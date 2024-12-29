@@ -1,0 +1,46 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'web/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'web/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: web/package-lock.json
+        
+    - name: Install Dependencies
+      run: npm ci
+      working-directory: ./web
+      
+    - name: Build
+      run: npm run build
+      working-directory: ./web
+      env:
+        CI: false
+        
+    - name: Test
+      run: npm test -- --passWithNoTests
+      working-directory: ./web
+      
+    - name: Upload artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-artifact
+        path: web/build 
