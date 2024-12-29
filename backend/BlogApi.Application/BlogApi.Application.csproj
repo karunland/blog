@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BlogApi.Core\BlogApi.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
+        <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.10\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+        <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.10\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
+    </ItemGroup>
+
+</Project>

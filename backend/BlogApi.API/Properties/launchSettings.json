@@ -1,0 +1,18 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:5003",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LC_ALL": "tr_TR.UTF-8",
+        "LANG": "tr_TR.UTF-8",
+        "exampleConnectionString": "Server=localhost:5432;Database=BlogWebsite2;User Id=postgres;Password=karun;"
+      }
+    }
+  }
+}

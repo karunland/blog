@@ -1,0 +1,47 @@
+/* Dark theme styles */
+/* Dark theme styles */
+[data-theme='dark'] {
+    --text-primary: #e1e1e1;
+    --text-secondary: #d1d1d1;
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --card-bg: #333333;
+    --border-color: #404040;
+  }
+  
+  /* Card styles for dark theme */
+  
+  [data-theme='dark'] .card-title {
+    color: var(--text-primary);
+  }
+  
+  [data-theme='dark'] .card-text {
+    color: var(--text-secondary);
+  }
+  
+  /* Pagination styles for dark theme */
+  [data-theme='dark'] .pagination .page-link {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+  }
+  
+  [data-theme='dark'] .pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+  }
+  
+  /* Text colors for dark theme */
+  [data-theme='dark'] {
+    color: var(--text-primary);
+  }
+  
+  [data-theme='dark'] h1,
+  [data-theme='dark'] h2,
+  [data-theme='dark'] h3,
+  [data-theme='dark'] h4,
+  [data-theme='dark'] h5,
+  [data-theme='dark'] h6 {
+    color: var(--text-primary);
+  } 

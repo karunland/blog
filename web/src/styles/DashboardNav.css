@@ -1,0 +1,56 @@
+.dashboard-nav {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nav-item {
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-item:hover {
+  color: var(--link-color);
+  background-color: var(--hover-bg);
+  text-decoration: none;
+}
+
+/* React Router's default active class */
+.nav-links .nav-item.active {
+  color: #fff !important;
+  background-color: var(--link-color) !important;
+  text-decoration: none;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .dashboard-nav {
+    padding: 0.75rem;
+  }
+  
+  .nav-links {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
+  .nav-item {
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+  }
+} 

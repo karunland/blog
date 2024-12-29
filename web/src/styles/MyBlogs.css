@@ -1,0 +1,142 @@
+.blogs {
+  padding: 20px;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.blogs h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: var(--heading-color);
+}
+
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.blog-item {
+  padding: 1.5rem;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: var(--card-shadow);
+}
+
+.blog-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.blog-item-title {
+  color: var(--heading-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.blog-meta {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.blog-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #27ae60;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Blog status badge */
+.blog-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.status-draft {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.status-published {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.status-archived {
+  background-color: var(--text-secondary);
+  color: white;
+}
+
+/* Empty state */
+.empty-blogs {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  border: 2px dashed var(--border-color);
+}
+
+.empty-blogs h3 {
+  color: var(--heading-color);
+  margin-bottom: 1rem;
+}
+
+.empty-blogs p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.add-blog-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--link-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.add-blog-btn:hover {
+  background-color: var(--link-hover-color);
+  transform: translateY(-1px);
+}

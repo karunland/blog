@@ -1,0 +1,124 @@
+.custom-navbar {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 1rem 0;
+  background-color: var(--navbar-bg) !important;
+  z-index: 1030 !important;
+}
+
+.custom-navbar.scrolled {
+  background-color: var(--navbar-bg) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0.5rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  animation: slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.custom-navbar .navbar-brand,
+.custom-navbar .nav-link {
+  color: var(--text-primary) !important;
+  transition: all 0.3s ease;
+}
+
+.custom-navbar .nav-link:hover {
+  color: var(--text-secondary) !important;
+  transform: translateY(-1px);
+}
+
+.dropdown-menu {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dropdown-item {
+  color: var(--text-primary);
+}
+
+.dropdown-item:hover {
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.dropdown-divider {
+  border-color: var(--border-color);
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--hover-bg);
+}
+
+.navbar-toggler {
+  border-color: var(--border-color);
+}
+
+.navbar-toggler-icon {
+  background-image: none !important;
+  position: relative;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background-color: var(--text-primary);
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler-icon::before {
+  top: 8px;
+}
+
+.navbar-toggler-icon::after {
+  bottom: 8px;
+}
+
+/* Ana içeriği navbar'ın altına kaydırmak için padding kaldırıldı */
+main {
+  position: relative;
+  z-index: 1;
+  transition: padding-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dropdown menülerin navbar'ın altında kalmaması için */
+.dropdown-menu {
+  z-index: 1031 !important;
+}
+
+/* Navbar scroll olduğunda içeriğin kaymaması için */
+body.has-scrolled-navbar {
+  padding-top: 72px;
+  transition: padding-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scroll threshold'unu artırmak için JavaScript'te kullanılacak değişken */
+:root {
+  --scroll-threshold: 50px;
+}
+  

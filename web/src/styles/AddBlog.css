@@ -1,0 +1,278 @@
+/* blog/src/styles/AddBlog.css */
+
+.add-blog {
+  padding: 10px;
+  background-color: var(--bg-secondary);
+  border-radius: 12px;
+}
+
+.add-blog h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+.blog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  background-color: var(--card-bg);
+  padding: .5rem;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: var(--link-color);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 4px rgba(116, 185, 255, 0.2);
+}
+
+/* TinyMCE Editor Styles */
+.editor-container {
+  margin-bottom: 2rem;
+}
+
+.editor-container .tox-tinymce {
+  border: 2px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.editor-container .tox .tox-edit-area__iframe {
+  background-color: var(--bg-secondary) !important;
+}
+
+.editor-container .tox .tox-toolbar__primary {
+  background-color: var(--card-bg) !important;
+  border-bottom: 2px solid var(--border-color) !important;
+}
+
+.editor-container .tox .tox-tbtn {
+  color: var(--text-primary) !important;
+}
+
+.editor-container .tox .tox-tbtn:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+.editor-container .tox .tox-tbtn--enabled,
+.editor-container .tox .tox-tbtn--enabled:hover {
+  background-color: var(--hover-bg) !important;
+  color: var(--link-color) !important;
+}
+
+/* Dark theme for TinyMCE */
+[data-theme='dark'] .tox .tox-toolbar,
+[data-theme='dark'] .tox .tox-toolbar__overflow,
+[data-theme='dark'] .tox .tox-toolbar__primary {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme='dark'] .tox .tox-tbtn svg {
+  fill: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .tox .tox-tbtn:hover svg {
+  fill: var(--link-color) !important;
+}
+
+[data-theme='dark'] .tox .tox-edit-area__iframe {
+  background-color: var(--bg-secondary) !important;
+}
+
+[data-theme='dark'] .tox .tox-statusbar {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Code block styles */
+.tox-tinymce-aux {
+  z-index: 9999 !important;
+}
+
+pre {
+  background-color: #272822 !important;
+  color: #f8f8f2 !important;
+  border-radius: 8px !important;
+  padding: 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  font-family: 'Fira Code', 'Consolas', monospace !important;
+  font-size: 0.95rem !important;
+  line-height: 1.6 !important;
+  overflow-x: auto;
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.submit-button {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--link-color) 0%, var(--link-hover-color) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  background: linear-gradient(135deg, var(--link-hover-color) 0%, var(--link-color) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.submit-button:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* File upload area */
+.file-upload {
+  border: 2px dashed var(--link-color);
+  padding: 2.5rem;
+  text-align: center;
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.file-upload:hover {
+  border-color: var(--link-hover-color);
+  background-color: rgba(116, 185, 255, 0.1);
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.file-upload-text {
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+}
+
+.file-upload-icon {
+  font-size: 2.5rem;
+  color: var(--link-color);
+  margin-bottom: 1rem;
+}
+
+.file-preview {
+  margin-top: 1rem;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  width: 100%;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+}
+
+.file-preview img {
+  max-height: 350px;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Error messages */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Success message */
+.success-message {
+  color: #2ecc71;
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .blog-form {
+    padding: 1.5rem;
+  }
+  
+  .editor-container .tox-tinymce {
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 576px) {
+  .editor-container .tox-tinymce {
+    min-height: 400px;
+  }
+}
