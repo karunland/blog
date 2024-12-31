@@ -8,16 +8,30 @@ import { BlogDetail } from './components/BlogDetail';
 import { Login } from './pages/Login';
 import { About } from './pages/About';
 import { Dashboard } from './pages/Dashboard';
-import { Container } from 'react-bootstrap';
+import { Box, Container } from '@mui/material';
 
 function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh',
+            bgcolor: 'background.default'
+          }}
+        >
           <Navbar />
-          <main className="flex-grow-1 py-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-            <Container className="container-narrow">
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              py: 4,
+              bgcolor: 'background.default'
+            }}
+          >
+            <Container maxWidth="xl">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
@@ -26,9 +40,9 @@ function App() {
                 <Route path="/:slug" element={<BlogDetail />} />
               </Routes>
             </Container>
-          </main>
+          </Box>
           <Footer />
-        </div>
+        </Box>
       </ThemeProvider>
     </AuthProvider>
   );

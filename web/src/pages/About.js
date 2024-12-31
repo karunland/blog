@@ -1,57 +1,81 @@
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Paper, Typography, Box, Avatar, Grid } from '@mui/material';
+import EmailIcon from '@mui/icons-material/Email';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 export function About() {
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
-          <Card className="shadow-sm">
-            <Card.Body className="p-5">
-              <h2 className="text-center mb-4">Hakkımda</h2>
-              <div className="text-center mb-4">
-                <img 
-                  src="/profile-image.jpg" 
-                  alt="Profil" 
-                  className="rounded-circle"
-                  style={{ width: '150px', height: '150px', objectFit: 'cover' }}
-                />
-              </div>
-              <p className="lead text-center mb-4">
-                Merhaba, ben [İsim Soyisim]
-              </p>
-              <div className="mb-4">
-                <h5>Kim Bu Blogger?</h5>
-                <p>
-                  Yazılım geliştirme tutkusu ile başlayan yolculuğumda, 
-                  sürekli öğrenme ve kendimi geliştirme fırsatları arıyorum. 
-                  Bu blog, teknik deneyimlerimi ve öğrendiklerimi paylaşmak 
-                  için oluşturduğum bir platform.
-                </p>
-              </div>
-              <div className="mb-4">
-                <h5>Neler Yapıyorum?</h5>
-                <p>
-                  Full-stack web geliştirme alanında çalışıyorum. 
-                  React, .NET Core ve modern web teknolojileri üzerine 
-                  yazılar yazıyor, deneyimlerimi paylaşıyorum.
-                </p>
-              </div>
-              <div>
-                <h5>İletişim</h5>
-                <p>
-                  Benimle iletişime geçmek veya projelerim hakkında 
-                  daha fazla bilgi almak için:
-                </p>
-                <ul className="list-unstyled">
-                  <li>📧 Email: example@email.com</li>
-                  <li>🌐 GitHub: github.com/username</li>
-                  <li>💼 LinkedIn: linkedin.com/in/username</li>
-                </ul>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+    <Container maxWidth="md" sx={{ py: 5 }}>
+      <Paper elevation={1} sx={{ p: 5, borderRadius: 2 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Hakkımda
+        </Typography>
+        
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+          <Avatar
+            src="/profile-image.jpg"
+            alt="Profil"
+            sx={{ width: 150, height: 150 }}
+          />
+        </Box>
+
+        <Typography variant="h5" align="center" gutterBottom sx={{ mb: 4 }}>
+          Merhaba, ben [İsim Soyisim]
+        </Typography>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            Kim Bu Blogger?
+          </Typography>
+          <Typography variant="body1" paragraph>
+            Yazılım geliştirme tutkusu ile başlayan yolculuğumda, 
+            sürekli öğrenme ve kendimi geliştirme fırsatları arıyorum. 
+            Bu blog, teknik deneyimlerimi ve öğrendiklerimi paylaşmak 
+            için oluşturduğum bir platform.
+          </Typography>
+        </Box>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            Neler Yapıyorum?
+          </Typography>
+          <Typography variant="body1" paragraph>
+            Full-stack web geliştirme alanında çalışıyorum. 
+            React, .NET Core ve modern web teknolojileri üzerine 
+            yazılar yazıyor, deneyimlerimi paylaşıyorum.
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography variant="h6" gutterBottom>
+            İletişim
+          </Typography>
+          <Typography variant="body1" paragraph>
+            Benimle iletişime geçmek veya projelerim hakkında 
+            daha fazla bilgi almak için:
+          </Typography>
+          <Grid container spacing={2} sx={{ pl: 2 }}>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <EmailIcon />
+                <Typography>example@email.com</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <GitHubIcon />
+                <Typography>github.com/username</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <LinkedInIcon />
+                <Typography>linkedin.com/in/username</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+      </Paper>
     </Container>
   );
 } 

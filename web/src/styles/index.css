@@ -15,22 +15,24 @@
   --heading-color: #2d3436;
   --link-color: #0984e3;
   --link-hover-color: #0769b5;
+  --bg-active: rgba(9, 132, 227, 0.1);
 }
 
 [data-theme='dark'] {
   /* Dark theme variables */
   --bg-primary: #121212;
   --bg-secondary: #1e1e1e;
-  --text-primary: #ffffff;
+  --text-primary: #e1e1e1;
   --text-secondary: #b2bec3;
   --border-color: #2d2d2d;
   --card-bg: #1e1e1e;
   --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   --navbar-bg: #121212;
   --hover-bg: #2d2d2d;
-  --heading-color: #74b9ff;
+  --heading-color: #e1e1e1;
   --link-color: #74b9ff;
   --link-hover-color: #0984e3;
+  --bg-active: rgba(116, 185, 255, 0.1);
 }
 
 /* Global font ayarları */

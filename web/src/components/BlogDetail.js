@@ -1,7 +1,20 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getBlogBySlug } from '../lib/api';
-import '../styles/BlogDetail.css';
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Paper, 
+  Stack,
+  Button,
+  Divider,
+  useTheme,
+  useMediaQuery,
+  Grid
+} from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PersonIcon from '@mui/icons-material/Person';
 
 export function BlogDetail() {
   const [blog, setBlog] = useState(null);
@@ -9,6 +22,8 @@ export function BlogDetail() {
   const [activeId, setActiveId] = useState('');
   const { slug } = useParams();
   const contentRef = useRef(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
   useEffect(() => {
     loadBlog();
@@ -44,11 +59,10 @@ export function BlogDetail() {
       if (!contentRef.current) return;
 
       const headingElements = contentRef.current.querySelectorAll('h1');
-      const scrollPosition = window.scrollY + 100; // Viewport üstünden offset
+      const scrollPosition = window.scrollY + 100;
 
       let currentHeading = null;
       
-      // Başlıkları tersten kontrol edelim (aşağıdan yukarıya)
       for (let i = headingElements.length - 1; i >= 0; i--) {
         const heading = headingElements[i];
         const headingTop = heading.offsetTop;
@@ -62,8 +76,6 @@ export function BlogDetail() {
       if (currentHeading) {
         setActiveId(currentHeading.id);
       } else if (headingElements.length > 0) {
-        // Eğer hiçbir başlık bulunamadıysa ve sayfanın en üstündeysek
-        // ilk başlığı seçelim
         if (scrollPosition < headingElements[0].offsetTop) {
           setActiveId(headingElements[0].id);
         }
@@ -71,7 +83,6 @@ export function BlogDetail() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    // İlk yüklemede de çalıştıralım
     handleScroll();
     
     return () => window.removeEventListener('scroll', handleScroll);
@@ -81,7 +92,6 @@ export function BlogDetail() {
     try {
       const response = await getBlogBySlug(slug);
       if (response.isSuccess) {
-        console.log(response.data);
         setBlog(response.data);
       }
     } catch (error) {
@@ -92,7 +102,7 @@ export function BlogDetail() {
   const scrollToHeading = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      const offset = 80; // Üstten boşluk bırakalım
+      const offset = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
       
@@ -103,38 +113,113 @@ export function BlogDetail() {
     }
   };
 
-  if (!blog) return <div>Yükleniyor...</div>;
+  if (!blog) {
+    return (
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        <Typography>Yükleniyor...</Typography>
+      </Container>
+    );
+  }
 
   return (
-    <div className="blog-detail-container">
-      <div className="blog-detail">
-        <div className="blog-header">
-          <h1>{blog.title}</h1>
-          <div className="blog-meta">
-            <span>Yazar: {blog.authorName}</span>
-            <span>Tarih: {new Date(blog.createdAt).toLocaleDateString()}</span>
-          </div>
-        </div>
-        <div
-          ref={contentRef}
-          className="blog-content"
-        />
-      </div>
-      {headings.length > 0 && (
-        <div className="table-of-contents">
-          <nav>
-            {headings.map((heading) => (
-              <button
-                key={heading.id}
-                onClick={() => scrollToHeading(heading.id)}
-                className={`toc-item ${activeId === heading.id ? 'active' : ''}`}
-              >
-                {heading.text}
-              </button>
-            ))}
-          </nav>
-        </div>
-      )}
-    </div>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} lg={headings.length > 0 ? 8 : 12} style={{ wordBreak: 'break-word' }}>
+          {blog.imageUrl && (
+            <Box
+              component="img"
+              src={blog.imageUrl}
+              alt={blog.title}
+              sx={{
+                width: '100%',
+                height: '600px',
+                objectFit: 'cover',
+                borderRadius: 2,
+                mb: 4
+              }}
+            />
+          )}
+          
+          <Typography variant="h3" component="h1" gutterBottom>
+            {blog.title}
+          </Typography>
+
+          <Stack 
+            direction="row" 
+            spacing={3} 
+            sx={{ mb: 4 }}
+          >
+            <Stack direction="row" spacing={1} alignItems="center">
+              <PersonIcon color="action" fontSize="small" />
+              <Typography variant="body2" color="text.secondary">
+                {blog.authorName}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <CalendarTodayIcon color="action" fontSize="small" />
+              <Typography variant="body2" color="text.secondary">
+                {new Date(blog.createdAt).toLocaleDateString()}
+              </Typography>
+            </Stack>
+          </Stack>
+
+          <Divider sx={{ mb: 4 }} />
+          
+          <Box
+            ref={contentRef}
+            sx={{
+              typography: 'body1',
+              '& h1': {
+                ...theme.typography.h4,
+                mt: 4,
+                mb: 2
+              },
+              '& p': {
+                mb: 2,
+                lineHeight: 1.8
+              }
+            }}
+          />
+        </Grid>
+
+        {headings.length > 0 && (
+          <Grid item xs={12} lg={4}>
+            <Paper
+              elevation={0}
+              sx={{
+                position: isMobile ? 'relative' : 'sticky',
+                top: isMobile ? 0 : 100,
+                p: 3,
+                bgcolor: 'grey.50',
+                height: 'fit-content',
+                borderRadius: 2
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                İçindekiler
+              </Typography>
+              <Stack spacing={1}>
+                {headings.map((heading) => (
+                  <Button
+                    key={heading.id}
+                    onClick={() => scrollToHeading(heading.id)}
+                    variant={activeId === heading.id ? "contained" : "text"}
+                    size="small"
+                    sx={{
+                      justifyContent: 'flex-start',
+                      textAlign: 'left',
+                      textTransform: 'none',
+                      px: 2
+                    }}
+                  >
+                    {heading.text}
+                  </Button>
+                ))}
+              </Stack>
+            </Paper>
+          </Grid>
+        )}
+      </Grid>
+    </Container>
   );
 } 

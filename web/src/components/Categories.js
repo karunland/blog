@@ -1,21 +1,34 @@
-import { ListGroup, Placeholder } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getAllCategories } from '../lib/api';
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Typography,
+  Skeleton,
+  Chip,
+  Divider,
+  Box
+} from '@mui/material';
+import CategoryIcon from '@mui/icons-material/Category';
+import ArticleIcon from '@mui/icons-material/Article';
 
 function SideBarSkeleton() {
   return (
-    <div className="sidebar mb-4">
-      <ListGroup>
-        {[1, 2, 3].map(i => (
-          <ListGroup.Item key={i}>
-            <Placeholder animation="glow">
-              <Placeholder xs={8} />
-            </Placeholder>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-    </div>
+    <Paper sx={{ p: 2 }}>
+      {[1, 2, 3, 4].map((item) => (
+        <Skeleton
+          key={item}
+          variant="rectangular"
+          height={40}
+          sx={{ mb: 1, borderRadius: 1 }}
+        />
+      ))}
+    </Paper>
   );
 }
 
@@ -45,7 +58,11 @@ export function Categories() {
 
   const handleCategoryClick = (categoryId) => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.set('CategoryId', categoryId);
+    if (categoryId) {
+      newParams.set('CategoryId', categoryId);
+    } else {
+      newParams.delete('CategoryId');
+    }
     newParams.set('PageNumber', '1');
     newParams.set('PageSize', '9');
     navigate(`/?${newParams.toString()}`);
@@ -55,39 +72,57 @@ export function Categories() {
     return <SideBarSkeleton />;
   }
 
+  const totalBlogs = categories.reduce((total, cat) => total + (cat.blogsCount || 0), 0);
+
   return (
-    <div className="sidebar mb-4">
-      <ListGroup>
-        <ListGroup.Item 
-          action 
-          active={!activeCategoryId}
-          onClick={() => {
-            const newParams = new URLSearchParams(searchParams);
-            newParams.delete('CategoryId');
-            navigate(`/?${newParams.toString()}`);
-          }}
-          className="d-flex justify-content-between align-items-center"
+    <Paper 
+      elevation={0}
+      sx={{ 
+        p: 2,
+        backgroundColor: 'background.paper',
+        borderRadius: 2
+      }}
+    >
+      <Typography variant="h6" gutterBottom sx={{ pl: 2, fontWeight: 'medium' }}>
+        Kategoriler
+      </Typography>
+      
+      <Divider sx={{ my: 2 }} />
+      
+      <List component="nav" disablePadding>
+        <ListItemButton
+          selected={!activeCategoryId}
+          onClick={() => handleCategoryClick(null)}
         >
-          <span>Tüm Yazılar</span>
-          <span className="badge bg-secondary rounded-pill">
-            {categories.reduce((total, cat) => total + (cat.blogsCount || 0), 0)}
-          </span>
-        </ListGroup.Item>
+          <ListItemIcon>
+            <ArticleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Tüm Yazılar" />
+          <Chip 
+            label={totalBlogs}
+            size="small"
+            color={!activeCategoryId ? "primary" : "default"}
+          />
+        </ListItemButton>
+
         {categories.map(category => (
-          <ListGroup.Item 
+          <ListItemButton
             key={category.id}
-            action
-            active={activeCategoryId === category.id.toString()}
+            selected={activeCategoryId === category.id.toString()}
             onClick={() => handleCategoryClick(category.id)}
-            className="d-flex justify-content-between align-items-center"
           >
-            <span>{category.name}</span>
-            <span className="badge bg-secondary rounded-pill">
-              {category.blogsCount || 0}
-            </span>
-          </ListGroup.Item>
+            <ListItemIcon>
+              <CategoryIcon />
+            </ListItemIcon>
+            <ListItemText primary={category.name} />
+            <Chip 
+              label={category.blogsCount || 0}
+              size="small"
+              color={activeCategoryId === category.id.toString() ? "primary" : "default"}
+            />
+          </ListItemButton>
         ))}
-      </ListGroup>
-    </div>
+      </List>
+    </Paper>
   );
 }

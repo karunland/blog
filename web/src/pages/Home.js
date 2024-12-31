@@ -1,16 +1,14 @@
-import { Row, Col } from 'react-bootstrap';
+import { Grid, Container } from '@mui/material';
 import { BlogList } from '../components/blogList';
-import { Categories } from '../components/Categories';
 
 export function Home() {
   return (
-    <Row>
-      <Col md={3}>
-        <Categories />
-      </Col>
-      <Col md={9}>
-        <BlogList />
-      </Col>
-    </Row>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} >
+          <BlogList />
+        </Grid>
+      </Grid>
+    </Container>
   );
 }

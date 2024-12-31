@@ -1,8 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { register } from '../lib/api';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Grid,
+  Link,
+  IconButton
+} from '@mui/material';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
 export function Register() {
   const navigate = useNavigate();
@@ -14,6 +26,7 @@ export function Register() {
     lastName: '',
     image: null
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,17 +38,23 @@ export function Register() {
 
   const handleImageChange = (e) => {
     if (e.target.files?.[0]) {
+      const file = e.target.files[0];
       setFormData(prev => ({
         ...prev,
-        image: e.target.files[0]
+        image: file
       }));
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // FormData kullanarak dosya yüklemesi yapabiliyoruz
       const data = new FormData();
       Object.keys(formData).forEach(key => {
         if (formData[key] !== null) {
@@ -64,91 +83,123 @@ export function Register() {
   };
 
   return (
-    <Container>
-      <Row className="justify-content-center">
-        <Col md={6}>
-          <Card className="shadow-sm">
-            <Card.Body className="p-4">
-              <h2 className="text-center mb-4">Kayıt Ol</h2>
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Ad</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Soyad</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+    <Container maxWidth="sm" sx={{ py: 5 }}>
+      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Kayıt Ol
+        </Typography>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Kullanıcı Adı</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="userName"
-                    value={formData.userName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Şifre</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Profil Fotoğrafı</Form.Label>
-                  <Form.Control
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Ad"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Soyad"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Kullanıcı Adı"
+                name="userName"
+                value={formData.userName}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Şifre"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<PhotoCamera />}
+                >
+                  {imagePreview ? 'Fotoğrafı Değiştir' : 'Profil Fotoğrafı Yükle'}
+                  <input
                     type="file"
-                    name="image"
-                    onChange={handleImageChange}
+                    hidden
                     accept="image/*"
+                    onChange={handleImageChange}
                   />
-                </Form.Group>
-
-                <Button variant="primary" type="submit" className="w-100">
-                  Kayıt Ol
                 </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+                {imagePreview && (
+                  <Box
+                    component="img"
+                    src={imagePreview}
+                    alt="Önizleme"
+                    sx={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                )}
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            size="large"
+            startIcon={<PersonAddIcon />}
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Kayıt Ol
+          </Button>
+
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Typography variant="body2">
+              Zaten hesabınız var mı?{' '}
+              <Link
+                href="/login"
+                underline="hover"
+                sx={{ cursor: 'pointer' }}
+              >
+                Giriş Yap
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
     </Container>
   );
 }

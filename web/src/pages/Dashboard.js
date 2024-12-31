@@ -1,27 +1,28 @@
-import { Row, Col } from 'react-bootstrap';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Stats } from './dashboard/Stats';
 import { MyBlogs } from './dashboard/Blogs';
 import { AddBlog } from './dashboard/Add';
 import { EditBlog } from './dashboard/Edit';
 import '../styles/Dashboard.css';
 import { DashboardNav } from '../components/DashboardNav';
+import { Grid, Box } from '@mui/material';
+
 export function Dashboard() {
   return (
-    <div className="dashboard-container">
-      <Row>
-        {/* Sidebar on the left */}
-        <DashboardNav />
-        {/* Main Content */}
-        <Col>
+    <Box className="dashboard-container">
+      <Grid container spacing={3} flexDirection="column">
+        <Grid item xs={12} md={3} style={{ minWidth: '100%' }}>
+          <DashboardNav />
+        </Grid>
+        <Grid item xs={12} md={9}>
           <Routes>
             <Route path="/" element={<Stats />} />
             <Route path="/blogs" element={<MyBlogs />} />
             <Route path="/add-blog" element={<AddBlog />} />
             <Route path="/blogs/edit/:slug" element={<EditBlog />} />
           </Routes>
-        </Col>
-      </Row>
-    </div>
+        </Grid>
+      </Grid>
+    </Box>
   );
 } 

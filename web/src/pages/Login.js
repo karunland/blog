@@ -1,86 +1,105 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import axios from 'axios';
-import '../styles/Login.css';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Link
+} from '@mui/material';
+import LoginIcon from '@mui/icons-material/Login';
 
 export function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://localhost:5003/api/User/Login', {
-        email,
-        password
-      });
-
-      if (response.data.isSuccess) {
-        login(response.data.data);
-        Swal.fire({
-          title: 'Başarılı!',
-          text: response.data.message,
-          icon: 'success',
-          timer: 2000
-        });
-        navigate('/');
-      } else {
-        Swal.fire({
-          title: 'Hata!',
-          text: response.data.error?.errorMessage || 'Bir hata oluştu',
-          icon: 'error'
-        });
+      const response = await login(formData);
+      if (response.isSuccess) {
+        navigate('/dashboard');
       }
     } catch (error) {
       Swal.fire({
         title: 'Hata!',
-        text: 'Giriş yapılırken bir hata oluştu',
+        text: error.response?.data?.error?.errorMessage || 'Giriş başarısız oldu',
         icon: 'error'
       });
     }
   };
 
   return (
-    <Container>
-      <Row className="justify-content-center">
-        <Col md={6}>
-          <Card className="shadow-sm">
-            <Card.Body className="p-4">
-              <h2 className="text-center mb-4">Giriş Yap</h2>
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </Form.Group>
+    <Container maxWidth="sm" sx={{ py: 5 }}>
+      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Giriş Yap
+        </Typography>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Şifre</Form.Label>
-                  <Form.Control
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </Form.Group>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <TextField
+            fullWidth
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+            margin="normal"
+          />
 
-                <Button variant="primary" type="submit" className="w-100">
-                  Giriş Yap
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+          <TextField
+            fullWidth
+            label="Şifre"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+            margin="normal"
+          />
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            size="large"
+            startIcon={<LoginIcon />}
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Giriş Yap
+          </Button>
+
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Typography variant="body2">
+              Hesabınız yok mu?{' '}
+              <Link
+                href="/register"
+                underline="hover"
+                sx={{ cursor: 'pointer' }}
+              >
+                Kaydol
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
     </Container>
   );
 } 

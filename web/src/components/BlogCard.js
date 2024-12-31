@@ -1,41 +1,77 @@
-import { Card } from 'react-bootstrap';
+import { Card, CardContent, Typography, Box, Stack, CardMedia } from '@mui/material';
 import { Link } from 'react-router-dom';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import '../styles/BlogCard.css';
 
 export function BlogCard({ blog }) {
-  const theme = document.body.getAttribute('data-theme');
-  
-  const cardStyle = {
-    backgroundColor: theme === 'dark' ? '#333333' : 'white',
-    color: theme === 'dark' ? '#e1e1e1' : 'inherit',
-    border: 0,
-    backgroundColor: 'transparent',
-  };
-
   return (
-    <Card style={cardStyle}>
-      <Card.Body>
-        <div className="blog-card__header">
-          <Link 
-            to={`/${blog.slug}`} 
-            className="blog-title-link"
-          >
-            <Card.Title className="blog-card__title">
-              {blog.id} {blog.title}
-            </Card.Title>
-          </Link>
-          <div className="blog-card__meta">
-            <span className="blog-card__date">
-              {new Date(blog.createdAt).toLocaleDateString('tr-TR')}
-            </span>
-            <span className="blog-card__separator">•</span>
-            <span className="blog-card__category">
-              {blog.categoryName || 'Kategorisiz'}
-            </span>
-          </div>
-        </div>
+    <Card 
+      elevation={0}
+      sx={{ 
+        mb: 2,
+        backgroundColor: 'transparent',
+        '&:hover': {
+          backgroundColor: 'action.hover',
+          transform: 'translateY(-2px)',
+          transition: 'all 0.3s ease'
+        }
+      }}
+    >
+      <Link 
+        to={`/${blog.slug}`} 
+        style={{ textDecoration: 'none', color: 'inherit' }}
+      >
+        {blog.imageUrl && (
+          <CardMedia
+            component="img"
+            height="300"
+            image={blog.imageUrl}
+            alt={blog.title}
+            sx={{
+              objectFit: 'cover',
+              borderRadius: 2,
+              mb: 2,
+              width: '100%',
+              maxHeight: '300px'
+            }}
+          />
+        )}
+      </Link>
+      <CardContent>
+        <Link 
+          to={`/${blog.slug}`} 
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <Typography variant="h5" component="h2" gutterBottom>
+            {blog.title}
+          </Typography>
+        </Link>
         
-      </Card.Body>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
+            <CalendarTodayIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            <Typography variant="body2">
+              {new Date(blog.createdAt).toLocaleDateString('tr-TR')}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
+            <LocalOfferIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            <Typography variant="body2">
+              {blog.categoryName || 'Kategorisiz'}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
+            <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
+            <Typography variant="body2">
+              {blog.views || 0} görüntülenme
+            </Typography>
+          </Box>
+        </Stack>
+      </CardContent>
     </Card>
   );
 } 

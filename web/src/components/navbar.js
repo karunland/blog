@@ -1,15 +1,49 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { Navbar as BNavbar, Nav, NavDropdown, Container, Button } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { BsSun, BsMoon } from 'react-icons/bs';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Container,
+  Box,
+  useScrollTrigger,
+  Slide,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  useMediaQuery,
+  useTheme as useMuiTheme
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import '../styles/Navbar.css';
+
+function HideOnScroll(props) {
+  const { children } = props;
+  const trigger = useScrollTrigger();
+
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
 
 export function Navbar() {
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const theme = useMuiTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,71 +54,169 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMobileMenuToggle = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   const getDisplayName = () => {
     if (!user) return '';
     return user.firstName || "Hesabım";
   };
 
-  return (
-    <BNavbar 
-      expand="lg" 
-      className={`custom-navbar ${isScrolled ? 'scrolled' : ''}`}
-      style={{ backgroundColor: 'var(--navbar-bg)' }}
-      variant={isDarkMode ? 'dark' : 'light'}
-      fixed={isScrolled ? "top" : undefined}
-    >
-      <Container>
-        <BNavbar.Brand as={Link} to="/" className="fw-bold">
-          BlogApp
-        </BNavbar.Brand>
-        <BNavbar.Toggle aria-controls="basic-navbar-nav" />
-        <BNavbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto align-items-center">
-            <Nav.Link as={Link} to="/about" className="mx-2">
-              Hakkımda
-            </Nav.Link>
-            
-            <Button
-              variant={isDarkMode ? 'dark' : 'light'}
-              onClick={toggleTheme}
-              className="theme-toggle mx-2"
-              style={{ border: 'none' }}
-            >
-              {isDarkMode ? <BsSun /> : <BsMoon />}
-            </Button>
+  const menuItems = [
+    { text: 'Dashboard', path: '/dashboard', requiresAuth: true },
+    { text: 'Çıkış Yap', onClick: logout, requiresAuth: true },
+    { text: 'Giriş Yap', path: '/login', requiresAuth: false },
+    { text: 'Kaydol', path: '/register', requiresAuth: false }
+  ];
 
-            {user ? (
-              <NavDropdown 
-                title={getDisplayName()}
-                id="basic-nav-dropdown"
-                className="mx-2"
+  const renderMenu = () => (
+    <Menu
+      anchorEl={anchorEl}
+      open={Boolean(anchorEl)}
+      onClose={handleClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      {menuItems
+        .filter(item => item.requiresAuth === Boolean(user))
+        .map((item, index) => (
+          <MenuItem
+            key={index}
+            onClick={() => {
+              handleClose();
+              if (item.onClick) item.onClick();
+            }}
+            component={item.path ? Link : 'button'}
+            to={item.path}
+          >
+            {item.text}
+          </MenuItem>
+        ))
+      }
+    </Menu>
+  );
+
+  const renderMobileDrawer = () => (
+    <Drawer
+      anchor="right"
+      open={mobileMenuOpen}
+      onClose={handleMobileMenuToggle}
+    >
+      <Box sx={{ width: 250 }} role="presentation">
+        <List>
+          <ListItem component={Link} to="/about">
+            <ListItemText primary="Hakkımda" />
+          </ListItem>
+          {menuItems
+            .filter(item => item.requiresAuth === Boolean(user))
+            .map((item, index) => (
+              <ListItem
+                key={index}
+                component={item.path ? Link : 'button'}
+                to={item.path}
+                onClick={() => {
+                  handleMobileMenuToggle();
+                  if (item.onClick) item.onClick();
+                }}
               >
-                <NavDropdown.Item as={Link} to="/dashboard">
-                  Dashboard
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={logout}>
-                  Çıkış Yap
-                </NavDropdown.Item>
-              </NavDropdown>
+                <ListItemText primary={item.text} />
+              </ListItem>
+            ))
+          }
+        </List>
+      </Box>
+    </Drawer>
+  );
+
+  return (
+    <HideOnScroll>
+      <AppBar 
+        position="sticky" 
+        elevation={isScrolled ? 4 : 0}
+        sx={{ 
+          bgcolor: 'background.paper',
+          color: 'text.primary'
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/"
+              sx={{
+                flexGrow: 1,
+                textDecoration: 'none',
+                color: 'inherit',
+                fontWeight: 'bold'
+              }}
+            >
+              BlogApp
+            </Typography>
+
+            {!isMobile ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Button
+                  component={Link}
+                  to="/about"
+                  color="inherit"
+                >
+                  Hakkımda
+                </Button>
+
+                <IconButton
+                  onClick={toggleTheme}
+                  color="inherit"
+                  size="small"
+                >
+                  {isDarkMode ? <BsSun /> : <BsMoon />}
+                </IconButton>
+
+                <Button
+                  color="inherit"
+                  onClick={handleMenu}
+                >
+                  {user ? getDisplayName() : 'Hesap'}
+                </Button>
+                {renderMenu()}
+              </Box>
             ) : (
-              <NavDropdown 
-                title="Hesap" 
-                id="basic-nav-dropdown"
-                align="end"
-                className="mx-2"
-              >
-                <NavDropdown.Item as={Link} to="/login">
-                  Giriş Yap
-                </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/register">
-                  Kaydol
-                </NavDropdown.Item>
-              </NavDropdown>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <IconButton
+                  onClick={toggleTheme}
+                  color="inherit"
+                  size="small"
+                >
+                  {isDarkMode ? <BsSun /> : <BsMoon />}
+                </IconButton>
+                <IconButton
+                  color="inherit"
+                  onClick={handleMobileMenuToggle}
+                  edge="end"
+                >
+                  <MenuIcon />
+                </IconButton>
+                {renderMobileDrawer()}
+              </Box>
             )}
-          </Nav>
-        </BNavbar.Collapse>
-      </Container>
-    </BNavbar>
+          </Toolbar>
+        </Container>
+      </AppBar>
+    </HideOnScroll>
   );
 }

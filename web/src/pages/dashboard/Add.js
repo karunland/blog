@@ -1,18 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Container, Row, Col } from 'react-bootstrap';
-import { FiSave, FiUpload } from 'react-icons/fi';
+import { FiUpload } from 'react-icons/fi';
 import { getCategories, createBlog } from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Grid,
+  MenuItem,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select
+} from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import '../../styles/AddBlog.css';
 
 export function AddBlog() {
   const navigate = useNavigate();
-  const isDarkTheme = document.body.getAttribute('data-theme') === 'dark';
-  const textColor = isDarkTheme ? '#fff' : '#000';
-  const placeholderColor = isDarkTheme ? '#aaa' : '#6c757d';
-  const backgroundColor = isDarkTheme ? '#333' : '#fff';
-
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -63,7 +73,7 @@ export function AddBlog() {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
       setFormData(prev => ({
         ...prev,
@@ -85,14 +95,11 @@ export function AddBlog() {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('content', formData.content);
-      formDataToSend.append('categoryId', formData.categoryId);
-      formDataToSend.append('status', formData.status);
-      formDataToSend.append('slug', formData.slug);
-      if (formData.image) {
-        formDataToSend.append('image', formData.image);
-      }
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== null) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
 
       const response = await createBlog(formDataToSend);
 
@@ -110,120 +117,108 @@ export function AddBlog() {
   };
 
   return (
-    <div className="add-blog">
-      <Container fluid>
-        <h2 style={{ color: textColor }}>Yeni Blog Ekle</h2>
-        <Form onSubmit={handleSubmit}>
-          <Row>
-            <Col lg={9}>
-              <Form.Group className="form-group">
-                <Form.Label style={{ color: textColor }}>Başlık</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="Blog başlığını girin"
-                  required
-                  style={{ 
-                    color: textColor,
-                    backgroundColor: backgroundColor,
-                    '::placeholder': { color: placeholderColor }
-                  }}
-                />
-              </Form.Group>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
+        <Typography variant="h4" gutterBottom>
+          Yeni Blog Ekle
+        </Typography>
 
-              <Form.Group className="form-group">
-                <Form.Label style={{ color: textColor }}>URL Slug</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="slug"
-                  value={formData.slug}
-                  onChange={handleInputChange}
-                  placeholder="url-slug-giriniz"
-                  required
-                  style={{ 
-                    color: textColor,
-                    backgroundColor: backgroundColor,
-                    '::placeholder': { color: placeholderColor }
-                  }}
-                />
-              </Form.Group>
-            </Col>
-          
-            <Col lg={3}>
-              <Form.Group className="form-group">
-                <Form.Label style={{ color: textColor }}>Kategori</Form.Label>
-                <Form.Select
+        <Box component="form" onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={8}>
+              <TextField
+                fullWidth
+                label="Başlık"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+                margin="normal"
+              />
+
+              <TextField
+                fullWidth
+                label="URL Slug"
+                name="slug"
+                value={formData.slug}
+                onChange={handleInputChange}
+                required
+                margin="normal"
+              />
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Kategori</InputLabel>
+                <Select
                   name="categoryId"
                   value={formData.categoryId}
                   onChange={handleInputChange}
                   required
-                  style={{ 
-                    color: textColor,
-                    backgroundColor: backgroundColor
-                  }}
+                  label="Kategori"
                 >
-                  <option value="" style={{ color: placeholderColor }}>Kategori seçin</option>
+                  <MenuItem value="" disabled>
+                    Kategori seçin
+                  </MenuItem>
                   {categories.map(category => (
-                    <option key={category.id} value={category.id} style={{ color: textColor }}>
+                    <MenuItem key={category.id} value={category.id}>
                       {category.name}
-                    </option>
+                    </MenuItem>
                   ))}
-                </Form.Select>
-              </Form.Group>
+                </Select>
+              </FormControl>
 
-              <Form.Group className="form-group">
-                <Form.Label style={{ color: textColor }}>Durum</Form.Label>
-                <Form.Select
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Durum</InputLabel>
+                <Select
                   name="status"
                   value={formData.status}
                   onChange={handleInputChange}
                   required
-                  style={{ 
-                    color: textColor,
-                    backgroundColor: backgroundColor
-                  }}
+                  label="Durum"
                 >
-                  <option value={1} style={{ color: textColor }}>Taslak</option>
-                  <option value={2} style={{ color: textColor }}>Yayınlandı</option>
-                  <option value={3} style={{ color: textColor }}>Arşivlendi</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
+                  <MenuItem value={1}>Taslak</MenuItem>
+                  <MenuItem value={2}>Yayınlandı</MenuItem>
+                  <MenuItem value={3}>Arşivlendi</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
 
-          <Row>
-          <div className="form-group">
-          <label className="file-upload" htmlFor="image">
-            <div className="file-upload-icon">
-              <FiUpload />
-            </div>
-            <div className="file-upload-text">
-              {formData.image ? 'Resmi değiştir' : 'Kapak resmi yükle'}
-            </div>
-            <input
-              type="file"
-              id="image"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-          </label>
-          {imagePreview && (
-            <div className="file-preview">
-              <img src={imagePreview} alt="Önizleme" />
-            </div>
-          )}
-        </div>
-        </Row>
-          <Row>
-            <Col lg={12}>
-              <Form.Group className="form-group editor-container">
-                <Form.Label>İçerik</Form.Label>
+            <Grid item xs={12}>
+              <Box sx={{ mb: 3 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<PhotoCamera />}
+                >
+                  {imagePreview ? 'Kapak Resmini Değiştir' : 'Kapak Resmi Yükle'}
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                </Button>
+                {imagePreview && (
+                  <Box
+                    component="img"
+                    src={imagePreview}
+                    alt="Önizleme"
+                    sx={{
+                      mt: 2,
+                      maxWidth: '100%',
+                      maxHeight: 200,
+                      objectFit: 'cover',
+                      borderRadius: 1
+                    }}
+                  />
+                )}
+              </Box>
+
+              <Box className="editor-container">
                 <Editor
                   apiKey={process.env.REACT_APP_TINYMCE_API_KEY}
                   value={formData.content}
-                  required
                   onEditorChange={handleEditorChange}
                   init={{
                     height: 800,
@@ -233,34 +228,32 @@ export function AddBlog() {
                       'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
                       'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
                     ],
-                    toolbar: 'undo redo | importword | blocks | bold italic underline strikethrough forecolor backcolor | align checklist bullist numlist | link image media footnotes mergetags table | subscript superscript charmap blockquote | tokens | spellchecker typography a11ycheck wordcount | addcomment showcomments | fullscreen preview',
+                    toolbar: 'undo redo | blocks | bold italic underline strikethrough forecolor backcolor | align bullist numlist | link image media | spellchecker code fullscreen',
                     content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
-                    skin: (document.body.getAttribute('data-theme') === 'dark') ? 'oxide-dark' : 'oxide',
-                    content_css: (document.body.getAttribute('data-theme') === 'dark') ? 'dark' : 'default'
                   }}
                 />
-              </Form.Group>
-            </Col>
-          </Row>
+              </Box>
+            </Grid>
+          </Grid>
 
-          {error && <div className="error-message" style={{ color: '#dc3545' }}>{error}</div>}
+          {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
+            </Typography>
+          )}
 
-          <button 
-            type="submit" 
-            className="submit-button" 
-            disabled={loading} 
-            style={{ 
-              fontSize: '14px', 
-              padding: '8px 12px',
-              backgroundColor: isDarkTheme ? '#0d6efd' : '#0d6efd',
-              color: '#fff'
-            }}
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            startIcon={<SaveIcon />}
+            disabled={loading}
+            sx={{ mt: 4 }}
           >
-            <FiSave />
             {loading ? 'Kaydediliyor...' : 'Kaydet'}
-          </button>
-        </Form>
-      </Container>
-    </div>
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 }
