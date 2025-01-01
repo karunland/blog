@@ -8,14 +8,13 @@ import '../styles/BlogCard.css';
 export function BlogCard({ blog }) {
   return (
     <Card 
-      elevation={0}
+      elevation={1}
       sx={{ 
         mb: 2,
-        backgroundColor: 'transparent',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
         '&:hover': {
-          backgroundColor: 'action.hover',
-          transform: 'translateY(-2px)',
-          transition: 'all 0.3s ease'
+          transform: 'translateY(-4px)',
+          boxShadow: (theme) => theme.shadows[4]
         }
       }}
     >
@@ -31,10 +30,8 @@ export function BlogCard({ blog }) {
             alt={blog.title}
             sx={{
               objectFit: 'cover',
-              borderRadius: 2,
-              mb: 2,
-              width: '100%',
-              maxHeight: '300px'
+              borderRadius: 1,
+              mb: 2
             }}
           />
         )}
@@ -44,29 +41,40 @@ export function BlogCard({ blog }) {
           to={`/${blog.slug}`} 
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
-          <Typography variant="h5" component="h2" gutterBottom>
+          <Typography 
+            variant="h5" 
+            component="h2" 
+            gutterBottom
+            sx={{
+              color: 'text.primary',
+              fontWeight: 600,
+              '&:hover': {
+                color: 'primary.main'
+              }
+            }}
+          >
             {blog.title}
           </Typography>
         </Link>
         
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-            <CalendarTodayIcon sx={{ fontSize: 16, mr: 0.5 }} />
-            <Typography variant="body2">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <CalendarTodayIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
+            <Typography variant="body2" color="text.secondary">
               {new Date(blog.createdAt).toLocaleDateString('tr-TR')}
             </Typography>
           </Box>
           
-          <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-            <LocalOfferIcon sx={{ fontSize: 16, mr: 0.5 }} />
-            <Typography variant="body2">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <LocalOfferIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
+            <Typography variant="body2" color="text.secondary">
               {blog.categoryName || 'Kategorisiz'}
             </Typography>
           </Box>
           
-          <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-            <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
-            <Typography variant="body2">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <VisibilityIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
+            <Typography variant="body2" color="text.secondary">
               {blog.views || 0} görüntülenme
             </Typography>
           </Box>

@@ -141,4 +141,20 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 
         return blog;
     }
+
+    public async Task<ApiResult<List<BlogsDto>>> Search(string search)
+    {
+        var blogs = context.Blogs
+            .Where(x => x.Title.Contains(search) || x.Content.Contains(search) || x.Slug.Contains(search))
+            .OrderByDescending(x => x.CreatedAt);
+
+        return await blogs.Select(x => new BlogsDto
+        {
+            CreatedAt = x.CreatedAt,
+            Title = x.Title,
+            Slug = x.Slug,
+            CategoryName = x.Category.Name,
+            AuthorName = x.User.FullName,
+        }).ToListAsync();
+    }
 }

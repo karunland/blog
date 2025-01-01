@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BlogCard } from './BlogCard';
-import { getBlogsByCategory, getAllCategories } from '../lib/api';
+import { getBlogsByCategory, getAllCategories, searchBlogs } from '../lib/api';
 import { 
   Box, 
   TextField, 
@@ -14,7 +14,12 @@ import {
   Paper,
   InputAdornment,
   Stack,
-  Chip
+  Chip,
+  List,
+  ListItem,
+  ListItemText,
+  ClickAwayListener,
+  ListItemSecondaryAction,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import SortIcon from '@mui/icons-material/Sort';
@@ -43,6 +48,9 @@ export function BlogList() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [categories, setCategories] = useState([]);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const navigate = useNavigate();
   const currentPage = parseInt(searchParams.get('PageNumber')) || 1;
   const pageSize = parseInt(searchParams.get('PageSize')) || 9;
   const [searchTerm, setSearchTerm] = useState(searchParams.get('Search') || '');
@@ -64,17 +72,36 @@ export function BlogList() {
     }
   };
 
-  const handleSearch = (event) => {
+  const handleSearchInputChange = async (event) => {
     const value = event.target.value;
     setSearchTerm(value);
-    const newParams = new URLSearchParams(searchParams);
-    if (value) {
-      newParams.set('Search', value);
+    
+    if (value.length > 0) {
+      try {
+        const response = await searchBlogs(value);
+        if (response.isSuccess) {
+          setSearchSuggestions(response.data);
+          setShowSuggestions(true);
+        }
+      } catch (error) {
+        console.error('Search failed:', error);
+      }
     } else {
-      newParams.delete('Search');
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
     }
-    newParams.set('PageNumber', '1');
-    setSearchParams(newParams);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    if (searchTerm) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
+  const handleSuggestionClick = (slug) => {
+    navigate(`/blog/${slug}`);
+    setShowSuggestions(false);
   };
 
   const handleSort = (event) => {
@@ -141,20 +168,57 @@ export function BlogList() {
   return (
     <Box>
       <Stack direction="row" spacing={2} sx={{ mb: 4 }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Blog ara..."
-          value={searchTerm}
-          onChange={handleSearch}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <ClickAwayListener onClickAway={() => setShowSuggestions(false)}>
+          <Box sx={{ position: 'relative', width: '100%' }}>
+            <form onSubmit={handleSearchSubmit}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Blog ara..."
+                value={searchTerm}
+                onChange={handleSearchInputChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </form>
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <Paper
+                sx={{
+                  position: 'absolute',
+                  width: '100%',
+                  zIndex: 1000,
+                  maxHeight: '300px',
+                  overflow: 'auto',
+                }}
+              >
+                <List>
+                  {searchSuggestions.map((blog) => (
+                    <ListItem
+                      key={blog.slug}
+                      button
+                      onClick={() => handleSuggestionClick(blog.slug)}
+                    >
+                      <ListItemText primary={blog.title} />
+                      {/* add category and author name */}
+                      <ListItemSecondaryAction>
+                        <Chip 
+                          size="small"
+                          label={blog.categoryName}
+                          sx={{ ml: 1 }}
+                        />
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            )}
+          </Box>
+        </ClickAwayListener>
         
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel>Kategori</InputLabel>

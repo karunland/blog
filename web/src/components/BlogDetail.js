@@ -17,10 +17,10 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PersonIcon from '@mui/icons-material/Person';
 
 export function BlogDetail() {
+  const { slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [headings, setHeadings] = useState([]);
   const [activeId, setActiveId] = useState('');
-  const { slug } = useParams();
   const contentRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
@@ -31,62 +31,66 @@ export function BlogDetail() {
 
   useEffect(() => {
     if (blog) {
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = blog.content;
-      
-      const headingElements = tempDiv.querySelectorAll('h1');
+      // Blog içeriğini contentRef'e ekle
+      contentRef.current.innerHTML = blog.content;
+
+      // Başlıkları bul ve ID'lerini ayarla
+      const headingElements = contentRef.current.querySelectorAll('h1, h2, h3');
       const headingsData = Array.from(headingElements).map((heading, index) => {
         const id = `heading-${index}`;
         heading.id = id;
         return {
           id,
           text: heading.textContent,
-          level: 1
+          level: parseInt(heading.tagName[1])
         };
       });
-      
       setHeadings(headingsData);
-      
-      const contentWithIds = tempDiv.innerHTML;
-      if (contentRef.current) {
-        contentRef.current.innerHTML = contentWithIds;
-      }
+
+      // Başlıklara stil ekle
+      headingElements.forEach(heading => {
+        heading.style.color = theme.palette.text.primary;
+        heading.style.marginTop = theme.spacing(4);
+        heading.style.marginBottom = theme.spacing(2);
+      });
+
+      // Paragraf ve link stillerini ayarla
+      const paragraphs = contentRef.current.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        p.style.color = theme.palette.text.primary;
+        p.style.marginBottom = theme.spacing(2);
+        p.style.lineHeight = '1.8';
+      });
+
+      const links = contentRef.current.querySelectorAll('a');
+      links.forEach(link => {
+        link.style.color = theme.palette.primary.main;
+        link.style.textDecoration = 'none';
+      });
     }
-  }, [blog]);
+  }, [blog, theme]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!contentRef.current) return;
-
-      const headingElements = contentRef.current.querySelectorAll('h1');
-      const scrollPosition = window.scrollY + 100;
-
-      let currentHeading = null;
-      
-      for (let i = headingElements.length - 1; i >= 0; i--) {
-        const heading = headingElements[i];
-        const headingTop = heading.offsetTop;
-        
-        if (scrollPosition >= headingTop) {
-          currentHeading = heading;
-          break;
-        }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: '-20% 0% -35% 0%'
       }
+    );
 
-      if (currentHeading) {
-        setActiveId(currentHeading.id);
-      } else if (headingElements.length > 0) {
-        if (scrollPosition < headingElements[0].offsetTop) {
-          setActiveId(headingElements[0].id);
-        }
-      }
+    const headingElements = contentRef.current?.querySelectorAll('h1, h2, h3') || [];
+    headingElements.forEach((element) => observer.observe(element));
+
+    return () => {
+      headingElements.forEach((element) => observer.unobserve(element));
     };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [blog]);
 
   async function loadBlog() {
     try {
@@ -116,7 +120,7 @@ export function BlogDetail() {
   if (!blog) {
     return (
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Typography>Yükleniyor...</Typography>
+        <Typography color="text.secondary">Yükleniyor...</Typography>
       </Container>
     );
   }
@@ -124,7 +128,7 @@ export function BlogDetail() {
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Grid container spacing={4}>
-        <Grid item xs={12} lg={headings.length > 0 ? 8 : 12} style={{ wordBreak: 'break-word' }}>
+        <Grid item xs={12} lg={headings.length > 0 ? 8 : 12}>
           {blog.imageUrl && (
             <Box
               component="img"
@@ -132,15 +136,26 @@ export function BlogDetail() {
               alt={blog.title}
               sx={{
                 width: '100%',
-                height: '600px',
+                height: 'auto',
+                maxHeight: '600px',
                 objectFit: 'cover',
                 borderRadius: 2,
-                mb: 4
+                mb: 4,
+                boxShadow: theme.shadows[4]
               }}
             />
           )}
-          
-          <Typography variant="h3" component="h1" gutterBottom>
+
+          <Typography 
+            variant="h3" 
+            component="h1" 
+            gutterBottom
+            sx={{
+              color: 'text.primary',
+              fontWeight: 700,
+              letterSpacing: '-0.01em'
+            }}
+          >
             {blog.title}
           </Typography>
 
@@ -150,13 +165,13 @@ export function BlogDetail() {
             sx={{ mb: 4 }}
           >
             <Stack direction="row" spacing={1} alignItems="center">
-              <PersonIcon color="action" fontSize="small" />
+              <PersonIcon sx={{ color: 'text.secondary' }} fontSize="small" />
               <Typography variant="body2" color="text.secondary">
                 {blog.authorName}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
-              <CalendarTodayIcon color="action" fontSize="small" />
+              <CalendarTodayIcon sx={{ color: 'text.secondary' }} fontSize="small" />
               <Typography variant="body2" color="text.secondary">
                 {new Date(blog.createdAt).toLocaleDateString()}
               </Typography>
@@ -169,14 +184,29 @@ export function BlogDetail() {
             ref={contentRef}
             sx={{
               typography: 'body1',
-              '& h1': {
-                ...theme.typography.h4,
-                mt: 4,
-                mb: 2
+              color: 'text.primary',
+              '& img': {
+                maxWidth: '100%',
+                height: 'auto',
+                borderRadius: 1,
+                my: 2
               },
-              '& p': {
-                mb: 2,
-                lineHeight: 1.8
+              '& pre': {
+                backgroundColor: 'background.paper',
+                p: 2,
+                borderRadius: 1,
+                overflow: 'auto',
+                '& code': {
+                  color: 'text.primary'
+                }
+              },
+              '& blockquote': {
+                borderLeft: 4,
+                borderColor: 'primary.main',
+                pl: 2,
+                my: 2,
+                color: 'text.secondary',
+                fontStyle: 'italic'
               }
             }}
           />
@@ -185,17 +215,24 @@ export function BlogDetail() {
         {headings.length > 0 && (
           <Grid item xs={12} lg={4}>
             <Paper
-              elevation={0}
+              elevation={1}
               sx={{
                 position: isMobile ? 'relative' : 'sticky',
                 top: isMobile ? 0 : 100,
                 p: 3,
-                bgcolor: 'grey.50',
-                height: 'fit-content',
-                borderRadius: 2
+                borderRadius: 2,
+                bgcolor: 'background.paper'
               }}
             >
-              <Typography variant="h6" gutterBottom>
+              <Typography 
+                variant="h6" 
+                gutterBottom
+                sx={{ 
+                  color: 'text.primary',
+                  fontWeight: 600,
+                  mb: 2
+                }}
+              >
                 İçindekiler
               </Typography>
               <Stack spacing={1}>
@@ -208,8 +245,11 @@ export function BlogDetail() {
                     sx={{
                       justifyContent: 'flex-start',
                       textAlign: 'left',
-                      textTransform: 'none',
-                      px: 2
+                      pl: heading.level > 1 ? (heading.level - 1) * 2 : 1,
+                      color: activeId === heading.id ? 'primary.contrastText' : 'text.primary',
+                      '&:hover': {
+                        backgroundColor: activeId === heading.id ? 'primary.dark' : 'action.hover'
+                      }
                     }}
                   >
                     {heading.text}

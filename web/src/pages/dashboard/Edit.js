@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getCategories, getBlogDetail, updateBlog } from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
+import { useTheme } from '../../contexts/ThemeContext';
 import {
   Container,
   Paper,
@@ -18,11 +19,13 @@ import {
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import EditIcon from '@mui/icons-material/Edit';
 import '../../styles/AddBlog.css';
 
 export function EditBlog() {
   const navigate = useNavigate();
   const { slug } = useParams();
+  const { isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -35,6 +38,10 @@ export function EditBlog() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+
+  useEffect(() => {
+    document.title = formData.title ? `${formData.title} Düzenle | BlogApp` : 'Blog Düzenle | BlogApp';
+  }, [formData.title]);
 
   const fetchBlogAndCategories = async () => {
     if (!slug) return;
@@ -147,9 +154,12 @@ export function EditBlog() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h4" gutterBottom>
-          Blog Düzenle
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+          <EditIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
+          <Typography variant="h4" component="h1">
+            {formData.title ? `"${formData.title}" Düzenle` : 'Blog Düzenle'}
+          </Typography>
+        </Box>
 
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={3}>
@@ -257,7 +267,24 @@ export function EditBlog() {
                       'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
                     ],
                     toolbar: 'undo redo | blocks | bold italic underline strikethrough forecolor backcolor | align bullist numlist | link image media | spellchecker code fullscreen',
-                    content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
+                    content_style: `
+                      body { 
+                        font-family: Inter, Arial, sans-serif; 
+                        font-size: 16px;
+                        background-color: ${isDarkMode ? '#2d2d2d' : '#ffffff'};
+                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                      }
+                      p { 
+                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                        line-height: 1.6;
+                      }
+                      h1, h2, h3, h4, h5, h6 { 
+                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                        font-weight: 600;
+                      }
+                    `,
+                    skin: isDarkMode ? 'oxide-dark' : 'oxide',
+                    content_css: isDarkMode ? 'dark' : 'default'
                   }}
                 />
               </Box>

@@ -102,26 +102,91 @@
 [data-theme='dark'] .tox .tox-toolbar,
 [data-theme='dark'] .tox .tox-toolbar__overflow,
 [data-theme='dark'] .tox .tox-toolbar__primary {
-  background-color: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
+  background-color: #2d2d2d !important;
+  border-color: #404040 !important;
 }
 
 [data-theme='dark'] .tox .tox-tbtn svg {
-  fill: var(--text-primary) !important;
+  fill: #ffffff !important;
 }
 
 [data-theme='dark'] .tox .tox-tbtn:hover svg {
-  fill: var(--link-color) !important;
+  fill: #3d8bfd !important;
 }
 
 [data-theme='dark'] .tox .tox-edit-area__iframe {
-  background-color: var(--bg-secondary) !important;
+  background-color: #2d2d2d !important;
 }
 
 [data-theme='dark'] .tox .tox-statusbar {
-  background-color: var(--card-bg) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-secondary) !important;
+  background-color: #2d2d2d !important;
+  border-color: #404040 !important;
+  color: #e1e1e1 !important;
+}
+
+[data-theme='dark'] .tox-tinymce {
+  border-color: #404040 !important;
+  background-color: #2d2d2d !important;
+}
+
+[data-theme='dark'] .tox .tox-edit-area__iframe {
+  background-color: #2d2d2d !important;
+}
+
+[data-theme='dark'] .tox .tox-tbtn {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] .tox .tox-tbtn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme='dark'] .tox .tox-tbtn--enabled,
+[data-theme='dark'] .tox .tox-tbtn--enabled:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* TinyMCE içerik alanı stilleri */
+[data-theme='dark'] .mce-content-body {
+  color: #ffffff !important;
+  background-color: #2d2d2d !important;
+}
+
+[data-theme='dark'] .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Form alanları için dark tema stilleri */
+[data-theme='dark'] .form-group input,
+[data-theme='dark'] .form-group select {
+  background-color: #2d2d2d;
+  color: #ffffff;
+  border-color: #404040;
+}
+
+[data-theme='dark'] .form-group input:focus,
+[data-theme='dark'] .form-group select:focus {
+  border-color: #3d8bfd;
+  box-shadow: 0 0 0 4px rgba(61, 139, 253, 0.2);
+}
+
+[data-theme='dark'] .form-group label {
+  color: #ffffff;
+}
+
+/* Dosya yükleme alanı için dark tema stilleri */
+[data-theme='dark'] .file-upload {
+  background-color: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme='dark'] .file-upload:hover {
+  background-color: #363636;
+  border-color: #3d8bfd;
+}
+
+[data-theme='dark'] .file-upload-text {
+  color: #e1e1e1;
 }
 
 /* Code block styles */

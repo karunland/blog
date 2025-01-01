@@ -8,6 +8,7 @@ import { BlogDetail } from './components/BlogDetail';
 import { Login } from './pages/Login';
 import { About } from './pages/About';
 import { Dashboard } from './pages/Dashboard';
+import { Search } from './pages/Search';
 import { Box, Container } from '@mui/material';
 
 function App() {
@@ -37,7 +38,8 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard/*" element={<Dashboard />} />
-                <Route path="/:slug" element={<BlogDetail />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/blog/:slug" element={<BlogDetail />} />
               </Routes>
             </Container>
           </Box>

@@ -161,4 +161,14 @@ export const updateBlog = async (id, data) => {
   }
 };
 
+export const searchBlogs = async (search) => {
+  try {
+    const response = await api.get(`/blog/search?search=${encodeURIComponent(search)}`);
+    return response.data;
+  } catch (error) {
+    console.error('Search Error:', error);
+    throw error;
+  }
+};
+
 export default api;

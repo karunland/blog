@@ -46,5 +46,11 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     {
         return await blogRepo.Delete(slug);
     }
-    
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<ApiResult<List<BlogsDto>>> Search([FromQuery] string search)
+    {
+        return await blogRepo.Search(search);
+    }
 }

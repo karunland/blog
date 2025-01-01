@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiUpload } from 'react-icons/fi';
 import { getCategories, createBlog } from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
+import { useTheme } from '../../contexts/ThemeContext';
 import {
   Container,
   Paper,
@@ -19,10 +20,12 @@ import {
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import CreateIcon from '@mui/icons-material/Create';
 import '../../styles/AddBlog.css';
 
 export function AddBlog() {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -38,6 +41,7 @@ export function AddBlog() {
 
   useEffect(() => {
     fetchCategories();
+    document.title = 'Yeni Blog Yazısı | BlogApp';
   }, []);
 
   const fetchCategories = async () => {
@@ -119,9 +123,12 @@ export function AddBlog() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h4" gutterBottom>
-          Yeni Blog Ekle
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+          <CreateIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
+          <Typography variant="h4" component="h1">
+            Yeni Blog Yazısı
+          </Typography>
+        </Box>
 
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={3}>
@@ -229,7 +236,24 @@ export function AddBlog() {
                       'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
                     ],
                     toolbar: 'undo redo | blocks | bold italic underline strikethrough forecolor backcolor | align bullist numlist | link image media | spellchecker code fullscreen',
-                    content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
+                    content_style: `
+                      body { 
+                        font-family: Inter, Arial, sans-serif; 
+                        font-size: 16px;
+                        background-color: ${isDarkMode ? '#2d2d2d' : '#ffffff'};
+                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                      }
+                      p { 
+                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                        line-height: 1.6;
+                      }
+                      h1, h2, h3, h4, h5, h6 { 
+                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                        font-weight: 600;
+                      }
+                    `,
+                    skin: isDarkMode ? 'oxide-dark' : 'oxide',
+                    content_css: isDarkMode ? 'dark' : 'default'
                   }}
                 />
               </Box>
