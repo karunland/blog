@@ -204,7 +204,6 @@ export function BlogList() {
                       onClick={() => handleSuggestionClick(blog.slug)}
                     >
                       <ListItemText primary={blog.title} />
-                      {/* add category and author name */}
                       <ListItemSecondaryAction>
                         <Chip 
                           size="small"

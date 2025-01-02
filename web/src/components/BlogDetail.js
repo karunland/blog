@@ -137,7 +137,7 @@ export function BlogDetail() {
               sx={{
                 width: '100%',
                 height: 'auto',
-                maxHeight: '600px',
+                maxHeight: '400px',
                 objectFit: 'cover',
                 borderRadius: 2,
                 mb: 4,

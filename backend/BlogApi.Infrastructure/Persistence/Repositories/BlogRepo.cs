@@ -1,6 +1,7 @@
 ﻿using BlogApi.Application.Common.Messages;
 using BlogApi.Application.DTOs;
 using BlogApi.Application.DTOs.Blog;
+using BlogApi.Application.DTOs.File;
 using BlogApi.Application.Interfaces;
 using BlogApi.Core.Entities;
 using BlogApi.Core.Enums;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class BlogRepo(BlogContext context, ICurrentUserService currentUserService)
+public class BlogRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo)
 {
     public async Task<ApiResultPagination<BlogsDto>> GetAll(BlogFilterModel filter)
     {
@@ -31,12 +32,12 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
         {
             Id = x.Id,
             Title = x.Title,
-            Content = x.Content.Length > 100 ? x.Content.Substring(0, 100) + "..." : x.Content,
             CreatedAt = x.CreatedAt,
             AuthorName = x.User.FullName,
             Slug = x.Slug,
             CategoryName = x.Category.Name,
-            ViewCount = x.ViewCount
+            ViewCount = x.ViewCount,
+            ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl
         });
 
         return await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
@@ -54,6 +55,15 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             Slug = blog.Slug,
             CreatedAt = DateTime.UtcNow
         };
+
+        if (blog.Image != null)
+        {
+            var imagePath = await fileRepo.UploadFileAsync(new UploadFileAsyncDto {
+                File = blog.Image,
+                Type = FileTypeEnum.Thumbnail
+            } );
+            newBlog.ImageUrl = imagePath.FileUrl;
+        }
 
         context.Blogs.Add(newBlog);
         await context.SaveChangesAsync();
@@ -75,6 +85,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
                 CreatedAt = x.CreatedAt,
                 AuthorName = x.User.FullName,
                 Slug = x.Slug,
+                ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl,
                 CategoryName = x.Category.Name,
                 CategoryId = x.CategoryId,
                 ViewCount = x.ViewCount,
@@ -133,6 +144,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
                 CategoryId = x.CategoryId,
                 ViewCount = x.ViewCount,
                 StatusEnumId = x.BlogStatusEnum,
+                ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl
             })
             .FirstOrDefaultAsync();
 

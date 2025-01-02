@@ -9,6 +9,7 @@ public class Blog
     public string Title { get; set; }
     public string Slug { get; set; }
     public string Content { get; set; }
+    public string ImageUrl { get; set; }
     public BlogStatusEnum BlogStatusEnum { get; set; } = BlogStatusEnum.Published;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }

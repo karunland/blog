@@ -3,6 +3,6 @@ namespace BlogApi.Core.Enums;
 public enum FileTypeEnum
 {
     ProfilePicture = 1,
-    PostImage = 2
-    
+    Thumbnail = 2,
+    BlogImage = 3
 }

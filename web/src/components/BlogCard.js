@@ -19,26 +19,27 @@ export function BlogCard({ blog }) {
       }}
     >
       <Link 
-        to={`/${blog.slug}`} 
+        to={`/blog/${blog.slug}`} 
         style={{ textDecoration: 'none', color: 'inherit' }}
       >
         {blog.imageUrl && (
           <CardMedia
             component="img"
-            height="300"
+            height="200"
+            width="800"
             image={blog.imageUrl}
             alt={blog.title}
             sx={{
               objectFit: 'cover',
-              borderRadius: 1,
-              mb: 2
+              width: '100%',
+              borderRadius: '4px 4px 0 0'
             }}
           />
         )}
       </Link>
       <CardContent>
         <Link 
-          to={`/${blog.slug}`} 
+          to={`/blog/${blog.slug}`} 
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           <Typography 
@@ -68,14 +69,14 @@ export function BlogCard({ blog }) {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <LocalOfferIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
             <Typography variant="body2" color="text.secondary">
-              {blog.categoryName || 'Kategorisiz'}
+              {blog.categoryName || ''}
             </Typography>
           </Box>
           
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <VisibilityIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
             <Typography variant="body2" color="text.secondary">
-              {blog.views || 0} görüntülenme
+              {blog.viewCount || 0}
             </Typography>
           </Box>
         </Stack>

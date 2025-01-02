@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-
+import api from '../lib/api';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -27,10 +28,19 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = (userData) => {
-    if (userData?.token) {
-      localStorage.setItem('token', userData.token);
-      setUser(jwtDecode(userData.token));
+  const login = async (userData) => {
+    try {
+      const response = await api.post('/user/login', userData);
+      if (response.data.isSuccess) {
+        localStorage.setItem('token', response.data.data.token);
+        console.log(response.data.data.token);
+        setUser(jwtDecode(response.data.data.token));
+        return response.data;
+      } else {
+        throw new Error(response.data.error.errorMessage);
+      }
+    } catch (error) {
+      throw new Error('Giriş başarısız oldu');
     }
   };
 

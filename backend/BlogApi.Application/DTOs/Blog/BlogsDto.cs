@@ -15,4 +15,5 @@ public record BlogsDto
     public int ViewCount { get; set; }
     public BlogStatusEnum StatusEnumId { get; set; }
     public string Status { get; set; }
+    public string ImageUrl { get; set; }
 }

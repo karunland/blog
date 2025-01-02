@@ -26,7 +26,7 @@ public class FileRepo
         var folderFileName = type switch
         {
             FileTypeEnum.ProfilePicture => "ProfilePictures",
-            FileTypeEnum.PostImage => "PostImages",
+            FileTypeEnum.Thumbnail => "PostImages",
             _ => "",
         };
 

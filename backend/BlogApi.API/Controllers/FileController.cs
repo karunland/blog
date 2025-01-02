@@ -1,13 +1,14 @@
 ﻿using BlogApi.Application.DTOs.File;
 using BlogApi.Application.Services;
 using BlogApi.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
 public class FileController(FileRepo fileRepo) : BaseApiController
 {
-    [HttpPost("UploadFile")]
+    [HttpPost]
     public async Task<IActionResult> UploadFile([FromForm] UploadFileAsyncDto model)
     {
         try
@@ -21,7 +22,8 @@ public class FileController(FileRepo fileRepo) : BaseApiController
         }
     }
 
-    [HttpGet("Image/{imageUrl}")]
+    [HttpGet("{imageUrl}")]
+    [AllowAnonymous]
     public async Task<IActionResult> Image([FromRoute] string imageUrl)
     {
         var file = await fileRepo.GetFileAsync(imageUrl);

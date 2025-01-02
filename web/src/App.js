@@ -10,7 +10,7 @@ import { About } from './pages/About';
 import { Dashboard } from './pages/Dashboard';
 import { Search } from './pages/Search';
 import { Box, Container } from '@mui/material';
-
+import { Register } from './pages/Register';
 function App() {
   return (
     <AuthProvider>
@@ -37,6 +37,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/dashboard/*" element={<Dashboard />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/blog/:slug" element={<BlogDetail />} />
