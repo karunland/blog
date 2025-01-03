@@ -11,6 +11,9 @@ import { Dashboard } from './pages/Dashboard';
 import { Search } from './pages/Search';
 import { Box, Container } from '@mui/material';
 import { Register } from './pages/Register';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Terms from './pages/Terms';
+
 function App() {
   return (
     <AuthProvider>
@@ -29,7 +32,8 @@ function App() {
             sx={{
               flexGrow: 1,
               py: 4,
-              bgcolor: 'background.default'
+              bgcolor: 'background.default',
+              marginTop: '50px'
             }}
           >
             <Container maxWidth="xl">
@@ -41,6 +45,8 @@ function App() {
                 <Route path="/dashboard/*" element={<Dashboard />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/blog/:slug" element={<BlogDetail />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<Terms />} />
               </Routes>
             </Container>
           </Box>

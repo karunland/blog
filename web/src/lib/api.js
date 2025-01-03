@@ -9,10 +9,8 @@ const api = axios.create({
   }
 });
 
-// Yapay gecikme için yardımcı fonksiyon
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Kategoriye göre blog listesi getir
 export const getBlogsByCategory = async (params) => {
   try {
     const response = await api.get('/blog/list', { 
@@ -21,7 +19,6 @@ export const getBlogsByCategory = async (params) => {
         'Content-Type': 'application/json'
       }
     });
-    console.log('API Response:', response.data); // Response'u kontrol etmek için
     return response.data;
   } catch (error) {
     console.error('Get Blogs By Category Error:', error.response?.data || error);
@@ -29,7 +26,6 @@ export const getBlogsByCategory = async (params) => {
   }
 };
 
-// Tüm kategorileri getir
 export const getAllCategories = async () => {
   try {
     const response = await api.get('/Category/List');
@@ -40,7 +36,6 @@ export const getAllCategories = async () => {
   }
 };
 
-// Blog detayını getir
 export const getBlogBySlug = async (slug) => {
   try {
     const response = await api.get(`/blog/detail?slug=${slug}`);
@@ -79,11 +74,8 @@ export const register = async (formData) => {
   }
 };
 
-// Blog oluştur
 export const createBlog = async (blogData) => {
   try {
-    // console out all the data
-    console.log(blogData);
     const response = await api.post('/blog/create', blogData, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`

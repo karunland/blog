@@ -14,21 +14,23 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 {
     public async Task<ApiResultPagination<BlogsDto>> GetAll(BlogFilterModel filter)
     {
-        var blogs = context.Blogs
-            .OrderByDescending(x => x.Id);
-        
+        var query = context.Blogs.AsQueryable();
+
         if (!string.IsNullOrEmpty(filter.Search)) 
-            blogs = (IOrderedQueryable<Blog>)blogs.Where(x => x.Title.Contains(filter.Search));
+            query = query.Where(x => x.Title.Contains(filter.Search));
 
         if (!string.IsNullOrEmpty(filter.CategoryId))
-            blogs = (IOrderedQueryable<Blog>)blogs.Where(x => x.CategoryId == int.Parse(filter.CategoryId));
+            query = query.Where(x => x.CategoryId == int.Parse(filter.CategoryId));
 
-        if (filter.SortType == BlogSortTypesEnum.EnEskiler)
-            blogs = blogs.OrderBy(x => x.CreatedAt);
-        else
-            blogs = blogs.OrderByDescending(x => x.CreatedAt);
+        query = filter.SortBy switch
+        {
+            BlogSortType.Oldest => query.OrderBy(x => x.CreatedAt),
+            BlogSortType.MostViewed => query.OrderByDescending(x => x.ViewCount),
+            BlogSortType.MostCommented => query.OrderByDescending(x => x.Comments.Count),
+            _ => query.OrderByDescending(x => x.CreatedAt) // Newest varsayılan
+        };
 
-        var result = blogs.Select(x => new BlogsDto
+        var result = query.Select(x => new BlogsDto
         {
             Id = x.Id,
             Title = x.Title,

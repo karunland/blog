@@ -1,6 +1,7 @@
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Typography, Link } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
-export function Footer() {
+export const Footer = () => {
   return (
     <Box
       component="footer"
@@ -8,16 +9,41 @@ export function Footer() {
         py: 3,
         px: 2,
         mt: 'auto',
-        backgroundColor: 'background.paper',
-        borderTop: 1,
-        borderColor: 'divider'
+        backgroundColor: 'background.paper'
       }}
     >
-      <Container maxWidth="xl">
-        <Typography variant="body2" color="text.secondary" align="center">
-          &copy; 2024 BlogApp. Tüm hakları saklıdır.
-        </Typography>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap'
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            © {new Date().getFullYear()} Blog. Tüm hakları saklıdır.
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 3 }}>
+            <Link
+              component={RouterLink}
+              to="/privacy-policy"
+              color="text.secondary"
+              sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              Gizlilik Politikası
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/terms"
+              color="text.secondary"
+              sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              Kullanım Koşulları
+            </Link>
+          </Box>
+        </Box>
       </Container>
     </Box>
   );
-}
+};

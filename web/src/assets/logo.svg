@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="248" fill="#335C67" stroke="#FFF3B0" stroke-width="16"/>
+  
+  <!-- Code Brackets -->
+  <path d="M186 146L106 256L186 366" stroke="#FFF3B0" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M326 146L406 256L326 366" stroke="#FFF3B0" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Slash -->
+  <path d="M286 116L226 396" stroke="#E09F3E" stroke-width="24" stroke-linecap="round"/>
+  
+  <!-- Dots -->
+  <circle cx="256" cy="256" r="12" fill="#9E2A2B"/>
+  <circle cx="206" cy="256" r="12" fill="#9E2A2B"/>
+  <circle cx="306" cy="256" r="12" fill="#9E2A2B"/>
+</svg> 

@@ -11,6 +11,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 builder.Services.AddStartupServices(builder.Configuration);
+
 var app = builder.Build();
 await app.UseAppServicesAsync(configuration, app.Environment);
 

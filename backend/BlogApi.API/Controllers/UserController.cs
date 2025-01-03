@@ -1,13 +1,15 @@
-﻿using BlogApi.Application.DTOs;
+﻿using System.Net;
+using BlogApi.Application.DTOs;
 using BlogApi.Application.DTOs.Blog;
 using BlogApi.Application.DTOs.User;
 using BlogApi.Infrastructure.Persistence.Repositories;
+using BlogApi.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
-public class UserController(UserRepo userRepo, BlogRepo blogRepo) : BaseApiController
+public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthService googleAuthService) : BaseApiController
 {
     [HttpPost]
     [AllowAnonymous]
@@ -17,7 +19,6 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo) : BaseApiContr
         return result;
     }
     
-    // update
     [HttpPost]
     public async Task<ApiResult> Update(UserAddDto user)
     {
@@ -29,6 +30,21 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo) : BaseApiContr
     public async Task<ApiResult<MeDto>> Login(UserLoginDto user)
     {
         return await userRepo.Login(user);
+    }
+    
+    [HttpPost("google-login")]
+    [AllowAnonymous]
+    public async Task<ApiResult<MeDto>> GoogleLogin([FromBody] string credential)
+    {
+        try
+        {
+            var googleUser = await googleAuthService.ValidateGoogleTokenAsync(credential);
+            return await userRepo.ExternalLogin(googleUser);
+        }
+        catch (Exception ex)
+        {
+            return ApiError.Failure($"Google authentication failed: {ex.Message}", HttpStatusCode.InternalServerError);
+        }
     }
     
     [HttpGet]

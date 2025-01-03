@@ -4,6 +4,7 @@ using BlogApi.Application.Interfaces;
 using BlogApi.Application.Services;
 using BlogApi.Infrastructure.Persistence;
 using BlogApi.Infrastructure.Persistence.Repositories;
+using BlogApi.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,7 +36,10 @@ public static class ProgramExtensions
         services.AddScoped<FileRepo>();
         services.AddScoped<DashboardRepo>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        
+        services.AddScoped<UserRepo>();
+        services.AddScoped<BlogRepo>();
+        services.AddScoped<GoogleAuthService>();
+                
         services.AddSwaggerGen(swagger =>
         {
             swagger.SwaggerDoc("v1",

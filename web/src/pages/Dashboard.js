@@ -20,6 +20,7 @@ export function Dashboard() {
             <Route path="/blogs" element={<MyBlogs />} />
             <Route path="/add-blog" element={<AddBlog />} />
             <Route path="/blogs/edit/:slug" element={<EditBlog />} />
+            <Route path="/stats" element={<Stats />} />
           </Routes>
         </Grid>
       </Grid>

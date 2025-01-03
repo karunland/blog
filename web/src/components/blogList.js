@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BlogCard } from './BlogCard';
 import { getBlogsByCategory, getAllCategories, searchBlogs } from '../lib/api';
+import { PulseLoader } from 'react-spinners';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { 
   Box, 
   TextField, 
@@ -10,7 +13,6 @@ import {
   FormControl, 
   InputLabel,
   Grid,
-  Skeleton,
   Paper,
   InputAdornment,
   Stack,
@@ -28,34 +30,59 @@ import CategoryIcon from '@mui/icons-material/Category';
 function BlogSkeleton() {
   return (
     <Grid container spacing={3}>
-      {[1, 2, 3].map(i => (
-        <Grid item xs={12} key={i}>
-          <Paper sx={{ p: 2 }}>
-            <Skeleton variant="text" width="60%" height={40} />
-            <Skeleton variant="text" width="40%" height={20} sx={{ mt: 1 }} />
-            <Skeleton variant="text" width="20%" height={20} sx={{ mt: 1 }} />
-          </Paper>
+      {[1, 2, 3, 4, 5, 6].map(i => (
+        <Grid item xs={12} sm={6} md={4} key={i}>
+          <Box sx={{ height: '100%', borderRadius: 1, overflow: 'hidden' }}>
+            <Skeleton height={200} />
+            <Box sx={{ p: 2 }}>
+              <Skeleton height={60} />
+              <Skeleton width="60%" />
+              <Box sx={{ mt: 2 }}>
+                <Skeleton width="40%" />
+                <Skeleton width="30%" />
+                <Skeleton width="50%" />
+              </Box>
+            </Box>
+          </Box>
         </Grid>
       ))}
     </Grid>
   );
 }
 
+export const BlogSortType = {
+  Newest: 0,
+  Oldest: 1,
+  MostViewed: 2,
+  MostCommented: 3
+}
+
 export function BlogList() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
   const [categories, setCategories] = useState([]);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
-  const currentPage = parseInt(searchParams.get('PageNumber')) || 1;
-  const pageSize = parseInt(searchParams.get('PageSize')) || 9;
+  const pageSize = 9;
   const [searchTerm, setSearchTerm] = useState(searchParams.get('Search') || '');
-  const [sortBy, setSortBy] = useState(searchParams.get('SortBy') || 'newest');
+  const [sortBy, setSortBy] = useState(searchParams.get('SortBy') || BlogSortType.Newest);
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('CategoryId') || '');
+  const observer = useRef();
+
+  const lastBlogElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prevPage => prevPage + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
 
   useEffect(() => {
     loadCategories();
@@ -109,7 +136,6 @@ export function BlogList() {
     setSortBy(value);
     const newParams = new URLSearchParams(searchParams);
     newParams.set('SortBy', value);
-    newParams.set('PageNumber', '1');
     setSearchParams(newParams);
   };
 
@@ -122,27 +148,32 @@ export function BlogList() {
     } else {
       newParams.delete('CategoryId');
     }
-    newParams.set('PageNumber', '1');
     setSearchParams(newParams);
   };
 
-  async function loadPosts() {
+  async function loadPosts(isNewSearch = false) {
     setLoading(true);
     try {
       const params = {
-        PageNumber: currentPage,
+        PageNumber: isNewSearch ? 1 : page,
         PageSize: pageSize,
         CategoryId: searchParams.get('CategoryId') || '',
         Search: searchParams.get('Search') || '',
         SortBy: searchParams.get('SortBy') || 'newest'
       };
 
+      await new Promise(resolve => setTimeout(resolve, 800));
+
       const response = await getBlogsByCategory(params);
       
       if (response.isSuccess) {
-        setPosts(response.data);
-        setTotalCount(response.count);
-        setTotalPages(Math.ceil(response.count / pageSize));
+        setPosts(prevPosts => {
+          if (isNewSearch) {
+            return response.data;
+          }
+          return [...prevPosts, ...response.data];
+        });
+        setHasMore(response.data.length === pageSize);
       }
     } catch (error) {
       console.error('Bloglar yüklenemedi:', error);
@@ -152,16 +183,17 @@ export function BlogList() {
   }
 
   useEffect(() => {
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    loadPosts(true);
+  }, [searchParams.get('CategoryId'), searchParams.get('Search'), searchParams.get('SortBy')]);
+
+  useEffect(() => {
     loadPosts();
-  }, [searchParams]);
+  }, [page]);
 
-  const handlePageChange = (pageNumber) => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set('PageNumber', pageNumber);
-    setSearchParams(newParams);
-  };
-
-  if (loading) {
+  if (loading && posts.length === 0) {
     return <BlogSkeleton />;
   }
 
@@ -257,31 +289,49 @@ export function BlogList() {
               </InputAdornment>
             }
           >
-            <MenuItem value="newest">En Yeni</MenuItem>
-            <MenuItem value="oldest">En Eski</MenuItem>
-            <MenuItem value="most_viewed">En Çok Görüntülenen</MenuItem>
-            <MenuItem value="most_commented">En Çok Yorumlanan</MenuItem>
+            <MenuItem value={BlogSortType.Newest}>En Yeni</MenuItem>
+            <MenuItem value={BlogSortType.Oldest}>En Eski</MenuItem>
+            <MenuItem value={BlogSortType.MostViewed}>En Çok Görüntülenen</MenuItem>
+            <MenuItem value={BlogSortType.MostCommented}>En Çok Yorumlanan</MenuItem>
           </Select>
         </FormControl>
       </Stack>
 
       <Box>
         {Array.isArray(posts) && posts.length > 0 ? (
-          posts.map(blog => (
-            <BlogCard key={blog.id} blog={blog} />
-          ))
+          <Grid container spacing={3}>
+            {posts.map((blog, index) => (
+              <Grid item xs={12} sm={6} md={4} key={blog.id}>
+                <div ref={index === posts.length - 1 ? lastBlogElementRef : null}>
+                  <BlogCard blog={blog} />
+                </div>
+              </Grid>
+            ))}
+          </Grid>
         ) : (
           <Paper sx={{ p: 3, textAlign: 'center', color: 'text.secondary' }}>
             Gösterilecek blog bulunamadı.
           </Paper>
         )}
+        {loading && posts.length > 0 && (
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              py: 4,
+              width: '100%'
+            }}
+          >
+            <PulseLoader 
+              color="#1976d2"
+              size={15}
+              margin={2}
+              speedMultiplier={0.8}
+            />
+          </Box>
+        )}
       </Box>
-
-      {totalPages > 1 && (
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-          {/* Pagination component will be added here */}
-        </Box>
-      )}
     </Box>
   );
 }

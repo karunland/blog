@@ -10,11 +10,12 @@ export function BlogCard({ blog }) {
     <Card 
       elevation={1}
       sx={{ 
-        mb: 2,
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        border: '0.8px solid transparent',
         '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: (theme) => theme.shadows[4]
+          border: '0.8px solid var(--orange)',
         }
       }}
     >
@@ -22,64 +23,69 @@ export function BlogCard({ blog }) {
         to={`/blog/${blog.slug}`} 
         style={{ textDecoration: 'none', color: 'inherit' }}
       >
-        {blog.imageUrl && (
-          <CardMedia
-            component="img"
-            height="200"
-            width="800"
-            image={blog.imageUrl}
-            alt={blog.title}
-            sx={{
-              objectFit: 'cover',
-              width: '100%',
-              borderRadius: '4px 4px 0 0'
-            }}
-          />
-        )}
+        <CardMedia
+          component="img"
+          height="200"
+          image={blog.imageUrl || '/default-blog-image.jpg'}
+          alt={blog.title}
+          sx={{
+            objectFit: 'cover',
+            borderRadius: '4px 4px 0 0'
+          }}
+        />
       </Link>
-      <CardContent>
+      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Link 
           to={`/blog/${blog.slug}`} 
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           <Typography 
-            variant="h5" 
+            variant="h6" 
             component="h2" 
             gutterBottom
             sx={{
               color: 'text.primary',
               fontWeight: 600,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              mb: 2,
               '&:hover': {
-                color: 'primary.main'
+                color: 'var(--cream)',
+                textDecoration: 'underline'
               }
             }}
           >
             {blog.title}
           </Typography>
         </Link>
-        
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <CalendarTodayIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
-            <Typography variant="body2" color="text.secondary">
-              {new Date(blog.createdAt).toLocaleDateString('tr-TR')}
-            </Typography>
-          </Box>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <LocalOfferIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
-            <Typography variant="body2" color="text.secondary">
-              {blog.categoryName || ''}
-            </Typography>
-          </Box>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <VisibilityIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
-            <Typography variant="body2" color="text.secondary">
-              {blog.viewCount || 0}
-            </Typography>
-          </Box>
-        </Stack>
+
+        <Box sx={{ mt: 'auto' }}>
+          <Stack spacing={1}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CalendarTodayIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="body2" color="text.secondary">
+                {new Date(blog.createdAt).toLocaleDateString('tr-TR')}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <LocalOfferIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="body2" color="text.secondary">
+                {blog.categoryName || ''}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <VisibilityIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="body2" color="text.secondary">
+                {blog.viewCount || 0} görüntülenme
+              </Typography>
+            </Box>
+          </Stack>
+        </Box>
       </CardContent>
     </Card>
   );

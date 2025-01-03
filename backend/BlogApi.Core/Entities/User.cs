@@ -10,7 +10,7 @@ public class User
     public string LastName { get; set; }
     public string FirstName { get; set; }
     public string Email { get; set; }
-    public string Password { get; set; }
+    public string? Password { get; set; }
     public string? FileUrl { get; set; }
     public string? FileName { get; set; }
     public string? Extension { get; set; }
@@ -18,6 +18,13 @@ public class User
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; } = false;    
     public DateTime? DeletedAt { get; set; }
+    
+    // External Authentication Properties
+    public string? ExternalId { get; set; }
+    public string? ExternalProvider { get; set; }
+    public string? ExternalPictureUrl { get; set; }
+    public bool IsExternalAuth { get; set; } = false;
+    
     [NotMapped]
     public string FullName
     {

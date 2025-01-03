@@ -1,105 +1,131 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Swal from 'sweetalert2';
-import {
-  Container,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Link
-} from '@mui/material';
-import LoginIcon from '@mui/icons-material/Login';
+import { Container, Box, TextField, Button, Typography, Divider, Alert } from '@mui/material';
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 export function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await login(formData);
-      if (response.isSuccess) {
+      const response = await axios.post('/api/user/login', formData);
+      if (response.data.isSuccess) {
+        login(response.data.data);
         navigate('/dashboard');
+      } else {
+        setError(response.data.message);
       }
-    } catch (error) {
-      Swal.fire({
-        title: 'Hata!',
-        text: error.response?.data?.error?.errorMessage || 'Giriş başarısız oldu',
-        icon: 'error'
-      });
+    } catch (err) {
+      setError('Giriş yapılırken bir hata oluştu.');
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const response = await axios.post('/api/user/google-login', credentialResponse.credential);
+      if (response.data.isSuccess) {
+        login(response.data.data);
+        navigate('/dashboard');
+      } else {
+        setError(response.data.message);
+      }
+    } catch (err) {
+      setError('Google ile giriş yapılırken bir hata oluştu.');
     }
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 5 }}>
-      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h4" align="center" gutterBottom>
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          bgcolor: 'background.paper',
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 3
+        }}
+      >
+        <Typography component="h1" variant="h5" sx={{ color: 'var(--navy)', mb: 3 }}>
           Giriş Yap
         </Typography>
+        
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
           <TextField
+            margin="normal"
+            required
             fullWidth
-            label="Email"
+            id="email"
+            label="E-posta Adresi"
             name="email"
-            type="email"
+            autoComplete="email"
+            autoFocus
             value={formData.email}
-            onChange={handleInputChange}
-            required
-            margin="normal"
+            onChange={handleChange}
           />
-
           <TextField
-            fullWidth
-            label="Şifre"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
             margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Şifre"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={formData.password}
+            onChange={handleChange}
           />
-
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            size="large"
-            startIcon={<LoginIcon />}
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              mt: 3,
+              mb: 2,
+              bgcolor: 'var(--navy)',
+              '&:hover': {
+                bgcolor: 'var(--dark-red)'
+              }
+            }}
           >
             Giriş Yap
           </Button>
-
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Typography variant="body2">
-              Hesabınız yok mu?{' '}
-              <Link
-                href="/register"
-                underline="hover"
-                sx={{ cursor: 'pointer' }}
-              >
-                Kaydol
-              </Link>
-            </Typography>
+          
+          <Divider sx={{ my: 2 }}>veya</Divider>
+          
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError('Google ile giriş başarısız oldu.')}
+              useOneTap
+            />
           </Box>
         </Box>
-      </Paper>
+      </Box>
     </Container>
   );
 } 

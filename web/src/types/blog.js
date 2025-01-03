@@ -42,6 +42,13 @@
  * @property {number} commentCount
  */
 
+export const BlogSortType = {
+  Newest: 0,
+  Oldest: 1,
+  MostViewed: 2,
+  MostCommented: 3
+}
+
 /** @type {BlogPost} */
 export const BlogPost = {
   id: 0,

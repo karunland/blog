@@ -66,7 +66,6 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            UserName = user.Username,
             Token = TokenHelper.GenerateToken(new JwtTokenDto()
             {
                 Email = user.Email,
@@ -124,5 +123,66 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         await context.SaveChangesAsync();
         
         return ApiResult.Success();
+    }
+
+    public async Task<ApiResult<MeDto>> ExternalLogin(ExternalAuthDto externalUser)
+    {
+        try
+        {
+            var user = await context.Users
+                .FirstOrDefaultAsync(u => u.Email == externalUser.Email);
+
+            if (user == null)
+            {
+                // Create new user
+                user = new User
+                {
+                    Email = externalUser.Email,
+                    FirstName = externalUser.FirstName,
+                    LastName = externalUser.LastName,
+                    Username = externalUser.Email.Split('@')[0],
+                    ExternalId = externalUser.ExternalId,
+                    ExternalProvider = externalUser.ExternalProvider,
+                    ExternalPictureUrl = externalUser.ExternalPictureUrl,
+                    IsExternalAuth = true
+                };
+
+                await context.Users.AddAsync(user);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                if (!user.IsExternalAuth || user.ExternalId != externalUser.ExternalId)
+                {
+                    user.ExternalId = externalUser.ExternalId;
+                    user.ExternalProvider = externalUser.ExternalProvider;
+                    user.ExternalPictureUrl = externalUser.ExternalPictureUrl;
+                    user.IsExternalAuth = true;
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            var token = TokenHelper.GenerateToken(new JwtTokenDto()
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Id = user.Id
+            });
+
+            var meDto = new MeDto
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Token = token,
+            };
+
+            return meDto;
+        }
+        catch (Exception ex)
+        {
+            return ApiError.Failure($"External login failed: {ex.Message}");
+        }
     }
 }

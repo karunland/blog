@@ -2,37 +2,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
+  /* Custom color palette */
+  --navy: #335C67;
+  --cream: #FFF3B0;
+  --orange: #E09F3E;
+  --red: #9E2A2B;
+  --dark-red: #540B0E;
+
   /* Light theme variables */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --text-primary: #2d3436;
-  --text-secondary: #636e72;
-  --border-color: #dee2e6;
+  --bg-primary: var(--cream);
+  --bg-secondary: #ffffff;
+  --text-primary: var(--navy);
+  --text-secondary: var(--dark-red);
+  --border-color: var(--orange);
   --card-bg: #ffffff;
-  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --navbar-bg: #ffffff;
-  --hover-bg: #f5f5f5;
-  --heading-color: #2d3436;
-  --link-color: #0984e3;
-  --link-hover-color: #0769b5;
-  --bg-active: rgba(9, 132, 227, 0.1);
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --navbar-bg: var(--navy);
+  --hover-bg: rgba(224, 159, 62, 0.1);
+  --heading-color: var(--dark-red);
+  --link-color: var(--red);
+  --link-hover-color: var(--dark-red);
+  --bg-active: rgba(158, 42, 43, 0.1);
+  --button-primary: var(--navy);
+  --button-hover: var(--dark-red);
 }
 
 [data-theme='dark'] {
   /* Dark theme variables */
-  --bg-primary: #121212;
-  --bg-secondary: #1e1e1e;
-  --text-primary: #e1e1e1;
-  --text-secondary: #b2bec3;
-  --border-color: #2d2d2d;
-  --card-bg: #1e1e1e;
-  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  --navbar-bg: #121212;
-  --hover-bg: #2d2d2d;
-  --heading-color: #e1e1e1;
-  --link-color: #74b9ff;
-  --link-hover-color: #0984e3;
-  --bg-active: rgba(116, 185, 255, 0.1);
+  --bg-primary: var(--dark-red);
+  --bg-secondary: var(--navy);
+  --text-primary: var(--cream);
+  --text-secondary: var(--orange);
+  --border-color: var(--red);
+  --card-bg: var(--navy);
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --navbar-bg: var(--dark-red);
+  --hover-bg: rgba(224, 159, 62, 0.2);
+  --heading-color: var(--cream);
+  --link-color: var(--orange);
+  --link-hover-color: var(--cream);
+  --bg-active: rgba(255, 243, 176, 0.1);
+  --button-primary: var(--orange);
+  --button-hover: var(--cream);
 }
 
 /* Global font ayarları */
@@ -221,4 +232,55 @@ code {
 /* Dark mode transitions */
 *, *::before, *::after {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Custom Components */
+.hero-section {
+  background-color: var(--navy);
+  color: var(--cream);
+  padding: 4rem 0;
+  text-align: center;
+  border-radius: 0 0 2rem 2rem;
+  margin-bottom: 3rem;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--cream);
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--orange);
+  margin-bottom: 2rem;
+}
+
+.custom-button {
+  background-color: var(--button-primary);
+  color: var(--cream);
+  padding: 0.8rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.custom-button:hover {
+  background-color: var(--button-hover);
+  transform: translateY(-2px);
+}
+
+.card-custom {
+  background-color: var(--card-bg);
+  border-radius: 1rem;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.card-custom:hover {
+  transform: translateY(-5px);
 }
