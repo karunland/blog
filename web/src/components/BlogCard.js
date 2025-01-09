@@ -14,8 +14,16 @@ export function BlogCard({ blog }) {
         display: 'flex',
         flexDirection: 'column',
         border: '0.8px solid transparent',
+        borderRadius: '8px',
+        overflow: 'hidden',
         '&:hover': {
           border: '0.8px solid var(--orange)',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease-in-out',
+          '& h2': {
+            color: 'var(--orange)',
+            transition: 'all 0.3s ease-in-out'
+          }
         }
       }}
     >
@@ -23,16 +31,18 @@ export function BlogCard({ blog }) {
         to={`/blog/${blog.slug}`} 
         style={{ textDecoration: 'none', color: 'inherit' }}
       >
-        <CardMedia
-          component="img"
-          height="200"
-          image={blog.imageUrl || '/default-blog-image.jpg'}
-          alt={blog.title}
-          sx={{
-            objectFit: 'cover',
-            borderRadius: '4px 4px 0 0'
-          }}
-        />
+        <Box sx={{ p: 1.5, position: 'relative' }}>
+          <CardMedia
+            component="img"
+            height="200"
+            image={blog.imageUrl || '/default-blog-image.jpg'}
+            alt={blog.title}
+            sx={{
+              objectFit: 'cover',
+              borderRadius: '8px'
+            }}
+          />
+        </Box>
       </Link>
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Link 
@@ -51,11 +61,7 @@ export function BlogCard({ blog }) {
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
-              mb: 2,
-              '&:hover': {
-                color: 'var(--cream)',
-                textDecoration: 'underline'
-              }
+              mb: 2
             }}
           >
             {blog.title}

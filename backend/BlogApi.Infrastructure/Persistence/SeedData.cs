@@ -8,6 +8,42 @@ public static class SeedData
 {
     public static async Task SeedDatabaseAsync(this BlogContext context)
     {
+        var ss = @"<div>
+                        <h1>What is Lorem Ipsum?</h1>
+                        <p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                        </div>
+                        <div>
+                        <h1>Why do we use it?</h1>
+                        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+                        </div>
+                        <p>&nbsp;</p>
+                        <div>
+                        <h2>Where does it come from?</h2>
+                        <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of 'de Finibus Bonorum et Malorum' (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, 'Lorem ipsum dolor sit amet..', comes from a line in section 1.10.32.</p>
+                        <p>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from 'de Finibus Bonorum et Malorum' by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p>
+                        </div>
+                        <div>
+                        <h2>Where can I get some?</h2>
+                        <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.<br><br></p>
+                        <div>
+                        <h1>What is Lorem Ipsum?</h1>
+                        <p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                        </div>
+                        <div>
+                        <h2>Why do we use it?</h2>
+                        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+                        </div>
+                        <p>&nbsp;</p>
+                        <div>
+                        <h2>Where does it come from?</h2>
+                        <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of 'de Finibus Bonorum et Malorum' (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, 'Lorem ipsum dolor sit amet..', comes from a line in section 1.10.32.</p>
+                        <p>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from 'de Finibus Bonorum et Malorum' by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p>
+                        </div>
+                        <div>
+                        <h2>Where can I get some?</h2>
+                        <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</p>
+                        </div>
+                        </div>";
         if (!await context.Users.AnyAsync())
         {
             var users = new List<User>
@@ -15,11 +51,14 @@ public static class SeedData
                 new()
                 {
                     Id = 1,
-                    FirstName = "name",
-                    LastName = "surname",
-                    Username = "username",
-                    Email = "test@test.test",
+                    FirstName = "harun",
+                    LastName = "korkmaz",
+                    Username = "harunkorkmaz",
+                    Email = "1harunkorkmaz@gmail.com",
                     Password = "7C4A8D09CA3762AF61E59520943DC26494F8941B",
+                    FileUrl = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
+                    FileName = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
+                    Extension = ".jpg",
                 },
                 new()
                 {
@@ -29,6 +68,9 @@ public static class SeedData
                     Username = "johndoe",
                     Email = "johndoe@gmail.com",
                     Password = "7C4A8D09CA3762AF61E59520943DC26494F8941B",
+                    FileUrl = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
+                    FileName = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
+                    Extension = ".jpg",
                 }
             };
             context.Users.AddRange(users);
@@ -62,21 +104,7 @@ public static class SeedData
             {
                 new() {
                     Title = "The Future of AI",
-                    Content = @"<h2>Artificial Intelligence: Shaping Our Future</h2>
-                               <p>AI is revolutionizing the world in ways we never imagined. From self-driving cars to advanced medical diagnostics, the impact of AI is being felt across every industry.</p>
-                               <h3>Key Areas of AI Development</h3>
-                               <ul>
-                                   <li>Machine Learning</li>
-                                   <li>Natural Language Processing</li>
-                                   <li>Computer Vision</li>
-                                   <li>Robotics</li>
-                               </ul>
-                               <p>As we look to the future, AI will continue to evolve and shape our daily lives. Companies are investing heavily in AI research and development, leading to breakthrough innovations.</p>
-                               <blockquote>
-                                   <p>The development of full artificial intelligence could spell the end of the human race. - Stephen Hawking</p>
-                               </blockquote>
-                               <h3>Impact on Society</h3>
-                               <p>While AI brings numerous benefits, it also raises important ethical questions that we must address as a society.</p>",
+                    Content = ss,
                     Slug = "future-of-ai",
                     CategoryId = 1,
                     UserId = 1,
@@ -87,24 +115,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "Top 10 Healthy Foods",
-                    Content = @"<h2>Essential Foods for a Healthy Lifestyle</h2>
-                               <p>Maintaining a healthy diet is crucial for overall wellbeing. Here are some superfoods you should include in your daily meals.</p>
-                               <h3>Top 10 Superfoods</h3>
-                               <ol>
-                                   <li><strong>Blueberries</strong> - Rich in antioxidants</li>
-                                   <li><strong>Salmon</strong> - High in omega-3 fatty acids</li>
-                                   <li><strong>Kale</strong> - Packed with vitamins and minerals</li>
-                                   <li><strong>Quinoa</strong> - Complete protein source</li>
-                                   <li><strong>Avocado</strong> - Healthy fats and fiber</li>
-                               </ol>
-                               <h3>Benefits of Healthy Eating</h3>
-                               <ul>
-                                   <li>Increased energy levels</li>
-                                   <li>Better immune system</li>
-                                   <li>Improved mental clarity</li>
-                                   <li>Healthy weight maintenance</li>
-                               </ul>
-                               <p><em>Remember: You are what you eat!</em></p>",
+                    Content = ss,
                     Slug = "top-10-healthy-foods",
                     CategoryId = 2,
                     UserId = 2,
@@ -115,25 +126,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "Traveling to Japan",
-                    Content = @"<h2>Discovering the Land of the Rising Sun</h2>
-                               <p>Japan is a country where ancient traditions blend seamlessly with modern technology. Let's explore what makes Japan a unique travel destination.</p>
-                               <h3>Must-Visit Destinations</h3>
-                               <ul>
-                                   <li><strong>Tokyo</strong> - The bustling metropolis</li>
-                                   <li><strong>Kyoto</strong> - Cultural heart of Japan</li>
-                                   <li><strong>Mount Fuji</strong> - Japan's iconic symbol</li>
-                                   <li><strong>Osaka</strong> - Food lover's paradise</li>
-                               </ul>
-                               <h3>Travel Tips</h3>
-                               <ol>
-                                   <li>Learn basic Japanese phrases</li>
-                                   <li>Get a Japan Rail Pass</li>
-                                   <li>Try local cuisine</li>
-                                   <li>Respect local customs</li>
-                               </ol>
-                               <blockquote>
-                                   <p>To travel is to live. - Hans Christian Andersen</p>
-                               </blockquote>",
+                    Content = ss,
                     Slug = "traveling-to-japan",
                     CategoryId = 3,
                     UserId = 2,
@@ -226,24 +219,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "Minimalist Lifestyle",
-                    Content = @"<h2>Living with Less: A Guide to Minimalism</h2>
-                               <p>Minimalism isn't just about decluttering; it's about intentional living and finding freedom through simplicity.</p>
-                               <h3>Benefits of Minimalism</h3>
-                               <ul>
-                                   <li>Reduced stress and anxiety</li>
-                                   <li>More time and energy</li>
-                                   <li>Financial freedom</li>
-                                   <li>Environmental impact</li>
-                               </ul>
-                               <h3>Steps to Minimalism</h3>
-                               <ol>
-                                   <li><strong>Declutter</strong> - Start with physical items</li>
-                                   <li><strong>Simplify</strong> - Digital and commitments</li>
-                                   <li><strong>Maintain</strong> - Create lasting habits</li>
-                               </ol>
-                               <blockquote>
-                                   <p>Less is more. - Ludwig Mies van der Rohe</p>
-                               </blockquote>",
+                    Content = ss,
                     Slug = "minimalist-lifestyle",
                     CategoryId = 7,
                     UserId = 2,
@@ -281,34 +257,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "Top Recipes for Foodies",
-                    Content = @"<h2>Culinary Adventures: Must-Try Recipes</h2>
-                               <p>Explore these delicious recipes that will take your cooking skills to the next level.</p>
-                               <h3>Featured Recipes</h3>
-                               <ol>
-                                   <li><strong>Pasta Carbonara</strong>
-                                       <ul>
-                                           <li>Fresh eggs</li>
-                                           <li>Pecorino Romano</li>
-                                           <li>Guanciale</li>
-                                       </ul>
-                                   </li>
-                                   <li><strong>Thai Green Curry</strong>
-                                       <ul>
-                                           <li>Coconut milk</li>
-                                           <li>Fresh herbs</li>
-                                           <li>Thai chilies</li>
-                                       </ul>
-                                   </li>
-                               </ol>
-                               <h3>Cooking Tips</h3>
-                               <ul>
-                                   <li>Prep ingredients beforehand</li>
-                                   <li>Use fresh ingredients</li>
-                                   <li>Temperature control is key</li>
-                               </ul>
-                               <blockquote>
-                                   <p>Cooking is like love. It should be entered into with abandon or not at all.</p>
-                               </blockquote>",
+                    Content = ss,
                     Slug = "top-recipes-for-foodies",
                     CategoryId = 9,
                     UserId = 1,
@@ -319,7 +268,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "The History of Soccer",
-                    Content = "From its origins to modern times...",
+                    Content = ss,
                     Slug = "history-of-soccer",
                     CategoryId = 10,
                     UserId = 2,
@@ -330,7 +279,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "Gaming in 2024",
-                    Content = "Upcoming games and consoles...",
+                    Content = ss,
                     Slug = "gaming-in-2024",
                     CategoryId = 11,
                     UserId = 2,
@@ -341,7 +290,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "Top Movies to Watch",
-                    Content = "Don't miss these blockbusters...",
+                    Content = ss,
                     Slug = "top-movies-to-watch",
                     CategoryId = 12,
                     UserId = 1,
@@ -352,7 +301,7 @@ public static class SeedData
                 },
                 new() {
                     Title = "Investing Basics",
-                    Content = "Learn how to grow your wealth...",
+                    Content = ss,
                     Slug = "investing-basics",
                     CategoryId = 13,
                     UserId = 1,
@@ -361,62 +310,8 @@ public static class SeedData
                     ImageUrl = "Thumbnail_statistic.jpg",
                     CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(13)
                 },
-                new() { Title = "Politics in 2024", Content = @"<h2>Culinary Adventures: Must-Try Recipes</h2>
-                               <p>Explore these delicious recipes that will take your cooking skills to the next level.</p>
-                               <h3>Featured Recipes</h3>
-                               <ol>
-                                   <li><strong>Pasta Carbonara</strong>
-                                       <ul>
-                                           <li>Fresh eggs</li>
-                                           <li>Pecorino Romano</li>
-                                           <li>Guanciale</li>
-                                       </ul>
-                                   </li>
-                                   <li><strong>Thai Green Curry</strong>
-                                       <ul>
-                                           <li>Coconut milk</li>
-                                           <li>Fresh herbs</li>
-                                           <li>Thai chilies</li>
-                                       </ul>
-                                   </li>
-                               </ol>
-                               <h3>Cooking Tips</h3>
-                               <ul>
-                                   <li>Prep ingredients beforehand</li>
-                                   <li>Use fresh ingredients</li>
-                                   <li>Temperature control is key</li>
-                               </ul>
-                               <blockquote>
-                                   <p>Cooking is like love. It should be entered into with abandon or not at all.</p>
-                               </blockquote>", Slug = "politics-in-2024", CategoryId = 14, UserId = 2, ViewCount = 300, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(14)  },
-                new() { Title = "Politics in 2024", Content = @"<h2>Culinary Adventures: Must-Try Recipes</h2>
-                               <p>Explore these delicious recipes that will take your cooking skills to the next level.</p>
-                               <h3>Featured Recipes</h3>
-                               <ol>
-                                   <li><strong>Pasta Carbonara</strong>
-                                       <ul>
-                                           <li>Fresh eggs</li>
-                                           <li>Pecorino Romano</li>
-                                           <li>Guanciale</li>
-                                       </ul>
-                                   </li>
-                                   <li><strong>Thai Green Curry</strong>
-                                       <ul>
-                                           <li>Coconut milk</li>
-                                           <li>Fresh herbs</li>
-                                           <li>Thai chilies</li>
-                                       </ul>
-                                   </li>
-                               </ol>
-                               <h3>Cooking Tips</h3>
-                               <ul>
-                                   <li>Prep ingredients beforehand</li>
-                                   <li>Use fresh ingredients</li>
-                                   <li>Temperature control is key</li>
-                               </ul>
-                               <blockquote>
-                                   <p>Cooking is like love. It should be entered into with abandon or not at all.</p>
-                               </blockquote>", Slug = "politics-in-2024", CategoryId = 1, UserId = 2, ViewCount = 300, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(15)  },
+                new() { Title = "Politics in 2024", Content = ss, Slug = "politics-in-2024", CategoryId = 14, UserId = 2, ViewCount = 300, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(14)  },
+                new() { Title = "Politics in 2024", Content = ss, Slug = "politics-in-2024", CategoryId = 1, UserId = 2, ViewCount = 300, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(15)  },
                 new() { Title = "Politics in 2024 4", Content = @"<h2>Culinary Adventures: Must-Try Recipes</h2>
                                <p>Explore these delicious recipes that will take your cooking skills to the next level.</p>
                                <h3>Featured Recipes</h3>
@@ -500,7 +395,7 @@ public static class SeedData
                                </ul>
                                <blockquote>
                                    <p>Cooking is like love. It should be entered into with abandon or not at all.</p>
-                               </blockquote>", Slug = "politics-in-2024", CategoryId = 1, UserId = 2, ViewCount = 300, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(18)  },
+                               </blockquote>", Slug = "politics-in-2024", CategoryId = 1, UserId = 2, ViewCount = 3023230, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(18)  },
                 new() { Title = "Politics in 2024 4", Content = @"<h2>Culinary Adventures: Must-Try Recipes</h2>
                                <p>Explore these delicious recipes that will take your cooking skills to the next level.</p>
                                <h3>Featured Recipes</h3>
@@ -528,7 +423,7 @@ public static class SeedData
                                </ul>
                                <blockquote>
                                    <p>Cooking is like love. It should be entered into with abandon or not at all.</p>
-                               </blockquote>", Slug = "politics-in-2024", CategoryId = 1, UserId = 2, ViewCount = 300, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(19)  },
+                               </blockquote>", Slug = "politics-in-2024", CategoryId = 1, UserId = 2, ViewCount = 300250, Likes = [new() { UserId = 2 }], ImageUrl = "Thumbnail_default.jpg", CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(19)  },
             };
 
             context.Blogs.AddRange(blogs);

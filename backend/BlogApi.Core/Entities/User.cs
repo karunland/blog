@@ -21,7 +21,7 @@ public class User
     
     // External Authentication Properties
     public string? ExternalId { get; set; }
-    public string? ExternalProvider { get; set; }
+    public ExternalProviderEnum ExternalProvider { get; set; } = ExternalProviderEnum.None;
     public string? ExternalPictureUrl { get; set; }
     public bool IsExternalAuth { get; set; } = false;
     

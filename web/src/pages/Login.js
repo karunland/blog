@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Container, Box, TextField, Button, Typography, Divider, Alert } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { green } from '@mui/material/colors';
 
 export function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { loginAsync, googleLoginAsync } = useAuth();
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -23,30 +25,30 @@ export function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess(false);
+    
     try {
-      const response = await axios.post('/api/user/login', formData);
-      if (response.data.isSuccess) {
-        login(response.data.data);
+      await loginAsync(formData);
+      setSuccess(true);
+      setTimeout(() => {
         navigate('/dashboard');
-      } else {
-        setError(response.data.message);
-      }
+      }, 1500);
     } catch (err) {
-      setError('Giriş yapılırken bir hata oluştu.');
+      setError(err.message || 'Giriş yapılırken bir hata oluştu.');
     }
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post('/api/user/google-login', credentialResponse.credential);
-      if (response.data.isSuccess) {
-        login(response.data.data);
+      await googleLoginAsync(credentialResponse.credential);
+      setSuccess(true);
+      setTimeout(() => {
         navigate('/dashboard');
-      } else {
-        setError(response.data.message);
-      }
-    } catch (err) {
-      setError('Google ile giriş yapılırken bir hata oluştu.');
+      }, 1500);
+    } catch (error) {
+      setError('Google ile giriş başarısız oldu.');
+      console.error('Google login failed:', error);
     }
   };
 
@@ -61,9 +63,37 @@ export function Login() {
           bgcolor: 'background.paper',
           p: 4,
           borderRadius: 2,
-          boxShadow: 3
+          boxShadow: 3,
+          position: 'relative'
         }}
       >
+        {success && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'rgba(255, 255, 255, 0.9)',
+              zIndex: 1,
+              borderRadius: 2,
+            }}
+          >
+            <CheckCircleIcon sx={{ color: green[500], fontSize: 60, mb: 2 }} />
+            <Typography variant="h6" color={green[700]}>
+              Giriş Başarılı!
+            </Typography>
+            <Typography color="text.secondary" sx={{ mt: 1 }}>
+              Yönlendiriliyorsunuz...
+            </Typography>
+          </Box>
+        )}
+
         <Typography component="h1" variant="h5" sx={{ color: 'var(--navy)', mb: 3 }}>
           Giriş Yap
         </Typography>
@@ -119,6 +149,12 @@ export function Login() {
           
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
             <GoogleLogin
+              size="large"
+              shape="rectangular"
+              text="continue_with"
+              logo_alignment="left"
+              theme="outline"
+              width="100%"
               onSuccess={handleGoogleSuccess}
               onError={() => setError('Google ile giriş başarısız oldu.')}
               useOneTap

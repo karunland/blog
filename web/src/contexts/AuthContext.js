@@ -16,7 +16,10 @@ export function AuthProvider({ children }) {
           localStorage.removeItem('token');
           setUser(null);
         } else {
-          setUser(decodedToken);
+          setUser({
+            ...decodedToken,
+            imageUrl: decodedToken.imageUrl
+          });
         }
       } catch {
         localStorage.removeItem('token');
@@ -25,12 +28,16 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (userData) => {
+  const loginAsync = async (userData) => {
     try {
       const response = await api.post('/user/login', userData);
       if (response.data.isSuccess) {
+        const user = {
+          ...jwtDecode(response.data.data.token),
+          imageUrl: response.data.data.imageUrl
+        };
         localStorage.setItem('token', response.data.data.token);
-        setUser(jwtDecode(response.data.data.token));
+        setUser(user);
         return response.data;
       } else {
         throw new Error(response.data.error.errorMessage);
@@ -40,13 +47,32 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const googleLoginAsync = async (credential) => {
+    try {
+      const response = await api.post('/user/GoogleLogin', { credential: credential });
+      if (response.data.isSuccess) {
+        const user = {
+          ...jwtDecode(response.data.data.token),
+          imageUrl: response.data.data.imageUrl
+        };
+        localStorage.setItem('token', response.data.data.token);
+        setUser(user);
+        return response.data;
+      } else {
+        throw new Error(response.data.error.errorMessage);
+      }
+    } catch (error) {
+      throw new Error('Google ile giriş başarısız oldu');
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loginAsync, googleLoginAsync, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -27,6 +27,11 @@
   --button-hover: var(--dark-red);
 }
 
+::selection {
+  color: var(--cream);
+  background-color: var(--orange);
+}
+
 [data-theme='dark'] {
   /* Dark theme variables */
   --bg-primary: var(--dark-red);

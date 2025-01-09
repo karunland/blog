@@ -71,8 +71,9 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Id = user.Id
-            })
+                Id = user.Id,
+            }),
+            ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
         };
     }
     
@@ -91,7 +92,8 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            UserName = user.Username
+            UserName = user.Username,
+            ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
         };
     }
     
@@ -142,7 +144,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                     LastName = externalUser.LastName,
                     Username = externalUser.Email.Split('@')[0],
                     ExternalId = externalUser.ExternalId,
-                    ExternalProvider = externalUser.ExternalProvider,
+                    ExternalProvider = ExternalProviderEnum.Google,
                     ExternalPictureUrl = externalUser.ExternalPictureUrl,
                     IsExternalAuth = true
                 };
@@ -155,7 +157,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 if (!user.IsExternalAuth || user.ExternalId != externalUser.ExternalId)
                 {
                     user.ExternalId = externalUser.ExternalId;
-                    user.ExternalProvider = externalUser.ExternalProvider;
+                    user.ExternalProvider = ExternalProviderEnum.Google;
                     user.ExternalPictureUrl = externalUser.ExternalPictureUrl;
                     user.IsExternalAuth = true;
                     await context.SaveChangesAsync();
@@ -167,7 +169,8 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Id = user.Id
+                Id = user.Id,
+                ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
             });
 
             var meDto = new MeDto
@@ -176,6 +179,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Token = token,
+                ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
             };
 
             return meDto;

@@ -14,16 +14,16 @@ import {
   Drawer,
   useMediaQuery,
   useTheme as useMuiTheme,
-  Stack
+  Stack,
+  Avatar
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import '../styles/Navbar.css';
 import { ReactComponent as Logo } from '../assets/logo.svg';
 
 const menuItems = [
-  { title: 'Ana Sayfa', path: '/' },
   { title: 'Blog', path: '/blog' },
-  { title: 'Hakkında', path: '/about' }
+  { title: 'Hakkımızda', path: '/about' }
 ];
 
 export function Navbar() {
@@ -36,7 +36,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 40);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -87,6 +87,19 @@ export function Navbar() {
               >
                 Dashboard
               </Button>
+              <Avatar
+                component={Link}
+                to="/dashboard/profile"
+                src={user.imageUrl}
+                alt={`${user.firstName} ${user.lastName}`}
+                sx={{ 
+                  width: 35, 
+                  height: 35,
+                  cursor: 'pointer',
+                  border: 1,
+                  borderColor: 'rgba(255, 255, 255, 0.1)'
+                }}
+              />
               <Button
                 onClick={() => {
                   handleMobileMenuToggle();
@@ -216,6 +229,19 @@ export function Navbar() {
                   >
                     Dashboard
                   </Button>
+                  <Avatar
+                    component={Link}
+                    to="/dashboard/profile"
+                    src={user.imageUrl}
+                    alt={`${user.firstName} ${user.lastName}`}
+                    sx={{ 
+                      width: 35, 
+                      height: 35,
+                      cursor: 'pointer',
+                      border: 1,
+                      borderColor: 'rgba(255, 255, 255, 0.1)'
+                    }}
+                  />
                   <Button
                     onClick={logout}
                     color="inherit"

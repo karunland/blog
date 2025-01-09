@@ -32,12 +32,12 @@ public static class ProgramExtensions
         services.AddScoped<UserRepo>();
         services.AddScoped<CategoryRepo>();
         services.AddScoped<CommentRepo>();
-        services.AddSingleton<FileRepo>();
         services.AddScoped<FileRepo>();
         services.AddScoped<DashboardRepo>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<UserRepo>();
-        services.AddScoped<BlogRepo>();
+        services.AddScoped<BaseSettings>();
+
+        services.AddHttpClient<GoogleAuthService>();
         services.AddScoped<GoogleAuthService>();
                 
         services.AddSwaggerGen(swagger =>

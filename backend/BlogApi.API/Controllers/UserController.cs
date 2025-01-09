@@ -32,14 +32,13 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
         return await userRepo.Login(user);
     }
     
-    [HttpPost("google-login")]
+    [HttpPost]
     [AllowAnonymous]
-    public async Task<ApiResult<MeDto>> GoogleLogin([FromBody] string credential)
+    public async Task<ApiResult<MeDto>> GoogleLogin(justString credential)
     {
         try
         {
-            var googleUser = await googleAuthService.ValidateGoogleTokenAsync(credential);
-            return await userRepo.ExternalLogin(googleUser);
+            return await googleAuthService.ValidateGoogleTokenAsync(credential.credential);
         }
         catch (Exception ex)
         {
@@ -58,4 +57,9 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
     {
         return await blogRepo.MyBlogs(filter);
     }
+}
+
+public class justString
+{
+    public string credential { get; set; }
 }

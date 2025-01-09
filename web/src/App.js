@@ -11,8 +11,11 @@ import { Dashboard } from './pages/Dashboard';
 import { Search } from './pages/Search';
 import { Box, Container } from '@mui/material';
 import { Register } from './pages/Register';
+import { PrivateRoute } from './components/PrivateRoute';
+import { NotFound } from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
+import { Blog } from './pages/Blog';
 
 function App() {
   return (
@@ -42,11 +45,20 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/dashboard/*" element={<Dashboard />} />
+                <Route 
+                  path="/dashboard/*" 
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route path="/blog" element={<Blog />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/blog/:slug" element={<BlogDetail />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Container>
           </Box>

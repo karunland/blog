@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://localhost:5003/api';
+const API_URL = process.env.REACT_APP_API_URL;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -22,6 +22,23 @@ export const getBlogsByCategory = async (params) => {
     return response.data;
   } catch (error) {
     console.error('Get Blogs By Category Error:', error.response?.data || error);
+    throw error;
+  }
+};
+
+export const getBestBlogs = async () => {
+  try {
+    const response = await api.get('/blog/list', {
+      params: {
+        sortBy: 2
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Get Blogs Error:', error.response?.data || error);
     throw error;
   }
 };
