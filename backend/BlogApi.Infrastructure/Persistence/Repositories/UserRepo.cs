@@ -7,6 +7,7 @@ using BlogApi.Application.Interfaces;
 using BlogApi.Application.Services;
 using BlogApi.Core.Entities;
 using BlogApi.Core.Enums;
+using BlogApi.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Messages = BlogApi.Application.Common.Messages.Messages;
 
@@ -16,7 +17,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 {
     public async Task<ApiResult> Register(UserAddDto user)
     {
-        if (await context.Users.AnyAsync(x => x.Email == user.Email))
+        if (await context.Users.AnyAsync(x => (x.Email == user.Email && x.IsGoogleRegister == false) || (x.ExternalId == user.Email && x.IsGoogleRegister == true)))
         {
             return ApiError.Failure(Messages.AlreadyExist, HttpStatusCode.BadRequest);
         }

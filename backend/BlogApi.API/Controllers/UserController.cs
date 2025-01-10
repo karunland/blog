@@ -18,6 +18,13 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
         var result = await userRepo.Register(user);
         return result;
     }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<ApiResult> GoogleRegister(justString credential)
+    {
+        return await googleAuthService.GoogleRegisterAsync(credential.credential);
+    }
     
     [HttpPost]
     public async Task<ApiResult> Update(UserAddDto user)
@@ -38,7 +45,7 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
     {
         try
         {
-            return await googleAuthService.ValidateGoogleTokenAsync(credential.credential);
+            return await googleAuthService.GoogleLogin(credential.credential);
         }
         catch (Exception ex)
         {

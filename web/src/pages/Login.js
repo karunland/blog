@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Container, Box, TextField, Button, Typography, Divider, Alert } from '@mui/material';
-import { GoogleLogin } from '@react-oauth/google';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { green } from '@mui/material/colors';
-
+import { GoogleLoginBlog } from '../components/GoogleLogin';
 export function Login() {
   const navigate = useNavigate();
   const { loginAsync, googleLoginAsync } = useAuth();
@@ -39,18 +38,7 @@ export function Login() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      await googleLoginAsync(credentialResponse.credential);
-      setSuccess(true);
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
-    } catch (error) {
-      setError('Google ile giriş başarısız oldu.');
-      console.error('Google login failed:', error);
-    }
-  };
+  
 
   return (
     <Container component="main" maxWidth="xs">
@@ -147,19 +135,8 @@ export function Login() {
           
           <Divider sx={{ my: 2 }}>veya</Divider>
           
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <GoogleLogin
-              size="large"
-              shape="rectangular"
-              text="continue_with"
-              logo_alignment="left"
-              theme="outline"
-              width="100%"
-              onSuccess={handleGoogleSuccess}
-              onError={() => setError('Google ile giriş başarısız oldu.')}
-              useOneTap
-            />
-          </Box>
+          <GoogleLoginBlog buttonName="login" />
+
         </Box>
       </Box>
     </Container>

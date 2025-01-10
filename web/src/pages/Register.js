@@ -15,6 +15,8 @@ import {
 } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import { GoogleLoginBlog } from '../components/GoogleLogin';
+import { Divider } from '@mui/material';
 
 export function Register() {
   const navigate = useNavigate();
@@ -198,6 +200,11 @@ export function Register() {
               </Link>
             </Typography>
           </Box>
+
+          <Divider sx={{ my: 2 }}>veya</Divider>
+
+          <GoogleLoginBlog buttonName="register" />
+
         </Box>
       </Paper>
     </Container>

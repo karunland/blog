@@ -16,6 +16,7 @@ import { NotFound } from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import { Blog } from './pages/Blog';
+import { GoogleLoginBlog } from './components/GoogleLogin';
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/blog/:slug" element={<BlogDetail />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<Terms />} />
+                <Route path="/google-login" element={<GoogleLoginBlog />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Container>
