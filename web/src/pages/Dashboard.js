@@ -6,6 +6,7 @@ import { EditBlog } from './dashboard/Edit';
 import '../styles/Dashboard.css';
 import { DashboardNav } from '../components/DashboardNav';
 import { Grid, Box } from '@mui/material';
+import { Profile } from './dashboard/Profile';
 
 export function Dashboard() {
   return (
@@ -21,6 +22,7 @@ export function Dashboard() {
             <Route path="/add-blog" element={<AddBlog />} />
             <Route path="/blogs/edit/:slug" element={<EditBlog />} />
             <Route path="/stats" element={<Stats />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </Grid>
       </Grid>

@@ -20,6 +20,27 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
     }
 
     [HttpPost]
+    [Authorize]
+    public async Task<ApiResult> SendVerificationCode()
+    {
+        return await userRepo.SendVerificationCode();
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<ApiResult> VerifyEmail([FromBody] string code)
+    {
+        return await userRepo.VerifyCode(code);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<ApiResult> UpdateProfilePhoto(IFormFile image)
+    {
+        return await userRepo.UpdateProfilePhoto(image);
+    }
+
+    [HttpPost]
     [AllowAnonymous]
     public async Task<ApiResult> GoogleRegister(justString credential)
     {
@@ -31,7 +52,7 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
     {
         return await userRepo.Update(user);
     }
-    
+
     [HttpPost]
     [AllowAnonymous]
     public async Task<ApiResult<MeDto>> Login(UserLoginDto user)

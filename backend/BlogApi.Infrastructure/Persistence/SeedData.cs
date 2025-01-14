@@ -59,6 +59,8 @@ public static class SeedData
                     FileUrl = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
                     FileName = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
                     Extension = ".jpg",
+                    IsMailVerified = true,
+                    IsGoogleRegister = false,
                 },
                 new()
                 {
@@ -71,6 +73,8 @@ public static class SeedData
                     FileUrl = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
                     FileName = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
                     Extension = ".jpg",
+                    IsMailVerified = true,
+                    IsGoogleRegister = false,
                 }
             };
             context.Users.AddRange(users);

@@ -3,9 +3,8 @@ using System.Globalization;
 
 namespace BlogApi.Core.Entities;
 
-public class User
+public class User : BaseEntity
 {
-    public int Id { get; set; }
     public string Username { get; set; }
     public string LastName { get; set; }
     public string FirstName { get; set; }
@@ -14,10 +13,9 @@ public class User
     public string? FileUrl { get; set; }
     public string? FileName { get; set; }
     public string? Extension { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; } = false;    
     public DateTime? DeletedAt { get; set; }
+    public bool IsMailVerified { get; set; } = false;
     
     // External Authentication Properties
     public string? ExternalId { get; set; }
@@ -25,13 +23,7 @@ public class User
     public string? ExternalPictureUrl { get; set; }
     public bool IsExternalAuth { get; set; } = false;
     public bool IsGoogleRegister { get; set; } = false;
-    
+
     [NotMapped]
-    public string FullName
-    {
-        get
-        {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{FirstName} {LastName}");
-        }
-    }
+    public string FullName => CultureInfo.CurrentCulture.TextInfo.ToTitleCase($"{FirstName} {LastName}");
 }

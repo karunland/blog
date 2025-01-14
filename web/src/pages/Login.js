@@ -1,144 +1,136 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Container, Box, TextField, Button, Typography, Divider, Alert } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { green } from '@mui/material/colors';
+import { login } from '../lib/api';
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Box,
+  Grid,
+  Link,
+  Alert
+} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { GoogleLoginBlog } from '../components/GoogleLogin';
+import { Divider } from '@mui/material';
+import LoginIcon from '@mui/icons-material/Login';
+
+
 export function Login() {
   const navigate = useNavigate();
-  const { loginAsync, googleLoginAsync } = useAuth();
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const { setUser } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError('');
-    setSuccess(false);
-    
+
     try {
-      await loginAsync(formData);
-      setSuccess(true);
-      setTimeout(() => {
+      const response = await login(formData);
+      if (response.data?.isSuccess) {
+        const { token, ...userData } = response.data.data;
+        localStorage.setItem('token', token);
+        setUser(userData);
         navigate('/dashboard');
-      }, 1500);
-    } catch (err) {
-      setError(err.message || 'Giriş yapılırken bir hata oluştu.');
+      }
+    } catch (error) {
+      setError(error.response?.data?.error?.errorMessage || 'Giriş yapılırken bir hata oluştu');
+    } finally {
+      setLoading(false);
     }
   };
 
-  
+  const handleGoogleError = (errorMessage) => {
+    console.error('Login page received error:', errorMessage);
+    setError(errorMessage);
+    setLoading(false);
+  };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          bgcolor: 'background.paper',
-          p: 4,
-          borderRadius: 2,
-          boxShadow: 3,
-          position: 'relative'
-        }}
-      >
-        {success && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: 'rgba(255, 255, 255, 0.9)',
-              zIndex: 1,
-              borderRadius: 2,
-            }}
-          >
-            <CheckCircleIcon sx={{ color: green[500], fontSize: 60, mb: 2 }} />
-            <Typography variant="h6" color={green[700]}>
-              Giriş Başarılı!
-            </Typography>
-            <Typography color="text.secondary" sx={{ mt: 1 }}>
-              Yönlendiriliyorsunuz...
-            </Typography>
-          </Box>
-        )}
-
-        <Typography component="h1" variant="h5" sx={{ color: 'var(--navy)', mb: 3 }}>
+    <Container maxWidth="sm" sx={{ py: 5 }}>
+      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
+        <Typography variant="h4" align="center" gutterBottom>
           Giriş Yap
         </Typography>
-        
+
         {error && (
-          <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2 }}>
             {error}
           </Alert>
         )}
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="E-posta Adresi"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Şifre"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <Button
+        <Box component="form" onSubmit={handleSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Şifre"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+          </Grid>
+
+          <LoadingButton
             type="submit"
             fullWidth
             variant="contained"
-            sx={{
-              mt: 3,
-              mb: 2,
-              bgcolor: 'var(--navy)',
-              '&:hover': {
-                bgcolor: 'var(--dark-red)'
-              }
-            }}
+            size="large"
+            loading={loading}
+            startIcon={<LoginIcon />}
+            sx={{ mt: 3, mb: 2 }}
           >
             Giriş Yap
-          </Button>
-          
-          <Divider sx={{ my: 2 }}>veya</Divider>
-          
-          <GoogleLoginBlog buttonName="login" />
+          </LoadingButton>
 
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Typography variant="body2">
+              Hesabınız yok mu?{' '}
+              <Link
+                href="/register"
+                underline="hover"
+                sx={{ cursor: 'pointer' }}
+              >
+                Kayıt Ol
+              </Link>
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }}>veya</Divider>
+
+          <GoogleLoginBlog buttonName="login" onError={handleGoogleError} />
         </Box>
-      </Box>
+      </Paper>
     </Container>
   );
 } 

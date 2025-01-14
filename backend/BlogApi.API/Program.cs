@@ -1,5 +1,5 @@
 using BlogApi;
-
+using BlogApi.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -11,6 +11,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 builder.Services.AddStartupServices(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 await app.UseAppServicesAsync(configuration, app.Environment);

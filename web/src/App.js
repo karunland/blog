@@ -17,7 +17,9 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import { Blog } from './pages/Blog';
 import { GoogleLoginBlog } from './components/GoogleLogin';
-
+import EmailVerification from './pages/EmailVerification';
+import { Profile } from './pages/dashboard/Profile';
+  
 function App() {
   return (
     <AuthProvider>
@@ -52,7 +54,7 @@ function App() {
                     <PrivateRoute>
                       <Dashboard />
                     </PrivateRoute>
-                  } 
+                  }
                 />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/search" element={<Search />} />
@@ -60,7 +62,9 @@ function App() {
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/google-login" element={<GoogleLoginBlog />} />
+                <Route path="/verify/:code" element={<EmailVerification />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/dashboard/profile" element={<Profile />} />
               </Routes>
             </Container>
           </Box>

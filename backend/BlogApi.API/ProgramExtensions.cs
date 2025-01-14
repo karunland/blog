@@ -2,6 +2,7 @@
 using BlogApi.Application.Common.Settings;
 using BlogApi.Application.Interfaces;
 using BlogApi.Application.Services;
+using BlogApi.Core.Interfaces;
 using BlogApi.Infrastructure.Persistence;
 using BlogApi.Infrastructure.Persistence.Repositories;
 using BlogApi.Infrastructure.Services;
@@ -36,6 +37,7 @@ public static class ProgramExtensions
         services.AddScoped<DashboardRepo>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<BaseSettings>();
+        services.AddScoped<IEmailService, EmailService>();
 
         services.AddHttpClient<GoogleAuthService>();
         services.AddScoped<GoogleAuthService>();

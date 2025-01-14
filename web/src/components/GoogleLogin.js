@@ -1,89 +1,63 @@
-import { googleRegister } from '../lib/api';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { GoogleLogin } from '@react-oauth/google';
-import { Box, Typography, Link } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
-import Swal from 'sweetalert2';
+import { Button } from '@mui/material';
+import { googleLogin, googleRegister, getMe } from '../lib/api';
+import GoogleIcon from '@mui/icons-material/Google';
 
-export const GoogleLoginBlog = ({ buttonName }) => {
-    const navigate = useNavigate();
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
-    const { googleLoginAsync } = useAuth();
-    const handleGoogleLogin = async (credentialResponse) => {
-        try {
-            if (buttonName === 'login') {
-                const response = await googleLoginAsync(credentialResponse.credential);
-                if (response.isSuccess) {
-                    setSuccess(true);
-                    Swal.fire({
-                        title: 'Giriş Başarılı',
-                        text: 'Google ile giriş yapıldı.',
-                        icon: 'success',
-                        timer: 1500,
-                        showConfirmButton: false,
-                        showCancelButton: false,
-                    });
-                    setTimeout(() => {
-                        navigate('/dashboard');
-                    }, 1500);
-                } else {
-                    setError('Google ile giriş başarısız oldu.');
-                    console.error('Google login failed:', error);
-                }
-            } else {
-                const response = await googleRegister(credentialResponse.credential);
-                if (response.isSuccess) {
-                    setSuccess(true);
-                    Swal.fire({
-                        title: 'Kayıt Başarılı',
-                        text: 'Google ile kayıt yapıldı.',
-                        icon: 'success',
-                        timer: 1500,
-                        showConfirmButton: false,
-                        showCancelButton: false,
-                    });
-                    setTimeout(() => {
-                        navigate('/dashboard');
-                    }, 1500);
-                } else {
-                    setError('Google ile kayıt başarısız oldu.');
-                    console.error('Google register failed:', error);
-                }
-            }
-        } catch (error) {
-            setError('Google ile giriş başarısız oldu.');
-            console.error('Google login failed:', error);
+export function GoogleLoginBlog({ buttonName, onError }) {
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
+
+  const handleGoogleResponse = async (response) => {
+    try {
+      const apiResponse = buttonName === 'login' 
+        ? await googleLogin({ credential: response.credential })
+        : await googleRegister({ credential: response.credential });
+
+      if (apiResponse.data?.isSuccess) {
+        const token = apiResponse.data.data.token;
+        localStorage.setItem('token', token);
+
+        const meResponse = await getMe();
+        if (meResponse.data?.isSuccess) {
+          setUser(meResponse.data.data);
+          navigate('/dashboard');
         }
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      if (onError) {
+        const errorMessage = error.response?.data?.error?.errorMessage || 
+                           error.message ||
+                           'Google ile giriş sırasında bir hata oluştu';
+        onError(errorMessage);
+      }
     }
+  };
 
-    return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, mt: 2 }}>
-            <GoogleLogin
-                size="large"
-                shape="rectangular"
-                text="continue_with"
-                logo_alignment="left"
-                theme="outline"
-                // change button name
-                buttonText={buttonName === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
-                width="100%"
-                onSuccess={handleGoogleLogin}
-                onError={() => setError('Google ile giriş başarısız oldu.')}
-                useOneTap
-            />
-            {buttonName === 'login' ? 
-                <Typography variant="body2">
-                    Hesabınız yok mu? <Link href="/register" underline="hover" sx={{ cursor: 'pointer' }}>Kayıt Ol</Link>
-                </Typography> 
-                : 
-                <Typography variant="body2">
-                    Hesabınız var mı? <Link href="/login" underline="hover" sx={{ cursor: 'pointer' }}>Giriş Yap</Link>
-                </Typography>
-            }
-        </Box>
-    );
-};
+  const login = useGoogleLogin({
+    onSuccess: handleGoogleResponse,
+    onError: (error) => {
+      console.error('Google OAuth error:', error);
+      if (onError) {
+        onError('Google ile bağlantı kurulamadı');
+      }
+    },
+    flow: 'auth-code'
+  });
+
+  return (
+    <Button
+      variant="outlined"
+      onClick={() => login()}
+      startIcon={<GoogleIcon />}
+      fullWidth
+      sx={{ mt: 2, mb: 2 }}
+    >
+      Google ile {buttonName === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
+    </Button>
+  );
+}
 
 

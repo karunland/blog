@@ -1,16 +1,16 @@
-﻿using BlogApi.Application.Common.Messages;
-using BlogApi.Application.DTOs;
+﻿using BlogApi.Application.DTOs;
 using BlogApi.Application.DTOs.Blog;
 using BlogApi.Application.DTOs.File;
 using BlogApi.Application.Interfaces;
 using BlogApi.Core.Entities;
 using BlogApi.Core.Enums;
+using BlogApi.Core.Interfaces;
 using BlogApi.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class BlogRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo)
+public class BlogRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService)
 {
     public async Task<ApiResultPagination<BlogsDto>> GetAll(BlogFilterModel filter)
     {
@@ -70,6 +70,15 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
         context.Blogs.Add(newBlog);
         await context.SaveChangesAsync();
 
+        var emailMessage = new EmailMessage
+        {
+            To = "devlog760@gmail.com",
+            Subject = "Yeni Blog Oluşturuldu",
+            Body = "Yeni blog oluşturuldu."
+        };
+
+        await emailService.SendEmailAsync(emailMessage);
+
         return ApiResult.Success();
     }
 
@@ -113,6 +122,15 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 
         await context.SaveChangesAsync();
 
+        var emailMessage = new EmailMessage
+        {
+            To = "devlog760@gmail.com",
+            Subject = "Blog Güncellendi",
+            Body = "Blog güncellendi."
+        };
+
+        await emailService.SendEmailAsync(emailMessage);
+
         return ApiResult.Success();
     }
 
@@ -126,6 +144,15 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
         blogToDelete.DeletedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
+
+        var emailMessage = new EmailMessage
+        {
+            To = "devlog760@gmail.com",
+            Subject = "Blog Silindi",
+            Body = "Blog silindi."
+        };
+
+        await emailService.SendEmailAsync(emailMessage);
 
         return ApiResult.Success();
     }

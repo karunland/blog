@@ -28,6 +28,7 @@ export const getBlogsByCategory = async (params) => {
 
 export const getBestBlogs = async () => {
   try {
+    await sleep(1000);
     const response = await api.get('/blog/list', {
       params: {
         sortBy: 2
@@ -65,6 +66,7 @@ export const getBlogBySlug = async (slug) => {
 
 export const getBlogPosts = async () => {
   try {
+    await sleep(1000);
     const response = await api.get('/user/Blogs', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -107,6 +109,7 @@ export const createBlog = async (blogData) => {
 
 export const getDashboardStats = async () => {
   try {
+    await sleep(1000);
     const response = await api.get('/dashboard/getStats', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -132,7 +135,7 @@ export const getCategories = async () => {
 
 export const deleteBlog = async (slug) => {
   try {
-    const response = await api.post(`/api/blog/delete?slug=${slug}`, {
+    const response = await api.post(`/blog/delete?slug=${slug}`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -172,6 +175,7 @@ export const updateBlog = async (id, data) => {
 
 export const searchBlogs = async (search) => {
   try {
+    await sleep(1000);
     const response = await api.get(`/blog/search?search=${encodeURIComponent(search)}`);
     return response.data;
   } catch (error) {
@@ -186,6 +190,98 @@ export const googleRegister = async (credential) => {
     return response.data;
   } catch (error) {
     console.error('Google Register Error:', error);
+    throw error;
+  }
+};
+
+export const googleLogin = async (credential) => {
+  try {
+    const response = await api.post('/user/googleLogin', credential);
+    return response.data;
+  } catch (error) {
+    console.error('Google Login Error:', error);
+    throw error;
+  }
+};
+
+export const verifyEmail = async (code) => {
+  try {
+    const response = await api.post(`/user/verifyEmail`, code, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Verify Code Error:', error);
+    throw error;
+  }
+};
+
+export const getMe = async () => {
+  try {
+    const response = await api.get('/user/me', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Get Me Error:', error);
+    throw error;
+  }
+};
+
+export const updateProfile = async (data) => {
+  try {
+    const response = await api.post('/user/update', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Update Profile Error:', error);
+    throw error;
+  }
+};
+
+export const updateProfilePhoto = async (data) => {
+  try {
+    const response = await api.post('/user/updateProfilePhoto', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Update Profile Photo Error:', error);
+    throw error;
+  }
+};
+
+export const sendVerificationCode = async () => {
+  try {
+    const response = await api.post('/user/sendVerification', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Send Verification Code Error:', error);
+    throw error;
+  }
+};
+
+export const login = async (data) => {
+  try {
+    const response = await api.post('/user/login', data);
+    return response.data;
+  } catch (error) {
+    console.error('Login Error:', error.response?.data?.error?.errorMessage || 'Giriş yapılırken bir hata oluştu');
     throw error;
   }
 };
