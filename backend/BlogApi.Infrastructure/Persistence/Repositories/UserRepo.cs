@@ -238,7 +238,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             IsMailVerified = user.IsMailVerified,
             ExternalProviderId = user.ExternalProvider,
             ExternalProvider = user.ExternalProvider.GetEnumDescription(),
-            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google ? user.FileUrl : "https://localhost:5003/api/file/image/" + user.FileUrl
+            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google && user.FileUrl.StartsWith("http") ? user.FileUrl : "https://localhost:5003/api/file/image/" + user.FileUrl
         };
     }
 
