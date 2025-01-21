@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { verifyEmail, getMe } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/userSlice';
 import {
   Box,
   Paper,
@@ -13,20 +14,20 @@ import Swal from 'sweetalert2';
 export default function EmailVerification() {
   const { code } = useParams();
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const dispatch = useDispatch();
   const [isVerifying, setIsVerifying] = useState(true);
 
   useEffect(() => {
     const verifyEmail = async () => {
       try {
         const response = await verifyEmail(code);
-        if (response.data?.isSuccess) {
-          const token = response.data.data;
+        if (response.isSuccess) {
+          const token = response.data;
           localStorage.setItem('token', token);
 
           const meResponse = await getMe();
-          if (meResponse.data?.isSuccess) {
-            setUser(meResponse.data.data);
+          if (meResponse.isSuccess) {
+            dispatch(setUser(meResponse.data));
           }
 
           Swal.fire({

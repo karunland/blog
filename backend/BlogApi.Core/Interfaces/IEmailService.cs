@@ -4,5 +4,5 @@ namespace BlogApi.Core.Interfaces;
 
 public interface IEmailService
 {
-    Task SendEmailAsync(EmailMessage emailMessage);
+    Task SendEmailAsync(string to, string subject, string body, bool isHtml = false);
 } 

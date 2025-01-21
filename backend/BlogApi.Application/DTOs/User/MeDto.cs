@@ -8,6 +8,6 @@ public class MeDto
     public string Token { get; set; }
     public string? ImageUrl { get; set; }
     public bool IsMailVerified { get; set; }
-    public ExternalProviderEnum ExternalProvider { get; set; }
-    public string ExternalId { get; set; }
+    public ExternalProviderEnum ExternalProviderId { get; set; }
+    public string ExternalProvider { get; set; }
 }

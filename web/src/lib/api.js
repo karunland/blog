@@ -206,7 +206,7 @@ export const googleLogin = async (credential) => {
 
 export const verifyEmail = async (code) => {
   try {
-    const response = await api.post(`/user/verifyEmail`, code, {
+    const response = await api.post(`/user/verifyEmail`, { credential: code }, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
@@ -264,9 +264,10 @@ export const updateProfilePhoto = async (data) => {
 
 export const sendVerificationCode = async () => {
   try {
-    const response = await api.post('/user/sendVerification', {
+    const response = await api.post('/user/SendVerificationCode', {}, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
       }
     });
     return response.data;

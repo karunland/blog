@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/userSlice';
 import { login } from '../lib/api';
 import {
   Container,
@@ -10,23 +11,24 @@ import {
   Box,
   Grid,
   Link,
-  Alert
+  Alert,
+  Snackbar
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import LoginIcon from '@mui/icons-material/Login';
 import { GoogleLoginBlog } from '../components/GoogleLogin';
 import { Divider } from '@mui/material';
-import LoginIcon from '@mui/icons-material/Login';
-
 
 export function Login() {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,23 +45,25 @@ export function Login() {
 
     try {
       const response = await login(formData);
-      if (response.data?.isSuccess) {
-        const { token, ...userData } = response.data.data;
-        localStorage.setItem('token', token);
-        setUser(userData);
-        navigate('/dashboard');
+      if (response.isSuccess) {
+        localStorage.setItem('token', response.data.token);
+        dispatch(setUser(response.data));
+        setSuccess(true);
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 2000);
+      } else {
+        setError(response.errorMessage);
       }
     } catch (error) {
-      setError(error.response?.data?.error?.errorMessage || 'Giriş yapılırken bir hata oluştu');
+      setError(error.response?.data?.error?.errorMessage || 'Giriş işlemi başarısız oldu');
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleError = (errorMessage) => {
-    console.error('Login page received error:', errorMessage);
     setError(errorMessage);
-    setLoading(false);
   };
 
   return (
@@ -131,6 +135,17 @@ export function Login() {
           <GoogleLoginBlog buttonName="login" onError={handleGoogleError} />
         </Box>
       </Paper>
+
+      <Snackbar
+        open={success}
+        autoHideDuration={2000}
+        onClose={() => setSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="success" sx={{ width: '100%' }}>
+          Giriş başarılı! Yönlendiriliyorsunuz...
+        </Alert>
+      </Snackbar>
     </Container>
   );
 } 

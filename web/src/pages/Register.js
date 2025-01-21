@@ -11,7 +11,8 @@ import {
   Grid,
   Link,
   Dialog,
-  Alert
+  Alert,
+  Snackbar
 } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
@@ -38,6 +39,7 @@ export function Register() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [originalImage, setOriginalImage] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -122,10 +124,11 @@ export function Register() {
         }
       });
 
-      const response = await register(data);
-      if (response.data?.isSuccess) {
+      await register(data);
+      setSuccess(true);
+      setTimeout(() => {
         navigate('/login');
-      }
+      }, 2000);
     } catch (error) {
       setError(error.response?.data?.error?.errorMessage || 'Kayıt işlemi başarısız oldu');
     } finally {
@@ -266,6 +269,17 @@ export function Register() {
           <GoogleLoginBlog buttonName="register" onError={handleGoogleError} />
         </Box>
       </Paper>
+
+      <Snackbar
+        open={success}
+        autoHideDuration={2000}
+        onClose={() => setSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="success" sx={{ width: '100%' }}>
+          Kayıt işlemi başarılı! Giriş sayfasına yönlendiriliyorsunuz.
+        </Alert>
+      </Snackbar>
 
       <Dialog
         open={cropDialogOpen}

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using BlogApi.Application.DTOs;
+using BlogApi.Application.DTOs.Blog;
 using BlogApi.Application.DTOs.File;
 using BlogApi.Application.DTOs.User;
 using BlogApi.Application.Helper;
@@ -7,6 +8,7 @@ using BlogApi.Application.Interfaces;
 using BlogApi.Core.Entities;
 using BlogApi.Core.Enums;
 using BlogApi.Core.Interfaces;
+using BlogApi.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Messages = BlogApi.Application.Common.Messages.Messages;
@@ -47,6 +49,22 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
         context.Users.Add(newUser);
         await context.SaveChangesAsync();
+        
+        // Send welcome email
+        var emailMessage = new EmailMessage
+        {
+            To = newUser.Email,
+            Subject = "DevLog - Welcome",
+            IsHtml = true,
+            Body = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                    <h2>Hello {newUser.FirstName} {newUser.LastName}!</h2>
+                    <p>Welcome to DevLog. We are glad to see you here.</p>
+                </div>"
+        };
+        
+        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        
 
         return ApiResult.Success();
     }
@@ -85,7 +103,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
         context.VerificationCodes.Add(verificationCode);
         await context.SaveChangesAsync();
-        await emailService.SendEmailAsync(emailMessage);
+        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
         return ApiResult.Success();
     }
@@ -114,7 +132,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             Body = $"Email doğrulama işlemi başarıyla tamamlandı."
         };
 
-        await emailService.SendEmailAsync(emailMessage);
+        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
         return ApiResult.Success();
     }
@@ -218,7 +236,9 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             LastName = user.LastName,
             UserName = user.Username,
             IsMailVerified = user.IsMailVerified,
-            ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
+            ExternalProviderId = user.ExternalProvider,
+            ExternalProvider = user.ExternalProvider.GetEnumDescription(),
+            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google ? user.FileUrl : "https://localhost:5003/api/file/image/" + user.FileUrl
         };
     }
 
@@ -283,5 +303,30 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         {
             return ApiError.Failure($"External login failed: {ex.Message}");
         }
+    }
+
+    public async Task<ApiResultPagination<BlogsDto>> Blogs(FilterModel filter)
+    {
+        var blogs = context.Blogs
+            .OrderByDescending(x => x.UpdatedAt)
+            .ThenByDescending(x => x.CreatedAt)
+            .AsNoTracking()
+            .Select(x => new BlogsDto
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Content = x.Content,
+                CreatedAt = x.CreatedAt,
+                AuthorName = x.User.FullName,
+                Slug = x.Slug,
+                ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl,
+                CategoryName = x.Category.Name,
+                CategoryId = x.CategoryId,
+                ViewCount = x.ViewCount,
+                StatusEnumId = x.BlogStatusEnum,
+                Status = x.BlogStatusEnum.GetEnumDescription()
+            });
+
+        return await blogs.PaginatedListAsync(filter.PageNumber, filter.PageSize);
     }
 }

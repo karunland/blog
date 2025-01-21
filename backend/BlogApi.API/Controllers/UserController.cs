@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
-public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthService googleAuthService) : BaseApiController
+public class UserController(UserRepo userRepo, GoogleAuthService googleAuthService) : BaseApiController
 {
     [HttpPost]
     [AllowAnonymous]
@@ -28,9 +28,9 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
 
     [HttpPost]
     [Authorize]
-    public async Task<ApiResult> VerifyEmail([FromBody] string code)
+    public async Task<ApiResult> VerifyEmail(justString code)
     {
-        return await userRepo.VerifyCode(code);
+        return await userRepo.VerifyCode(code.credential);
     }
 
     [HttpPost]
@@ -42,7 +42,7 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ApiResult> GoogleRegister(justString credential)
+    public async Task<ApiResult<MeDto>> GoogleRegister(justString credential)
     {
         return await googleAuthService.GoogleRegisterAsync(credential.credential);
     }
@@ -64,14 +64,7 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
     [AllowAnonymous]
     public async Task<ApiResult<MeDto>> GoogleLogin(justString credential)
     {
-        try
-        {
-            return await googleAuthService.GoogleLogin(credential.credential);
-        }
-        catch (Exception ex)
-        {
-            return ApiError.Failure($"Google authentication failed: {ex.Message}", HttpStatusCode.InternalServerError);
-        }
+        return await googleAuthService.GoogleLogin(credential.credential);
     }
     
     [HttpGet]
@@ -83,7 +76,7 @@ public class UserController(UserRepo userRepo, BlogRepo blogRepo, GoogleAuthServ
     [HttpGet]
     public async Task<ApiResultPagination<BlogsDto>> Blogs([FromQuery] FilterModel filter)
     {
-        return await blogRepo.MyBlogs(filter);
+        return await userRepo.Blogs(filter);
     }
 }
 

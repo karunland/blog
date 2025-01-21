@@ -77,34 +77,9 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             Body = "Yeni blog oluşturuldu."
         };
 
-        await emailService.SendEmailAsync(emailMessage);
+        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
         return ApiResult.Success();
-    }
-
-    public async Task<ApiResultPagination<BlogsDto>> MyBlogs(FilterModel filter)
-    {
-        var blogs = context.Blogs
-            .Where(x => x.UserId == currentUserService.Id)
-            .OrderByDescending(x => x.UpdatedAt)
-            .ThenByDescending(x => x.CreatedAt)
-            .Select(x => new BlogsDto
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Content = x.Content,
-                CreatedAt = x.CreatedAt,
-                AuthorName = x.User.FullName,
-                Slug = x.Slug,
-                ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl,
-                CategoryName = x.Category.Name,
-                CategoryId = x.CategoryId,
-                ViewCount = x.ViewCount,
-                StatusEnumId = x.BlogStatusEnum,
-                Status = x.BlogStatusEnum.GetEnumDescription()
-            });
-
-        return await blogs.PaginatedListAsync(filter.PageNumber, filter.PageSize);
     }
 
     public async Task<ApiResult> Update(BlogUpdateDto blog)
@@ -129,7 +104,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             Body = "Blog güncellendi."
         };
 
-        await emailService.SendEmailAsync(emailMessage);
+        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
         return ApiResult.Success();
     }
@@ -152,7 +127,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             Body = "Blog silindi."
         };
 
-        await emailService.SendEmailAsync(emailMessage);
+        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
         return ApiResult.Success();
     }

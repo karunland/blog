@@ -18,59 +18,71 @@ import Terms from './pages/Terms';
 import { Blog } from './pages/Blog';
 import { GoogleLoginBlog } from './components/GoogleLogin';
 import EmailVerification from './pages/EmailVerification';
-import { Profile } from './pages/dashboard/Profile';
-  
+import { useEffect } from 'react';
+import { useAuth } from './contexts/AuthContext';
+
+function AppContent() {
+  const { checkAuth } = useAuth();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  return (
+    <ThemeProvider>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          bgcolor: 'background.default'
+        }}
+      >
+        <Navbar />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            py: 4,
+            bgcolor: 'background.default',
+            marginTop: '50px'
+          }}
+        >
+          <Container maxWidth="xl">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route 
+                path="/dashboard/*" 
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/blog/:slug" element={<BlogDetail />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/google-login" element={<GoogleLoginBlog />} />
+              <Route path="/verify/:code" element={<EmailVerification />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Container>
+        </Box>
+        <Footer />
+      </Box>
+    </ThemeProvider>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100vh',
-            bgcolor: 'background.default'
-          }}
-        >
-          <Navbar />
-          <Box
-            component="main"
-            sx={{
-              flexGrow: 1,
-              py: 4,
-              bgcolor: 'background.default',
-              marginTop: '50px'
-            }}
-          >
-            <Container maxWidth="xl">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route 
-                  path="/dashboard/*" 
-                  element={
-                    <PrivateRoute>
-                      <Dashboard />
-                    </PrivateRoute>
-                  }
-                />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/blog/:slug" element={<BlogDetail />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/google-login" element={<GoogleLoginBlog />} />
-                <Route path="/verify/:code" element={<EmailVerification />} />
-                <Route path="*" element={<NotFound />} />
-                <Route path="/dashboard/profile" element={<Profile />} />
-              </Routes>
-            </Container>
-          </Box>
-          <Footer />
-        </Box>
-      </ThemeProvider>
+      <AppContent />
     </AuthProvider>
   );
 }

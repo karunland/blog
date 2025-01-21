@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using BlogApi.Application.Common.Settings;
+using BlogApi.Application.Helper;
 using BlogApi.Application.Interfaces;
 using BlogApi.Application.Services;
 using BlogApi.Core.Interfaces;
@@ -41,6 +42,7 @@ public static class ProgramExtensions
 
         services.AddHttpClient<GoogleAuthService>();
         services.AddScoped<GoogleAuthService>();
+        services.AddScoped<TokenHelper>();
                 
         services.AddSwaggerGen(swagger =>
         {

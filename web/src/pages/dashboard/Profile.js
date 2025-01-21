@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import {
@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { updateProfile, updateProfilePhoto, verifyEmail, getMe, sendVerificationCode } from '../../lib/api';
+import { updateUserProfile } from '../../store/userSlice';
 import Swal from 'sweetalert2';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -40,7 +41,8 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
 }
 
 export function Profile() {
-  const { user, setUser } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
   const [selectedFile, setSelectedFile] = useState(null);
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState();
@@ -71,7 +73,8 @@ export function Profile() {
     setIsSendingCode(true);
     try {
       const response = await sendVerificationCode();
-      if (response.data?.isSuccess) {
+      console.log(response);
+      if (response.isSuccess) {
         setVerificationModalOpen(true);
         Swal.fire({
           title: 'Başarılı!',
@@ -95,10 +98,10 @@ export function Profile() {
     setIsVerifying(true);
     try {
       const response = await verifyEmail(verificationCode);
-      if (response.data?.isSuccess) {
+      if (response.isSuccess) {
         const meResponse = await getMe();
-        if (meResponse.data?.isSuccess) {
-          setUser(meResponse.data.data);
+        if (meResponse.isSuccess) {
+          dispatch(updateUserProfile(meResponse.data));
           setVerificationModalOpen(false);
           Swal.fire({
             title: 'Başarılı!',
@@ -136,7 +139,7 @@ export function Profile() {
   }
 
   async function onSaveImage() {
-    if (!completedCrop || !previewCanvasRef.current) return;
+    if (!previewCanvasRef.current) return;
 
     setIsUploading(true);
     try {
@@ -148,10 +151,15 @@ export function Profile() {
       formData.append('image', blob, 'profile.jpg');
 
       const response = await updateProfilePhoto(formData);
-      if (response.status === 200) {
+      if (response.isSuccess) {
         const meResponse = await getMe();
-        if (meResponse.status === 200) {
-          setUser(meResponse.data);
+        if (meResponse.isSuccess) {
+          dispatch(updateUserProfile(meResponse.data));
+          const meResponse2 = await getMe();
+          if (meResponse2.isSuccess) {
+            dispatch(updateUserProfile(meResponse2.data));
+          }
+
           setSelectedFile(null);
           Swal.fire({
             title: 'Başarılı!',
@@ -172,14 +180,14 @@ export function Profile() {
     }
   }
 
-  async function handleUpdateProfile() {
+  const handleUpdateProfile = async () => {
     setIsUpdating(true);
     try {
       const response = await updateProfile(formData);
-      if (response.status === 200) {
+      if (response.isSuccess) {
         const meResponse = await getMe();
-        if (meResponse.status === 200) {
-          setUser(meResponse.data);
+        if (meResponse.isSuccess) {
+          dispatch(updateUserProfile(meResponse.data));
           Swal.fire({
             title: 'Başarılı!',
             text: 'Profil bilgileriniz güncellendi.',
@@ -197,7 +205,7 @@ export function Profile() {
     } finally {
       setIsUpdating(false);
     }
-  }
+  };
 
   function onImageLoad(e) {
     const { width, height } = e.currentTarget;
@@ -240,7 +248,6 @@ export function Profile() {
   }
 
   return (
-    <>
     <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
       <Paper elevation={3} sx={{ p: 4, mb: 3 }}>
         <Typography variant="h4" gutterBottom>
@@ -430,6 +437,5 @@ export function Profile() {
         </DialogActions>
       </Dialog>
     </Box>
-    </>
   );
 }

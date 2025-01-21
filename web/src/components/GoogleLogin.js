@@ -1,27 +1,29 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
+import { setUser } from '../store/userSlice';
 import { googleLogin, googleRegister, getMe } from '../lib/api';
 import GoogleIcon from '@mui/icons-material/Google';
 
 export function GoogleLoginBlog({ buttonName, onError }) {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const dispatch = useDispatch();
 
-  const handleGoogleResponse = async (response) => {
+  const handleGoogleResponse = async (codeResponse) => {
     try {
+      console.log(codeResponse);
       const apiResponse = buttonName === 'login' 
-        ? await googleLogin({ credential: response.credential })
-        : await googleRegister({ credential: response.credential });
+        ? await googleLogin({ credential: codeResponse.access_token })
+        : await googleRegister({ credential: codeResponse.access_token });
 
-      if (apiResponse.data?.isSuccess) {
-        const token = apiResponse.data.data.token;
+      console.log(apiResponse);
+      if (apiResponse.isSuccess) {
+        const token = apiResponse.data.token;
         localStorage.setItem('token', token);
-
         const meResponse = await getMe();
-        if (meResponse.data?.isSuccess) {
-          setUser(meResponse.data.data);
+        if (meResponse.isSuccess) {
+          dispatch(setUser(meResponse.data));
           navigate('/dashboard');
         }
       }
@@ -44,7 +46,9 @@ export function GoogleLoginBlog({ buttonName, onError }) {
         onError('Google ile bağlantı kurulamadı');
       }
     },
-    flow: 'auth-code'
+    flow: 'implicit',
+    scope: 'email profile',
+    use_cors: true
   });
 
   return (
@@ -59,5 +63,3 @@ export function GoogleLoginBlog({ buttonName, onError }) {
     </Button>
   );
 }
-
-

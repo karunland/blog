@@ -7,78 +7,80 @@ using BlogApi.Application.Helper;
 using BlogApi.Core.Entities;
 using BlogApi.Core.Interfaces;
 using BlogApi.Infrastructure.Persistence;
+using BlogApi.Utilities;
 using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Infrastructure.Services;
 
-public class GoogleAuthService(HttpClient httpClient, BlogContext context, BaseSettings baseSettings, IEmailService emailService)
+public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, IEmailService emailService, TokenHelper tokenHelper)
 {
-
     public async Task<ApiResult<MeDto>> GoogleLogin(string idToken)
     {
-        try
+        var payload = await tokenHelper.VerifyGoogleAccessToken(idToken);
+        if (!payload)
         {
-            var settings = new GoogleJsonWebSignature.ValidationSettings
-            {
-                Audience = [baseSettings.GoogleClientId],
-            };
-
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
-
-            var user = await context.Users.FirstOrDefaultAsync(x => x.Email == payload.Email && x.IsGoogleRegister == true);
-
-            if (user == null)
-            {
-                return ApiError.Failure("Google ile giriş yapmak için önce Google hesabınızı kayıt ediniz.", HttpStatusCode.NotFound);
-            }
-
-            return new MeDto
-            {
-                Email = payload.Email,
-                FirstName = payload.GivenName,
-                LastName = payload.FamilyName,
-                Token = TokenHelper.GenerateToken(new JwtTokenDto()
-                {
-                    Email = payload.Email,
-                    FirstName = payload.GivenName,
-                    LastName = payload.FamilyName,
-                    Id = user.Id,
-                }),
-                ImageUrl = payload.Picture,
-                ExternalId = payload.Subject,
-                ExternalProvider = ExternalProviderEnum.Google,
-            };
+            return ApiError.Failure();
         }
-        catch (Exception ex)
+        
+        var spayload = await tokenHelper.GetUserInfoFromGoogle(idToken);
+        
+
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Email == spayload.Email && x.IsGoogleRegister);
+
+        if (user == null)
+            return ApiError.Failure("Google ile giriş yapmak için önce Google hesabınızı kayıt ediniz.", HttpStatusCode.NotFound);
+
+        return new MeDto
         {
-            throw new Exception($"Failed to validate Google token: {ex.Message}");
-        }
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Token = TokenHelper.GenerateToken(new JwtTokenDto()
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Id = user.Id,
+            }),
+            ImageUrl = user.FileUrl,
+            ExternalProvider = user.ExternalId,
+            ExternalProviderId = ExternalProviderEnum.Google,
+        };
     }
 
-
-    public async Task<ApiResult> GoogleRegisterAsync(string credential)
+    public async Task<ApiResult<MeDto>> GoogleRegisterAsync(string credential)
     {
-        var result = await GoogleLogin(credential);
-        if (!result.IsSuccess)
+        var isValidToken = await tokenHelper.VerifyGoogleAccessToken(credential);
+        if (!isValidToken)
         {
-            return ApiError.Failure(result.Message, HttpStatusCode.BadRequest);
+            return ApiError.Failure();
         }
 
-        if (await context.Users.AnyAsync(x => x.Email == result.Data.Email))
+        var payload = await tokenHelper.GetUserInfoFromGoogle(credential);
+        if (payload == null)
+        {
+            return ApiError.Failure();
+        }
+
+        var result = await context.Users.FirstOrDefaultAsync(x => x.Email == payload.Email &&  x.ExternalProvider == ExternalProviderEnum.Google);
+
+        if (result != null)
         {
             return ApiError.Failure(Messages.AlreadyExist, HttpStatusCode.BadRequest);
         }
 
         var newUser = new User
         {
-            Email = result.Data.Email,
-            FirstName = result.Data.FirstName,
-            LastName = result.Data.LastName,
-            ExternalId = result.Data.ExternalId,
+            Email = payload.Email,
+            FirstName = payload.GivenName,
+            LastName = payload.FamilyName,
+            Username = payload.Email.Split('@')[0],
+            ExternalId = payload.Id,
             ExternalProvider = ExternalProviderEnum.Google,
             IsGoogleRegister = true,
-            FileUrl = result.Data.ImageUrl
+            FileUrl = payload.Picture,
+            IsMailVerified = true
         };
 
         context.Users.Add(newUser);
@@ -86,13 +88,28 @@ public class GoogleAuthService(HttpClient httpClient, BlogContext context, BaseS
 
         var emailMessage = new EmailMessage
         {
-            To = result.Data.Email,
+            To = payload.Email,
             Subject = "Hesabınız Başarıyla Oluşturuldu",
             Body = "Hesabınız başarıyla oluşturuldu."
         };
 
-        await emailService.SendEmailAsync(emailMessage);
+        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
-        return ApiResult.Success();
+        return new MeDto
+        {
+            Email = newUser.Email,
+            FirstName = newUser.FirstName,
+            LastName = newUser.LastName,
+            Token = TokenHelper.GenerateToken(new JwtTokenDto()
+            {
+                Email = newUser.Email,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                Id = newUser.Id,
+            }),
+            ImageUrl = newUser.FileUrl,
+            ExternalProvider = newUser.ExternalProvider.GetEnumDescription(),
+            ExternalProviderId = newUser.ExternalProvider,
+        };
     }
-} 
+}

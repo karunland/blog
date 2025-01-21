@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
-import { useState, useEffect } from 'react';
-import { BsSun, BsMoon } from 'react-icons/bs';
+import { useState } from 'react';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearUser } from '../store/userSlice';
 import {
   AppBar,
   Toolbar,
@@ -13,151 +12,63 @@ import {
   Box,
   Drawer,
   useMediaQuery,
-  useTheme as useMuiTheme,
+  useTheme,
   Stack,
-  Avatar
+  Avatar,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Link
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import '../styles/Navbar.css';
-import { ReactComponent as Logo } from '../assets/logo.svg';
 
-const menuItems = [
-  { title: 'Blog', path: '/blog' },
-  { title: 'Hakkımızda', path: '/about' }
+const pages = [
+  { name: 'Ana Sayfa', path: '/' },
+  { name: 'Blog', path: '/blog' }
+];
+
+const settings = [
+  { name: 'Profil', path: '/dashboard/profile' },
+  { name: 'Blog Yazılarım', path: '/dashboard/blogs' },
+  { name: 'Yeni Blog', path: '/dashboard/blogs/new' }
 ];
 
 export function Navbar() {
-  const { user, logout } = useAuth();
-  const { isDarkMode, toggleTheme } = useTheme();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const theme = useMuiTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleMobileMenuToggle = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
   };
 
-  const renderMobileDrawer = () => (
-    <Drawer
-      anchor="right"
-      open={mobileMenuOpen}
-      onClose={handleMobileMenuToggle}
-      PaperProps={{
-        sx: {
-          width: 250,
-          bgcolor: theme.palette.mode === 'dark' 
-            ? 'rgba(18, 18, 18, 0.8)'
-            : 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(8px)'
-        }
-      }}
-    >
-      <Box sx={{ p: 2 }}>
-        <Stack spacing={2}>
-          {menuItems.map((item) => (
-            <Button
-              key={item.path}
-              component={Link}
-              to={item.path}
-              onClick={handleMobileMenuToggle}
-              fullWidth
-              sx={{ justifyContent: 'flex-start' }}
-            >
-              {item.title}
-            </Button>
-          ))}
-          {user ? (
-            <>
-              <Button
-                component={Link}
-                to="/dashboard"
-                onClick={handleMobileMenuToggle}
-                fullWidth
-                sx={{ justifyContent: 'flex-start' }}
-              >
-                Dashboard
-              </Button>
-              <Avatar
-                component={Link}
-                to="/dashboard/profile"
-                src={user.imageUrl}
-                alt={`${user.firstName} ${user.lastName}`}
-                sx={{ 
-                  width: 35, 
-                  height: 35,
-                  cursor: 'pointer',
-                  border: 1,
-                  borderColor: 'rgba(255, 255, 255, 0.1)'
-                }}
-              />
-              <Button
-                onClick={() => {
-                  handleMobileMenuToggle();
-                  logout();
-                }}
-                fullWidth
-                sx={{ justifyContent: 'flex-start' }}
-              >
-                Çıkış Yap
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                component={Link}
-                to="/login"
-                onClick={handleMobileMenuToggle}
-                fullWidth
-                sx={{ justifyContent: 'flex-start' }}
-              >
-                Giriş Yap
-              </Button>
-              <Button
-                component={Link}
-                to="/register"
-                onClick={handleMobileMenuToggle}
-                fullWidth
-                variant="contained"
-                sx={{ justifyContent: 'flex-start' }}
-              >
-                Kaydol
-              </Button>
-            </>
-          )}
-          <IconButton
-            onClick={toggleTheme}
-            size="small"
-            sx={{ alignSelf: 'flex-start' }}
-          >
-            {isDarkMode ? <BsSun /> : <BsMoon />}
-          </IconButton>
-        </Stack>
-      </Box>
-    </Drawer>
-  );
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleMenuClick = (path) => {
+    navigate(path);
+    handleCloseUserMenu();
+  };
 
   return (
     <AppBar 
       position="fixed"
       elevation={0}
       sx={{ 
-        bgcolor: theme.palette.mode === 'dark' 
-          ? isScrolled 
-            ? 'rgba(18, 18, 18, 0.85)'
-            : 'rgba(18, 18, 18, 0.4)'
-          : isScrolled 
-            ? 'rgba(255, 255, 255, 0.85)'
-            : 'rgba(255, 255, 255, 0.4)',
+        bgcolor: theme.palette.mode === 'dark'
+          ? 'rgba(18, 18, 18, 0.85)'
+          : 'rgba(18, 18, 18, 0.4)',
         backdropFilter: 'blur(10px)',
         borderBottom: 1,
         borderColor: theme.palette.mode === 'dark'
@@ -169,160 +80,149 @@ export function Navbar() {
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar 
-          disableGutters 
-          sx={{ 
-            justifyContent: 'space-between',
-            minHeight: { xs: '64px', sm: '70px' }
-          }}
-        >
-          {/* Logo ve İsim */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Logo style={{ width: 40, height: 40 }} />
-            <Typography
-              variant="h6"
-              component={Link}
-              to="/"
-              sx={{
-                textDecoration: 'none',
-                color: 'inherit',
-                fontWeight: 'bold',
-                letterSpacing: '0.5px'
-              }}
-            >
-              DevLog
-            </Typography>
-          </Box>
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component={RouterLink}
+            to="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            DEVLOG
+          </Typography>
 
-          {/* Desktop Menu */}
-          {!isMobile ? (
-            <Stack direction="row" spacing={2} alignItems="center">
-              {menuItems.map((item) => (
-                <Button
-                  key={item.path}
-                  component={Link}
-                  to={item.path}
-                  color="inherit"
-                  sx={{ 
-                    textTransform: 'none',
-                    fontSize: '1rem',
-                    '&:hover': {
-                      bgcolor: 'rgba(255, 255, 255, 0.1)'
-                    }
-                  }}
-                >
-                  {item.title}
-                </Button>
-              ))}
-              {user ? (
-                <>
-                  <Button
-                    component={Link}
-                    to="/dashboard"
-                    color="inherit"
-                    sx={{ 
-                      textTransform: 'none',
-                      '&:hover': {
-                        bgcolor: 'rgba(255, 255, 255, 0.1)'
-                      }
-                    }}
-                  >
-                    Dashboard
-                  </Button>
-                  <Avatar
-                    component={Link}
-                    to="/dashboard/profile"
-                    src={user.imageUrl}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    sx={{ 
-                      width: 35, 
-                      height: 35,
-                      cursor: 'pointer',
-                      border: 1,
-                      borderColor: 'rgba(255, 255, 255, 0.1)'
-                    }}
-                  />
-                  <Button
-                    onClick={logout}
-                    color="inherit"
-                    sx={{ 
-                      textTransform: 'none',
-                      '&:hover': {
-                        bgcolor: 'rgba(255, 255, 255, 0.1)'
-                      }
-                    }}
-                  >
-                    Çıkış Yap
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    component={Link}
-                    to="/login"
-                    color="inherit"
-                    sx={{ 
-                      textTransform: 'none',
-                      '&:hover': {
-                        bgcolor: 'rgba(255, 255, 255, 0.1)'
-                      }
-                    }}
-                  >
-                    Giriş Yap
-                  </Button>
-                  <Button
-                    component={Link}
-                    to="/register"
-                    variant="contained"
-                    sx={{ 
-                      textTransform: 'none',
-                      borderRadius: '20px',
-                      px: 3,
-                      bgcolor: theme.palette.mode === 'dark' 
-                        ? 'primary.main' 
-                        : 'primary.main',
-                      '&:hover': {
-                        bgcolor: theme.palette.mode === 'dark'
-                          ? 'primary.dark'
-                          : 'primary.dark'
-                      }
-                    }}
-                  >
-                    Kaydol
-                  </Button>
-                </>
-              )}
-              <IconButton
-                onClick={toggleTheme}
-                color="inherit"
-                size="small"
-                sx={{
-                  '&:hover': {
-                    bgcolor: 'rgba(255, 255, 255, 0.1)'
-                  }
-                }}
-              >
-                {isDarkMode ? <BsSun /> : <BsMoon />}
-              </IconButton>
-            </Stack>
-          ) : (
-            // Mobile Menu Icon
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
               color="inherit"
-              onClick={handleMobileMenuToggle}
-              edge="end"
-              sx={{
-                '&:hover': {
-                  bgcolor: 'rgba(255, 255, 255, 0.1)'
-                }
-              }}
             >
               <MenuIcon />
             </IconButton>
-          )}
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              {pages.map((page) => (
+                <MenuItem 
+                  key={page.name} 
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    navigate(page.path);
+                  }}
+                >
+                  <Typography textAlign="center">{page.name}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          
+          <Typography
+            variant="h5"
+            noWrap
+            component={RouterLink}
+            to="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            DEVLOG
+          </Typography>
+          
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page.name}
+                onClick={() => navigate(page.path)}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {page.name}
+              </Button>
+            ))}
+          </Box>
+
+          <Box sx={{ flexGrow: 0 }}>
+            {isAuthenticated ? (
+              <>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt={user?.userName} src={user?.imageUrl} />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem key={setting.name} onClick={() => handleMenuClick(setting.path)}>
+                      <Typography textAlign="center">{setting.name}</Typography>
+                    </MenuItem>
+                  ))}
+                  <MenuItem onClick={() => {
+                    handleCloseUserMenu();
+                    dispatch(clearUser());
+                    localStorage.removeItem('token');
+                    navigate('/');
+                  }}>
+                    <Typography textAlign="center">Çıkış Yap</Typography>
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button
+                onClick={() => navigate('/login')}
+                sx={{ color: 'white' }}
+              >
+                Giriş Yap
+              </Button>
+            )}
+          </Box>
         </Toolbar>
       </Container>
-      {renderMobileDrawer()}
     </AppBar>
   );
 }
