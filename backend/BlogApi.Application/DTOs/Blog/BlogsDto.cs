@@ -16,4 +16,5 @@ public record BlogsDto
     public BlogStatusEnum StatusEnumId { get; set; }
     public string Status { get; set; }
     public string ImageUrl { get; set; }
+    public int CommentCount { get; set; }
 }

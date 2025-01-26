@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { FiUpload } from 'react-icons/fi';
 import { getCategories, createBlog } from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
-import { useTheme } from '../../contexts/ThemeContext';
 import {
   Container,
   Paper,
@@ -22,10 +21,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import CreateIcon from '@mui/icons-material/Create';
 import '../../styles/AddBlog.css';
-
 export function AddBlog() {
   const navigate = useNavigate();
-  const { isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -38,6 +35,9 @@ export function AddBlog() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+  
+  // get theme info from local storage
+  const isDarkMode = localStorage.getItem('theme') === 'dark';
 
   useEffect(() => {
     fetchCategories();

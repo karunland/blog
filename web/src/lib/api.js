@@ -287,4 +287,46 @@ export const login = async (data) => {
   }
 };
 
+export const getComments = async (blogSlug, page = 1, pageSize = 100) => {
+  try {
+    const response = await api.get(`/comment/List?blogSlug=${blogSlug}&pageNumber=${page}&pageSize=${pageSize}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Get Comments Error:', error);
+    throw error;
+  }
+};
+
+export const addComment = async (data) => {
+  try {
+    const response = await api.post('/comment/create', data, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Add Comment Error:', error);
+    throw error;
+  }
+};
+
+export const deleteComment = async (id) => {
+  try {
+    const response = await api.delete(`/Comment/Delete?id=${id}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Delete Comment Error:', error);
+    throw error;
+  }
+};
+
 export default api;

@@ -40,7 +40,8 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             Slug = x.Slug,
             CategoryName = x.Category.Name,
             ViewCount = x.ViewCount,
-            ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl
+            ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
+            CommentCount = x.Comments.Count
         });
 
         return await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
@@ -123,7 +124,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 
         var emailMessage = new EmailMessage
         {
-            To = "devlog760@gmail.com",
+            To = currentUserService.Email,
             Subject = "Blog Silindi",
             Body = "Blog silindi."
         };
@@ -149,6 +150,8 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
                 CategoryId = x.CategoryId,
                 ViewCount = x.ViewCount,
                 StatusEnumId = x.BlogStatusEnum,
+                Status = x.BlogStatusEnum.ToString(),
+                CommentCount = x.Comments.Where(x => !x.IsDeleted).Count(),
                 ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl
             })
             .FirstOrDefaultAsync();

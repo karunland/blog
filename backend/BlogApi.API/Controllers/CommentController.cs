@@ -28,7 +28,7 @@ public class CommentController(CommentRepo commentRepo) : BaseApiController
     }
 
     [HttpDelete]
-    public async Task<ApiResult> Delete([FromRoute] int id)
+    public async Task<ApiResult> Delete([FromQuery] int id)
     {
         return await commentRepo.Delete(id);
     }

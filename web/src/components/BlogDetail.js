@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getBlogBySlug } from '../lib/api';
+import { CommentSection } from './CommentSection';
 import { 
   Box, 
   Container, 
@@ -11,10 +12,13 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
-  Grid
+  Grid,
+  IconButton
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import PersonIcon from '@mui/icons-material/Person';
+import CommentIcon from '@mui/icons-material/Comment';
 
 export function BlogDetail() {
   const { slug } = useParams();
@@ -173,7 +177,19 @@ export function BlogDetail() {
             <Stack direction="row" spacing={1} alignItems="center">
               <CalendarTodayIcon sx={{ color: 'text.secondary' }} fontSize="small" />
               <Typography variant="body2" color="text.secondary">
-                {new Date(blog.createdAt).toLocaleDateString()}
+                {blog.updatedAt ? new Date(blog.updatedAt).toLocaleDateString() : new Date(blog.createdAt).toLocaleDateString()}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <RemoveRedEyeIcon sx={{ color: 'text.secondary' }} fontSize="small" />
+              <Typography variant="body2" color="text.secondary">
+                {blog.viewCount}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <CommentIcon sx={{ color: 'text.secondary' }} fontSize="small" />
+              <Typography variant="body2" color="text.secondary">
+                {blog.commentCount}
               </Typography>
             </Stack>
           </Stack>
@@ -210,6 +226,10 @@ export function BlogDetail() {
               }
             }}
           />
+
+          <Divider sx={{ my: 4 }} />
+          
+          <CommentSection blogSlug={slug} />
         </Grid>
 
         {headings.length > 0 && (

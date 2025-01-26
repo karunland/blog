@@ -7,4 +7,6 @@ public record CommentsDto
     public DateTime CreatedAt { get; set; }
     public string AuthorName { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public string AuthorImageUrl { get; set; }
+    public bool IsMyComment { get; set; }
 }

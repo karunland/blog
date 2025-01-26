@@ -56,8 +56,8 @@ public static class SeedData
                     Username = "harunkorkmaz",
                     Email = "1harunkorkmaz@gmail.com",
                     Password = "7C4A8D09CA3762AF61E59520943DC26494F8941B",
-                    FileUrl = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
-                    FileName = "ProfilePicture_ff92118a2c6d471d90ec324578003123808c954ffb2a4b689f4ba377e9dfdb1a.jpg",
+                    FileUrl = "ProfilePicture_unnamed.jpg",
+                    FileName = "ProfilePicture_unnamed.jpg",
                     Extension = ".jpg",
                     IsMailVerified = true,
                     IsGoogleRegister = false,
@@ -115,7 +115,8 @@ public static class SeedData
                     ViewCount = 100,
                     Likes = [new() { UserId = 2 }],
                     ImageUrl = "Thumbnail_mouse.jpg",
-                    CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(1)
+                    CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(1),
+                    Comments = [new() { UserId = 1, Content = "Bu bir test yorumudur." }, new() { UserId = 1, Content = "Bu da bir test yorumudur." }]
                 },
                 new() {
                     Title = "Top 10 Healthy Foods",

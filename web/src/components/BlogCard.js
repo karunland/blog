@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import CommentIcon from '@mui/icons-material/Comment';
 import '../styles/BlogCard.css';
 
 export function BlogCard({ blog }) {
@@ -68,7 +69,7 @@ export function BlogCard({ blog }) {
           </Typography>
         </Link>
 
-        <Box sx={{ mt: 'auto' }}>
+        <Box sx={{ mt: 'auto', display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CalendarTodayIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
@@ -87,7 +88,14 @@ export function BlogCard({ blog }) {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <VisibilityIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
               <Typography variant="body2" color="text.secondary">
-                {blog.viewCount || 0} görüntülenme
+                {blog.viewCount || 0}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CommentIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="body2" color="text.secondary">
+                {blog.commentCount || 0}
               </Typography>
             </Box>
           </Stack>
