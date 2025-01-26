@@ -81,13 +81,6 @@ export function CommentSection({ blogSlug }) {
           const response = await deleteComment(commentId);
           if (response.isSuccess) {
             await fetchComments();
-            Swal.fire({
-            title: 'Başarılı',
-              text: 'Yorum başarıyla silindi',
-              icon: 'success',
-              background: '#0f172a',
-              color: '#f1f5f9',
-            });
           }
       }
     } catch (error) {
