@@ -10,4 +10,5 @@ public class BaseSettings(IConfiguration configuration)
     // google client id and secret
     public string? GoogleClientId => Environment.GetEnvironmentVariable("BaseSettings:GoogleClientId") ?? configuration["BaseSettings:GoogleClientId"];
     public string? GoogleClientSecret => Environment.GetEnvironmentVariable("BaseSettings:GoogleClientSecret") ?? configuration["BaseSettings:GoogleClientSecret"];
+    public string? BackendUrl => Environment.GetEnvironmentVariable("BaseSettings:BackendUrl") ?? configuration["BaseSettings:BackendUrl"];
 }

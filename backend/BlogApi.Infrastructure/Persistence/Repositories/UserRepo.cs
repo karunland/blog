@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using BlogApi.Application.Common.Settings;
 using BlogApi.Application.DTOs;
 using BlogApi.Application.DTOs.Blog;
 using BlogApi.Application.DTOs.File;
@@ -15,7 +16,7 @@ using Messages = BlogApi.Application.Common.Messages.Messages;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService)
+public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings)
 {
     public async Task<ApiResult> Register(UserAddDto user)
     {
@@ -76,7 +77,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             return ApiError.Failure(Messages.NotFound);
 
         if (user.IsMailVerified)
-            return ApiError.Failure("Email already verified", HttpStatusCode.BadRequest);
+            return ApiError.Failure("Email already verified");
 
         var verificationCode = new VerificationCodes
         {
@@ -118,7 +119,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             .FirstOrDefaultAsync(x => x.Code == code && x.Email == user.Email && !x.IsUsed && x.ExpirationDate > DateTime.UtcNow);
         
         if (verificationCode == null)
-            return ApiError.Failure("Geçersiz veya süresi dolmuş doğrulama kodu", HttpStatusCode.BadRequest);
+            return ApiError.Failure("Geçersiz veya süresi dolmuş doğrulama kodu");
 
         verificationCode.IsUsed = true;
         user.IsMailVerified = true;
@@ -166,7 +167,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
         // Email can't be changed if it's verified
         if (currentUser.IsMailVerified && currentUser.Email != user.Email)
-            return ApiError.Failure("Email cannot be changed once verified", HttpStatusCode.BadRequest);
+            return ApiError.Failure("Email cannot be changed once verified");
 
         currentUser.FirstName = user.FirstName;
         currentUser.LastName = user.LastName;
@@ -199,7 +200,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         
         if (user == null)
         {
-            return ApiError.Failure(Messages.NotFound, HttpStatusCode.NotFound);
+            return ApiError.Failure(Messages.NotFound);
         }
         
         return new MeDto
@@ -215,7 +216,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 LastName = user.LastName,
                 Id = user.Id,
             }),
-            ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
+            ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
         };
     }
     
@@ -238,7 +239,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             IsMailVerified = user.IsMailVerified,
             ExternalProviderId = user.ExternalProvider,
             ExternalProvider = user.ExternalProvider.GetEnumDescription(),
-            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google && user.FileUrl.StartsWith("http") ? user.FileUrl : "https://localhost:5003/api/file/image/" + user.FileUrl
+            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google && user.FileUrl.StartsWith("http") ? user.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
         };
     }
 
@@ -285,7 +286,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Id = user.Id,
-                ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
+                ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
             });
 
             var meDto = new MeDto
@@ -294,7 +295,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Token = token,
-                ImageUrl = "https://localhost:5003/api/file/image/" + user.FileUrl
+                ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
             };
 
             return meDto;
@@ -319,7 +320,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 CreatedAt = x.CreatedAt,
                 AuthorName = x.User.FullName,
                 Slug = x.Slug,
-                ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl,
+                ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
                 CategoryName = x.Category.Name,
                 CategoryId = x.CategoryId,
                 ViewCount = x.ViewCount,

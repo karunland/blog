@@ -6,7 +6,7 @@ namespace BlogApi.Application.DTOs;
 
 public readonly record struct ApiError
 {
-    public HttpStatusCode? Code { get; } = HttpStatusCode.InternalServerError;
+    public HttpStatusCode? Code { get; } = HttpStatusCode.OK;
 
     [JsonIgnore]
     public string ErrorMessage { get; }
@@ -17,7 +17,7 @@ public readonly record struct ApiError
         Code = code;
     }
 
-    public static ApiError Failure(string message = null, HttpStatusCode? code = HttpStatusCode.InternalServerError)
+    public static ApiError Failure(string message = null, HttpStatusCode? code = HttpStatusCode.OK)
     {
         return new ApiError(message ?? Messages.Fail, code);
     }

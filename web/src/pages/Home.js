@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { Container, Box, Typography, Button, Grid, Paper, Stack } from '@mui/material';
+import { Container, Box, Typography, Button, Grid, Paper, Stack, IconButton } from '@mui/material';
 import CreateIcon from '@mui/icons-material/Create';
 import GroupIcon from '@mui/icons-material/Group';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
 import { BlogCard } from '../components/BlogCard';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -14,7 +14,8 @@ import { getBestBlogs } from '../lib/api';
 import { useState, useEffect } from 'react';
 
 export function Home() {
-  const { isDarkMode } = useTheme();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -80,11 +81,16 @@ export function Home() {
       {/* Hero Section */}
       <Box
         sx={{
-          background: isDarkMode ? 'linear-gradient(45deg, #1a237e 30%, #311b92 90%)' : 'linear-gradient(45deg, #ff6b6b 30%, #ff8e53 90%)',
-          color: 'white',
+          background: isDarkMode 
+            ? 'linear-gradient(45deg, #1a1a1a 30%, #2d2d2d 90%)'
+            : 'linear-gradient(45deg, #335C67 30%, #4B7C8B 90%)',
+          color: isDarkMode ? '#f5f5f5' : 'white',
           py: 12,
           borderRadius: '0 0 20px 20px',
-          mb: 8
+          mb: 8,
+          boxShadow: isDarkMode 
+            ? '0 3px 10px rgba(0,0,0,0.5)'
+            : '0 3px 10px rgba(0,0,0,0.2)'
         }}
       >
         <Container maxWidth="lg">
@@ -93,7 +99,7 @@ export function Home() {
               <Typography variant="h2" component="h1" fontWeight="bold" gutterBottom>
                 Düşüncelerinizi Dünyayla Paylaşın
               </Typography>
-              <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
+              <Typography variant="h5" sx={{ mb: 4, opacity: 0.9, color: isDarkMode ? '#e0e0e0' : 'rgba(255,255,255,0.9)' }}>
                 Modern ve kullanıcı dostu blog platformumuzla hikayelerinizi anlatın,
                 bilgi paylaşın ve global toplulukla etkileşime geçin.
               </Typography>
@@ -104,10 +110,10 @@ export function Home() {
                   variant="contained"
                   size="large"
                   sx={{
-                    bgcolor: 'white',
-                    color: isDarkMode ? '#1a237e' : '#ff6b6b',
+                    bgcolor: isDarkMode ? '#E09F3E' : 'white',
+                    color: isDarkMode ? '#1a1a1a' : '#335C67',
                     '&:hover': {
-                      bgcolor: 'rgba(255,255,255,0.9)'
+                      bgcolor: isDarkMode ? '#B47E31' : 'rgba(255,255,255,0.9)'
                     }
                   }}
                 >
@@ -156,9 +162,10 @@ export function Home() {
           gutterBottom
           sx={{
             mb: 4,
-            borderBottom: '2px solid var(--orange)',
+            borderBottom: `2px solid ${isDarkMode ? '#E09F3E' : 'var(--orange)'}`,
             pb: 1,
-            width: 'fit-content'
+            width: 'fit-content',
+            color: isDarkMode ? '#f5f5f5' : theme.palette.text.primary
           }}
         >
           Öne Çıkan Bloglar
@@ -254,15 +261,28 @@ export function Home() {
               sx={{
                 p: 3,
                 height: '100%',
-                bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,107,107,0.05)',
-                borderRadius: 2
+                bgcolor: isDarkMode 
+                  ? 'rgba(255,255,255,0.03)'
+                  : theme.palette.background.paper,
+                borderRadius: 2,
+                border: 1,
+                borderColor: isDarkMode
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: isDarkMode 
+                    ? '0 5px 15px rgba(255,255,255,0.1)'
+                    : '0 5px 15px rgba(0,0,0,0.1)'
+                }
               }}
             >
               <CreateIcon sx={{ fontSize: 40, color: isDarkMode ? '#fff' : '#ff6b6b', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: isDarkMode ? '#f5f5f5' : theme.palette.text.primary }}>
                 Kolay İçerik Oluşturma
               </Typography>
-              <Typography color="text.secondary">
+              <Typography sx={{ color: isDarkMode ? '#bdbdbd' : theme.palette.text.secondary }}>
                 Modern editör ile yazılarınızı kolayca oluşturun ve düzenleyin.
               </Typography>
             </Paper>
@@ -273,15 +293,28 @@ export function Home() {
               sx={{
                 p: 3,
                 height: '100%',
-                bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,107,107,0.05)',
-                borderRadius: 2
+                bgcolor: isDarkMode 
+                  ? 'rgba(255,255,255,0.03)'
+                  : theme.palette.background.paper,
+                borderRadius: 2,
+                border: 1,
+                borderColor: isDarkMode
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: isDarkMode 
+                    ? '0 5px 15px rgba(255,255,255,0.1)'
+                    : '0 5px 15px rgba(0,0,0,0.1)'
+                }
               }}
             >
               <GroupIcon sx={{ fontSize: 40, color: isDarkMode ? '#fff' : '#ff6b6b', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: isDarkMode ? '#f5f5f5' : theme.palette.text.primary }}>
                 Aktif Topluluk
               </Typography>
-              <Typography color="text.secondary">
+              <Typography sx={{ color: isDarkMode ? '#bdbdbd' : theme.palette.text.secondary }}>
                 Dünya çapında okuyucularla etkileşime geçin ve fikir alışverişinde bulunun.
               </Typography>
             </Paper>
@@ -292,15 +325,28 @@ export function Home() {
               sx={{
                 p: 3,
                 height: '100%',
-                bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,107,107,0.05)',
-                borderRadius: 2
+                bgcolor: isDarkMode 
+                  ? 'rgba(255,255,255,0.03)'
+                  : theme.palette.background.paper,
+                borderRadius: 2,
+                border: 1,
+                borderColor: isDarkMode
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: isDarkMode 
+                    ? '0 5px 15px rgba(255,255,255,0.1)'
+                    : '0 5px 15px rgba(0,0,0,0.1)'
+                }
               }}
             >
               <TrendingUpIcon sx={{ fontSize: 40, color: isDarkMode ? '#fff' : '#ff6b6b', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: isDarkMode ? '#f5f5f5' : theme.palette.text.primary }}>
                 SEO Dostu
               </Typography>
-              <Typography color="text.secondary">
+              <Typography sx={{ color: isDarkMode ? '#bdbdbd' : theme.palette.text.secondary }}>
                 İçerikleriniz arama motorlarında üst sıralarda yer alsın.
               </Typography>
             </Paper>
@@ -311,15 +357,28 @@ export function Home() {
               sx={{
                 p: 3,
                 height: '100%',
-                bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,107,107,0.05)',
-                borderRadius: 2
+                bgcolor: isDarkMode 
+                  ? 'rgba(255,255,255,0.03)'
+                  : theme.palette.background.paper,
+                borderRadius: 2,
+                border: 1,
+                borderColor: isDarkMode
+                  ? 'rgba(255,255,255,0.1)'
+                  : 'rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: isDarkMode 
+                    ? '0 5px 15px rgba(255,255,255,0.1)'
+                    : '0 5px 15px rgba(0,0,0,0.1)'
+                }
               }}
             >
               <AutoStoriesIcon sx={{ fontSize: 40, color: isDarkMode ? '#fff' : '#ff6b6b', mb: 2 }} />
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: isDarkMode ? '#f5f5f5' : theme.palette.text.primary }}>
                 Zengin İçerik
               </Typography>
-              <Typography color="text.secondary">
+              <Typography sx={{ color: isDarkMode ? '#bdbdbd' : theme.palette.text.secondary }}>
                 Resim, video ve daha fazlasını içeriklerinize ekleyin.
               </Typography>
             </Paper>
@@ -334,8 +393,20 @@ export function Home() {
           sx={{
             p: 6,
             textAlign: 'center',
-            bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,107,107,0.05)',
-            borderRadius: 4
+            bgcolor: isDarkMode
+              ? 'rgba(255,255,255,0.03)'
+              : theme.palette.background.paper,
+            borderRadius: 4,
+            border: 1,
+            borderColor: isDarkMode
+              ? 'rgba(255,255,255,0.1)'
+              : 'rgba(0,0,0,0.1)',
+            '& h3': {
+              color: isDarkMode ? '#f5f5f5' : theme.palette.text.primary
+            },
+            '& h6': {
+              color: isDarkMode ? '#bdbdbd' : theme.palette.text.secondary
+            }
           }}
         >
           <Typography variant="h3" component="h2" gutterBottom fontWeight="bold">
@@ -352,10 +423,10 @@ export function Home() {
             sx={{
               px: 6,
               py: 1.5,
-              bgcolor: isDarkMode ? '#fff' : '#ff6b6b',
-              color: isDarkMode ? '#1a237e' : '#fff',
+              bgcolor: isDarkMode ? '#E09F3E' : theme.palette.primary.main,
+              color: isDarkMode ? '#1a1a1a' : '#ffffff',
               '&:hover': {
-                bgcolor: isDarkMode ? 'rgba(255,255,255,0.9)' : '#ff8e53'
+                bgcolor: isDarkMode ? '#B47E31' : theme.palette.primary.dark
               }
             }}
           >
@@ -363,6 +434,20 @@ export function Home() {
           </Button>
         </Paper>
       </Container>
+
+      {/* Diğer bileşenler için de benzer güncellemeler */}
+      <IconButton
+        sx={{
+          color: theme.palette.primary.main,
+          '&:hover': {
+            bgcolor: theme.palette.mode === 'dark'
+              ? 'rgba(255,255,255,0.1)'
+              : 'rgba(0,0,0,0.1)'
+          }
+        }}
+      >
+        {/* ... Icon button içeriği ... */}
+      </IconButton>
     </Box>
   );
 }

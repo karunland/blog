@@ -1,4 +1,5 @@
-﻿using BlogApi.Application.DTOs;
+﻿using BlogApi.Application.Common.Settings;
+using BlogApi.Application.DTOs;
 using BlogApi.Application.DTOs.Blog;
 using BlogApi.Application.DTOs.File;
 using BlogApi.Application.Interfaces;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class BlogRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService)
+public class BlogRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings)
 {
     public async Task<ApiResultPagination<BlogsDto>> GetAll(BlogFilterModel filter)
     {
@@ -39,7 +40,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             Slug = x.Slug,
             CategoryName = x.Category.Name,
             ViewCount = x.ViewCount,
-            ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl
+            ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl
         });
 
         return await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
@@ -72,7 +73,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 
         var emailMessage = new EmailMessage
         {
-            To = "devlog760@gmail.com",
+            To = currentUserService.Email,
             Subject = "Yeni Blog Oluşturuldu",
             Body = "Yeni blog oluşturuldu."
         };
@@ -99,7 +100,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 
         var emailMessage = new EmailMessage
         {
-            To = "devlog760@gmail.com",
+            To = currentUserService.Email,
             Subject = "Blog Güncellendi",
             Body = "Blog güncellendi."
         };
@@ -113,7 +114,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
     {
         var blogToDelete = await context.Blogs.FirstOrDefaultAsync(x => x.Slug == slug && x.UserId == currentUserService.Id);
 
-        if (blogToDelete == null) return ApiError.Failure();
+        if (blogToDelete == null) return ApiError.Failure(Messages.NotFound);
 
         blogToDelete.IsDeleted = true;
         blogToDelete.DeletedAt = DateTime.UtcNow;
@@ -148,7 +149,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
                 CategoryId = x.CategoryId,
                 ViewCount = x.ViewCount,
                 StatusEnumId = x.BlogStatusEnum,
-                ImageUrl = "https://localhost:5003/api/file/image/" + x.ImageUrl
+                ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl
             })
             .FirstOrDefaultAsync();
 

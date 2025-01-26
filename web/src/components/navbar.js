@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearUser } from '../store/userSlice';
@@ -21,6 +21,10 @@ import {
   Link
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import appIconAnimation from '../assets/icon.json';
+import { useLottie } from 'lottie-react';
+import { FaSun, FaMoon } from 'react-icons/fa';
+import { useColorMode } from '../App';
 
 const pages = [
   { name: 'Ana Sayfa', path: '/' },
@@ -38,8 +42,10 @@ export function Navbar() {
   const { user, isAuthenticated } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const theme = useTheme();
+  const colorMode = useColorMode();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [isDark, setIsDark] = useState(theme.palette.mode === 'dark');
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -61,6 +67,23 @@ export function Navbar() {
     handleCloseUserMenu();
   };
 
+  // Lottie animasyonu için options
+  const options = {
+    animationData: appIconAnimation,
+    loop: true,
+    autoplay: false,
+  };
+
+  const { View: LottieView, play, stop } = useLottie(options);
+
+  useEffect(() => {
+    setIsDark(theme.palette.mode === 'dark');
+  }, [theme.palette.mode]);
+
+  const toggleTheme = () => {
+    colorMode.toggleColorMode();
+  };
+
   return (
     <AppBar 
       position="fixed"
@@ -80,146 +103,158 @@ export function Navbar() {
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component={RouterLink}
-            to="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            DEVLOG
-          </Typography>
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
+        <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+          {/* Sol taraf - Logo ve başlık */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box 
+              sx={{ 
+                width: 100, 
+                mr: 2,
+                cursor: 'pointer',
+                marginRight: '0px',
+                transition: 'width 0.3s ease'
+              }}
+              onMouseEnter={() => play()}
+              onMouseLeave={() => stop()}
             >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
+              {LottieView}
+            </Box>
+            <Typography
+              variant="h5"
+              noWrap
+              component={RouterLink}
+              to="/"
               sx={{
-                display: { xs: 'block', md: 'none' },
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
               }}
             >
-              {pages.map((page) => (
-                <MenuItem 
-                  key={page.name} 
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    navigate(page.path);
-                  }}
-                >
-                  <Typography textAlign="center">{page.name}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          
-          <Typography
-            variant="h5"
-            noWrap
-            component={RouterLink}
-            to="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            DEVLOG
-          </Typography>
-          
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page.name}
-                onClick={() => navigate(page.path)}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page.name}
-              </Button>
-            ))}
+              DEVLOG
+            </Typography>
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            {isAuthenticated ? (
-              <>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt={user?.userName} src={user?.imageUrl} />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: '45px' }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
+          {/* Sağ taraf - Menü öğeleri, tema değiştirici ve kullanıcı menüsü */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {/* Desktop menü */}
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              {pages.map((page) => (
+                <Button
+                  key={page.name}
+                  onClick={() => navigate(page.path)}
+                  sx={{ color: 'inherit' }}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting.name} onClick={() => handleMenuClick(setting.path)}>
-                      <Typography textAlign="center">{setting.name}</Typography>
-                    </MenuItem>
-                  ))}
-                  <MenuItem onClick={() => {
-                    handleCloseUserMenu();
-                    dispatch(clearUser());
-                    localStorage.removeItem('token');
-                    navigate('/');
-                  }}>
-                    <Typography textAlign="center">Çıkış Yap</Typography>
-                  </MenuItem>
-                </Menu>
-              </>
-            ) : (
-              <Button
-                onClick={() => navigate('/login')}
-                sx={{ color: 'white' }}
+                  {page.name}
+                </Button>
+              ))}
+            </Box>
+
+            {/* Tema değiştirme butonu */}
+            <IconButton
+              onClick={toggleTheme}
+              sx={{
+                ml: 2,
+                color: 'inherit',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              {isDark ? <FaSun /> : <FaMoon />}
+            </IconButton>
+
+            {/* Mobile menü */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                color="inherit"
               >
-                Giriş Yap
-              </Button>
-            )}
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+              >
+                {pages.map((page) => (
+                  <MenuItem 
+                    key={page.name} 
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      navigate(page.path);
+                    }}
+                  >
+                    <Typography textAlign="center">{page.name}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+
+            {/* Kullanıcı menüsü */}
+            <Box sx={{ ml: 2 }}>
+              {isAuthenticated ? (
+                <>
+                  <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar alt={user?.userName} src={user?.imageUrl} />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                  >
+                    {settings.map((setting) => (
+                      <MenuItem key={setting.name} onClick={() => handleMenuClick(setting.path)}>
+                        <Typography textAlign="center">{setting.name}</Typography>
+                      </MenuItem>
+                    ))}
+                    <MenuItem onClick={() => {
+                      handleCloseUserMenu();
+                      dispatch(clearUser());
+                      localStorage.removeItem('token');
+                      navigate('/');
+                    }}>
+                      <Typography textAlign="center">Çıkış Yap</Typography>
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Button
+                  onClick={() => navigate('/login')}
+                  sx={{ color: 'inherit' }}
+                >
+                  Giriş Yap
+                </Button>
+              )}
+            </Box>
           </Box>
         </Toolbar>
       </Container>

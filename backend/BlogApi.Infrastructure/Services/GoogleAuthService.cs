@@ -29,7 +29,7 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
         var user = await context.Users.FirstOrDefaultAsync(x => x.Email == spayload.Email && x.IsGoogleRegister);
 
         if (user == null)
-            return ApiError.Failure("Google ile giriş yapmak için önce Google hesabınızı kayıt ediniz.", HttpStatusCode.NotFound);
+            return ApiError.Failure("Google ile giriş yapmak için önce Google hesabınızı kayıt ediniz.");
 
         return new MeDto
         {
@@ -67,7 +67,7 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
 
         if (result != null)
         {
-            return ApiError.Failure(Messages.AlreadyExist, HttpStatusCode.BadRequest);
+            return ApiError.Failure(Messages.AlreadyExist);
         }
 
         var newUser = new User

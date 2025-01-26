@@ -10,21 +10,20 @@
   --dark-red: #540B0E;
 
   /* Light theme variables */
-  --bg-primary: var(--cream);
-  --bg-secondary: #ffffff;
-  --text-primary: var(--navy);
-  --text-secondary: var(--dark-red);
-  --border-color: var(--orange);
-  --card-bg: #ffffff;
-  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --navbar-bg: var(--navy);
-  --hover-bg: rgba(224, 159, 62, 0.1);
-  --heading-color: var(--dark-red);
-  --link-color: var(--red);
-  --link-hover-color: var(--dark-red);
-  --bg-active: rgba(158, 42, 43, 0.1);
-  --button-primary: var(--navy);
-  --button-hover: var(--dark-red);
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #e1e1e1;
+  --text-secondary: #b2bec3;
+  --border-color: #2d2d2d;
+  --card-bg: #1e1e1e;
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --navbar-bg: #121212;
+  --hover-bg: #2d2d2d;
+  --heading-color: #e1e1e1;
+  --link-color: #74b9ff;
+  --link-hover-color: #0984e3;
+  --bg-active: rgba(116, 185, 255, 0.1);
+
 }
 
 ::selection {
@@ -34,21 +33,20 @@
 
 [data-theme='dark'] {
   /* Dark theme variables */
-  --bg-primary: var(--dark-red);
-  --bg-secondary: var(--navy);
-  --text-primary: var(--cream);
-  --text-secondary: var(--orange);
-  --border-color: var(--red);
-  --card-bg: var(--navy);
-  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  --navbar-bg: var(--dark-red);
-  --hover-bg: rgba(224, 159, 62, 0.2);
-  --heading-color: var(--cream);
-  --link-color: var(--orange);
-  --link-hover-color: var(--cream);
-  --bg-active: rgba(255, 243, 176, 0.1);
-  --button-primary: var(--orange);
-  --button-hover: var(--cream);
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #e1e1e1;
+  --text-secondary: #b2bec3;
+  --border-color: #2d2d2d;
+  --card-bg: #1e1e1e;
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --navbar-bg: #121212;
+  --hover-bg: #2d2d2d;
+  --heading-color: #e1e1e1;
+  --link-color: #74b9ff;
+  --link-hover-color: #0984e3;
+  --bg-active: rgba(116, 185, 255, 0.1);
+
 }
 
 /* Global font ayarları */
