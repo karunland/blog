@@ -48,7 +48,7 @@ public class UserController(UserRepo userRepo, GoogleAuthService googleAuthServi
     }
     
     [HttpPost]
-    public async Task<ApiResult> Update(UserAddDto user)
+    public async Task<ApiResult> Update(UserUpdateDto user)
     {
         return await userRepo.Update(user);
     }

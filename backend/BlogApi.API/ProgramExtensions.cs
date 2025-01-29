@@ -23,11 +23,11 @@ public static class ProgramExtensions
         services.AddSwaggerGen();
         services.AddHttpContextAccessor();
         services.Configure<BaseSettings>(configuration.GetSection("BaseSettings"));
-        
-        var connectionString = configuration.GetConnectionString("BlogConnection");
+        // use postgresql
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<BlogContext>(options =>
         {
-            if (connectionString != null) options.UseInMemoryDatabase(connectionString);
+            if (connectionString != null) options.UseNpgsql(connectionString);
         });
         
         services.AddScoped<BlogRepo>();
@@ -115,7 +115,7 @@ public static class ProgramExtensions
 
         using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var blogContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-        await blogContext.SeedDatabaseAsync();
+        blogContext.SeedDatabaseAsync();
         
         app.UseCors("AllowAllOrigins");
         app.UseHttpsRedirection();

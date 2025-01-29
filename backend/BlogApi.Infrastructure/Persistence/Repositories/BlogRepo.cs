@@ -8,6 +8,9 @@ using BlogApi.Core.Enums;
 using BlogApi.Core.Interfaces;
 using BlogApi.Utilities;
 using Microsoft.EntityFrameworkCore;
+using BlogApi.Application.Helper;
+using BlogApi.Application.Services;
+using BlogApi.Infrastructure.Services;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
@@ -49,12 +52,17 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 
     public async Task<ApiResult> Create(BlogAddDto blog)
     {
+        // İçerik kontrolü
+        // var contentCheck = await contentModerationService.CheckTextContent(blog.Content);
+        // if (!contentCheck.isAppropriate)
+        //     return ApiError.Failure(contentCheck.reason);
+
         var newBlog = new Blog
         {
             Title = blog.Title,
             Content = blog.Content,
             UserId = currentUserService.Id,
-            BlogStatusEnum = (BlogStatusEnum)int.Parse(blog.Status),
+            BlogStatusEnum = Enum.Parse<BlogStatusEnum>(blog.Status),
             CategoryId = int.Parse(blog.CategoryId),
             Slug = blog.Slug,
             CreatedAt = DateTime.UtcNow
@@ -62,10 +70,17 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
 
         if (blog.Image != null)
         {
+            // Resim içerik kontrolü
+            using var memoryStream = new MemoryStream();
+            await blog.Image.CopyToAsync(memoryStream);
+            // var imageCheck = await contentModerationService.CheckImage(memoryStream.ToArray());
+            // if (!imageCheck.isAppropriate)
+            //     return ApiError.Failure(imageCheck.reason);
+
             var imagePath = await fileRepo.UploadFileAsync(new UploadFileAsyncDto {
                 File = blog.Image,
                 Type = FileTypeEnum.Thumbnail
-            } );
+            });
             newBlog.ImageUrl = imagePath.FileUrl;
         }
 

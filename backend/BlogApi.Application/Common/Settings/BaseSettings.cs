@@ -11,4 +11,5 @@ public class BaseSettings(IConfiguration configuration)
     public string? GoogleClientId => Environment.GetEnvironmentVariable("BaseSettings:GoogleClientId") ?? configuration["BaseSettings:GoogleClientId"];
     public string? GoogleClientSecret => Environment.GetEnvironmentVariable("BaseSettings:GoogleClientSecret") ?? configuration["BaseSettings:GoogleClientSecret"];
     public string? BackendUrl => Environment.GetEnvironmentVariable("BaseSettings:BackendUrl") ?? configuration["BaseSettings:BackendUrl"];
+    public string? OpenAIApiKey => Environment.GetEnvironmentVariable("BaseSettings:OpenAIApiKey") ?? configuration["BaseSettings:OpenAIApiKey"];
 }

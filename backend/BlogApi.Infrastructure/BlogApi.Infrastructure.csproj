@@ -20,7 +20,11 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0" />
       <PackageReference Include="MimeKit" Version="4.9.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />
-      
+      <PackageReference Include="OpenAI-DotNet" Version="8.5.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>

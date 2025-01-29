@@ -159,34 +159,20 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         return ApiResult.Success();
     }
 
-    public async Task<ApiResult> Update(UserAddDto user)
+    public async Task<ApiResult> Update(UserUpdateDto user)
     {
         var currentUser = await context.Users.FindAsync(currentUserService.Id);
         if (currentUser == null)
             return ApiError.Failure(Messages.NotFound);
 
-        // Email can't be changed if it's verified
         if (currentUser.IsMailVerified && currentUser.Email != user.Email)
-            return ApiError.Failure("Email cannot be changed once verified");
+            return ApiError.Failure("Onaylanmış e-posta adresi değiştirilemez.");
 
         currentUser.FirstName = user.FirstName;
         currentUser.LastName = user.LastName;
         currentUser.Username = user.UserName;
         currentUser.Email = user.Email;
         currentUser.UpdatedAt = DateTime.UtcNow;
-
-        if (user.Image != null)
-        {
-            var response = await fileRepo.UploadFileAsync(new UploadFileAsyncDto
-            {
-                File = user.Image,
-                Type = FileTypeEnum.ProfilePicture
-            });
-
-            currentUser.FileUrl = response.FileUrl;
-            currentUser.FileName = response.FileName;
-            currentUser.Extension = response.Extension;
-        }
 
         await context.SaveChangesAsync();
         return ApiResult.Success();
@@ -312,6 +298,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             .OrderByDescending(x => x.UpdatedAt)
             .ThenByDescending(x => x.CreatedAt)
             .AsNoTracking()
+            .Where(x => x.UserId == currentUserService.Id)
             .Select(x => new BlogsDto
             {
                 Id = x.Id,

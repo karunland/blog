@@ -1,6 +1,9 @@
 using BlogApi;
 using BlogApi.Infrastructure;
 using BlogApi.Core.Settings;
+using BlogApi.Application.Services;
+using BlogApi.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 var builder = WebApplication.CreateBuilder(args);
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -30,6 +33,8 @@ builder.Services.AddCors(options =>
                 .AllowCredentials();
         });
 });
+
+// builder.Services.AddScoped<ContentModerationService>();
 
 var app = builder.Build();
 await app.UseAppServicesAsync(configuration, app.Environment);

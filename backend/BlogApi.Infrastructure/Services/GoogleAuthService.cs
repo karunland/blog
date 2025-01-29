@@ -46,6 +46,7 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
             ImageUrl = user.FileUrl,
             ExternalProvider = user.ExternalId,
             ExternalProviderId = ExternalProviderEnum.Google,
+            IsMailVerified = true
         };
     }
 
@@ -80,7 +81,8 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
             ExternalProvider = ExternalProviderEnum.Google,
             IsGoogleRegister = true,
             FileUrl = payload.Picture,
-            IsMailVerified = true
+            IsMailVerified = true,
+            FileName = payload.Picture
         };
 
         context.Users.Add(newUser);
