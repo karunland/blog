@@ -29,7 +29,24 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
         var user = await context.Users.FirstOrDefaultAsync(x => x.Email == spayload.Email && x.IsGoogleRegister);
 
         if (user == null)
-            return ApiError.Failure("Google ile giriş yapmak için önce Google hesabınızı kayıt ediniz.");
+        {
+            var newUser = new User
+            {
+                Email = spayload.Email,
+                FirstName = spayload.GivenName,
+                LastName = spayload.FamilyName,
+                Username = spayload.Email.Split('@')[0],
+                ExternalId = spayload.Id,
+                ExternalProvider = ExternalProviderEnum.Google,
+                IsGoogleRegister = true,
+                FileUrl = spayload.Picture,
+                IsMailVerified = true,
+                FileName = spayload.Picture
+            };
+
+            context.Users.Add(newUser);
+            await context.SaveChangesAsync();
+        }
 
         return new MeDto
         {

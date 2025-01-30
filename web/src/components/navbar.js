@@ -119,21 +119,21 @@ export function Navbar() {
             >
               {LottieView}
             </Box>
-            <Typography
+              <Typography
               variant="h5"
-              noWrap
+                noWrap
               component={RouterLink}
               to="/"
-              sx={{
+                sx={{
                 fontFamily: 'monospace',
-                fontWeight: 700,
+                  fontWeight: 700,
                 letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              DEVLOG
-            </Typography>
+                  color: 'inherit',
+                  textDecoration: 'none',
+                }}
+              >
+                DEVLOG
+              </Typography>
           </Box>
 
           {/* Sağ taraf - Menü öğeleri, tema değiştirici ve kullanıcı menüsü */}
@@ -152,7 +152,7 @@ export function Navbar() {
             </Box>
 
             {/* Tema değiştirme butonu */}
-            <IconButton
+            {/* <IconButton
               onClick={toggleTheme}
               sx={{
                 ml: 2,
@@ -163,34 +163,34 @@ export function Navbar() {
               }}
             >
               {isDark ? <FaSun /> : <FaMoon />}
-            </IconButton>
+            </IconButton> */}
 
             {/* Mobile menü */}
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size="large"
+            <IconButton
+              size="large"
                 aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
                   horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
                   horizontal: 'right',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
               >
                 {pages.map((page) => (
                   <MenuItem 
@@ -198,18 +198,18 @@ export function Navbar() {
                     onClick={() => {
                       handleCloseNavMenu();
                       navigate(page.path);
-                    }}
-                  >
+              }}
+            >
                     <Typography textAlign="center">{page.name}</Typography>
-                  </MenuItem>
+              </MenuItem>
                 ))}
-              </Menu>
-            </Box>
+            </Menu>
+          </Box>
 
             {/* Kullanıcı menüsü */}
             <Box sx={{ ml: 2 }}>
               {isAuthenticated ? (
-                <>
+              <>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                       <Avatar alt={user?.userName} src={user?.imageUrl} />
@@ -230,7 +230,7 @@ export function Navbar() {
                     }}
                     open={Boolean(anchorElUser)}
                     onClose={handleCloseUserMenu}
-                  >
+                >
                     {settings.map((setting) => (
                       <MenuItem key={setting.name} onClick={() => handleMenuClick(setting.path)}>
                         <Typography textAlign="center">{setting.name}</Typography>
@@ -245,15 +245,15 @@ export function Navbar() {
                       <Typography textAlign="center">Çıkış Yap</Typography>
                     </MenuItem>
                   </Menu>
-                </>
-              ) : (
-                <Button
+              </>
+            ) : (
+              <Button
                   onClick={() => navigate('/login')}
                   sx={{ color: 'inherit' }}
-                >
+              >
                   Giriş Yap
-                </Button>
-              )}
+              </Button>
+            )}
             </Box>
           </Box>
         </Toolbar>

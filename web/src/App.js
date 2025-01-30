@@ -2,16 +2,13 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Navbar } from './components/navbar';
-import { Footer } from './components/footer';
 import { Home } from './pages/Home';
 import { BlogDetail } from './components/BlogDetail';
-import { Login } from './pages/Login';
+import Login from './pages/Login';
 import { About } from './pages/About';
 import { Dashboard } from './pages/Dashboard';
 import { Search } from './pages/Search';
-import { Box, Container } from '@mui/material';
-import { Register } from './pages/Register';
+import Register from './pages/Register';
 import { PrivateRoute } from './components/PrivateRoute';
 import { NotFound } from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -21,6 +18,9 @@ import { GoogleLoginBlog } from './components/GoogleLogin';
 import EmailVerification from './pages/EmailVerification';
 import { useEffect, useState, useMemo, createContext, useContext } from 'react';
 import { useAuth } from './contexts/AuthContext';
+import GoogleCallback from './pages/GoogleCallback';
+import MainLayout from './layouts/MainLayout';
+import AuthLayout from './layouts/AuthLayout';
 
 // Tema context'ini oluştur
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -33,51 +33,36 @@ function AppContent() {
   }, []);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        bgcolor: 'background.default'
-      }}
-    >
-      <Navbar />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 4,
-          bgcolor: 'background.default',
-          marginTop: '50px'
-        }}
-      >
-        <Container maxWidth="xl">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route 
-              path="/dashboard/*" 
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/blog/:slug" element={<BlogDetail />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/google-login" element={<GoogleLoginBlog />} />
-            <Route path="/verify/:code" element={<EmailVerification />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Container>
-      </Box>
-      <Footer />
-    </Box>
+    <Routes>
+      {/* Auth Routes - Navbar ve Footer olmayan sayfalar */}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/google-callback" element={<GoogleCallback />} />
+      </Route>
+
+      {/* Main Routes - Normal sayfalar */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route 
+          path="/dashboard/*" 
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/google-login" element={<GoogleLoginBlog />} />
+        <Route path="/verify/:code" element={<EmailVerification />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
 
@@ -112,54 +97,52 @@ export default function App() {
           mode,
           ...(mode === 'light'
             ? {
-                // Light tema renkleri
                 primary: {
-                  main: '#2563eb', // Modern mavi
+                  main: '#2563eb',
                   light: '#3b82f6',
                   dark: '#1d4ed8',
                 },
                 secondary: {
-                  main: '#4f46e5', // Indigo
+                  main: '#4f46e5',
                   light: '#6366f1',
                   dark: '#4338ca',
                 },
                 error: {
-                  main: '#dc2626', // Kırmızı
+                  main: '#dc2626',
                 },
                 background: {
-                  default: '#f8fafc', // Çok açık gri
+                  default: '#f8fafc',
                   paper: '#ffffff',
                 },
                 text: {
-                  primary: '#0f172a', // Koyu slate
-                  secondary: '#475569', // Orta slate
+                  primary: '#0f172a',
+                  secondary: '#475569',
                 },
-                divider: 'rgba(226, 232, 240, 1)', // Açık slate
+                divider: 'rgba(226, 232, 240, 1)',
               }
             : {
-                // Dark tema renkleri
                 primary: {
-                  main: '#3b82f6', // Parlak mavi
+                  main: '#3b82f6',
                   light: '#60a5fa',
                   dark: '#2563eb',
                 },
                 secondary: {
-                  main: '#6366f1', // Parlak indigo
+                  main: '#6366f1',
                   light: '#818cf8',
                   dark: '#4f46e5',
                 },
                 error: {
-                  main: '#ef4444', // Parlak kırmızı
+                  main: '#ef4444',
                 },
                 background: {
-                  default: '#0f172a', // Koyu slate
-                  paper: '#1e293b', // Orta koyu slate
+                  default: '#0f172a',
+                  paper: '#1e293b',
                 },
                 text: {
-                  primary: '#f1f5f9', // Çok açık slate
-                  secondary: '#cbd5e1', // Açık slate
+                  primary: '#f1f5f9',
+                  secondary: '#cbd5e1',
                 },
-                divider: 'rgba(51, 65, 85, 1)', // Slate
+                divider: 'rgba(51, 65, 85, 1)',
               }),
         },
         typography: {
@@ -192,7 +175,6 @@ export default function App() {
               },
             },
           },
-          // Gölge efektleri
           MuiCard: {
             styleOverrides: {
               root: {
@@ -219,7 +201,6 @@ export default function App() {
   );
 }
 
-// Custom hook'u oluştur
 export function useColorMode() {
   return useContext(ColorModeContext);
 }

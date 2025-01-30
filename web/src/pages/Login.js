@@ -18,14 +18,16 @@ import { LoadingButton } from '@mui/lab';
 import LoginIcon from '@mui/icons-material/Login';
 import { GoogleLoginBlog } from '../components/GoogleLogin';
 import { Divider } from '@mui/material';
+import Logo from '../components/Logo';
 
-export function Login() {
+const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -67,12 +69,12 @@ export function Login() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 5 }}>
+    <Container maxWidth="sm" sx={{ py: 15 }}>
+      <Logo width={100} />
+      <Typography variant="h5" align="center" gutterBottom>
+        Giriş Yap
+      </Typography>
       <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Giriş Yap
-        </Typography>
-
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
@@ -82,25 +84,31 @@ export function Login() {
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
+              <Typography variant="subtitle2" gutterBottom>
+                Email
+              </Typography>
               <TextField
                 fullWidth
-                label="Email"
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
+                size="small"
               />
             </Grid>
             <Grid item xs={12}>
+              <Typography variant="subtitle2" gutterBottom>
+                Şifre
+              </Typography>
               <TextField
                 fullWidth
-                label="Şifre"
                 name="password"
                 type="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
+                size="small"
               />
             </Grid>
           </Grid>
@@ -109,14 +117,17 @@ export function Login() {
             type="submit"
             fullWidth
             variant="contained"
-            size="large"
+            size="medium"
             loading={loading}
             startIcon={<LoginIcon />}
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3 }}
           >
             Giriş Yap
           </LoadingButton>
 
+          <Divider sx={{ my: 2 }}>veya</Divider>
+
+          <GoogleLoginBlog buttonName="login" onError={handleGoogleError} />
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2">
               Hesabınız yok mu?{' '}
@@ -129,16 +140,12 @@ export function Login() {
               </Link>
             </Typography>
           </Box>
-
-          <Divider sx={{ my: 2 }}>veya</Divider>
-
-          <GoogleLoginBlog buttonName="login" onError={handleGoogleError} />
         </Box>
       </Paper>
 
       <Snackbar
         open={success}
-        autoHideDuration={2000}
+        autoHideDuration={1000}
         onClose={() => setSuccess(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
@@ -148,4 +155,6 @@ export function Login() {
       </Snackbar>
     </Container>
   );
-} 
+}
+
+export default Login;

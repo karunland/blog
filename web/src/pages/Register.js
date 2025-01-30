@@ -20,8 +20,9 @@ import { GoogleLoginBlog } from '../components/GoogleLogin';
 import { Divider } from '@mui/material';
 import Cropper from 'react-easy-crop';
 import { LoadingButton } from '@mui/lab';
+import Logo from '../components/Logo';
 
-export function Register() {
+const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     userName: '',
@@ -142,11 +143,13 @@ export function Register() {
 
   return (
     <Container maxWidth="sm" sx={{ py: 5 }}>
-      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Kayıt Ol
-        </Typography>
+      <Logo width={100} />
+      
+      <Typography variant="h5" align="center" gutterBottom>
+        Kayıt Ol
+      </Typography>
 
+      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
@@ -156,55 +159,62 @@ export function Register() {
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle2" gutterBottom> Ad </Typography>
               <TextField
                 fullWidth
-                label="Ad"
                 name="firstName"
+                label="Adınız"
                 value={formData.firstName}
                 onChange={handleInputChange}
                 required
+                size="small"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle2" gutterBottom> Soyad </Typography>
               <TextField
                 fullWidth
-                label="Soyad"
                 name="lastName"
+                label="Soyadınız"
                 value={formData.lastName}
                 onChange={handleInputChange}
                 required
+                size="small"
               />
             </Grid>
             <Grid item xs={12}>
+              <Typography variant="subtitle2" gutterBottom> Kullanıcı Adı </Typography>
               <TextField
                 fullWidth
-                label="Kullanıcı Adı"
                 name="userName"
                 value={formData.userName}
                 onChange={handleInputChange}
                 required
+                size="small"
               />
             </Grid>
             <Grid item xs={12}>
+              <Typography variant="subtitle2" gutterBottom> Email </Typography>
               <TextField
                 fullWidth
-                label="Email"
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
+                size="small"
               />
             </Grid>
             <Grid item xs={12}>
+              <Typography variant="subtitle2" gutterBottom> Şifre </Typography>
               <TextField
                 fullWidth
-                label="Şifre"
                 name="password"
                 type="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
+                size="small"
               />
             </Grid>
             <Grid item xs={12}>
@@ -308,3 +318,5 @@ export function Register() {
     </Container>
   );
 }
+
+export default Register;

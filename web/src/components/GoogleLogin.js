@@ -53,13 +53,15 @@ export function GoogleLoginBlog({ buttonName, onError }) {
 
   return (
     <Button
+      size="small"
       variant="outlined"
+      
       onClick={() => login()}
       startIcon={<GoogleIcon />}
       fullWidth
-      sx={{ mt: 2, mb: 2 }}
+      sx={{ }}
     >
-      Google ile {buttonName === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
+      Google ile Devam Et
     </Button>
   );
 }
