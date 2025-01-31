@@ -163,7 +163,6 @@ const Register = () => {
               <TextField
                 fullWidth
                 name="firstName"
-                label="Adınız"
                 value={formData.firstName}
                 onChange={handleInputChange}
                 required
@@ -175,7 +174,6 @@ const Register = () => {
               <TextField
                 fullWidth
                 name="lastName"
-                label="Soyadınız"
                 value={formData.lastName}
                 onChange={handleInputChange}
                 required
@@ -256,10 +254,14 @@ const Register = () => {
             size="large"
             loading={loading}
             startIcon={<PersonAddIcon />}
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3 }}
           >
             Kayıt Ol
           </LoadingButton>
+
+          <Divider sx={{ my: 2 }}>veya</Divider>
+
+          <GoogleLoginBlog buttonName="register" onError={handleGoogleError} />
 
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2">
@@ -273,10 +275,6 @@ const Register = () => {
               </Link>
             </Typography>
           </Box>
-
-          <Divider sx={{ my: 2 }}>veya</Divider>
-
-          <GoogleLoginBlog buttonName="register" onError={handleGoogleError} />
         </Box>
       </Paper>
 
