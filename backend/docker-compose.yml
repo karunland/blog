@@ -1,6 +1,0 @@
-﻿services:
-  blog:
-    image: blog
-    build:
-      context: .
-      dockerfile: Blog/Dockerfile
