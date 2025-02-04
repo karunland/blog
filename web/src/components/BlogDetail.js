@@ -255,17 +255,20 @@ export function BlogDetail() {
               >
                 İçindekiler
               </Typography>
-              <Stack spacing={1}>
+              <Stack spacing={0.5}>
                 {headings.map((heading) => (
                   <Button
                     key={heading.id}
                     onClick={() => scrollToHeading(heading.id)}
-                    variant={activeId === heading.id ? "contained" : "text"}
+                    variant={activeId === heading.id ? "contained" : "text"} 
                     size="small"
                     sx={{
                       justifyContent: 'flex-start',
                       textAlign: 'left',
-                      pl: heading.level > 1 ? (heading.level - 1) * 2 : 1,
+                      pl: heading.level > 1 ? (heading.level - 1) * 1 : 0.5,
+                      py: 0.25,
+                      minHeight: 0,
+                      fontSize: '0.875rem',
                       color: activeId === heading.id ? 'primary.contrastText' : 'text.primary',
                       '&:hover': {
                         backgroundColor: activeId === heading.id ? 'primary.dark' : 'action.hover'

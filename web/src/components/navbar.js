@@ -210,7 +210,7 @@ export function Navbar() {
             <Box sx={{ ml: 2 }}>
               {isAuthenticated ? (
               <>
-                  <Tooltip title="Open settings">
+                  <Tooltip title="">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                       <Avatar alt={user?.userName} src={user?.imageUrl} />
                     </IconButton>
