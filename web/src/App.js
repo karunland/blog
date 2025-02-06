@@ -10,6 +10,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Search } from './pages/Search';
 import Register from './pages/Register';
 import { PrivateRoute } from './components/PrivateRoute';
+import { PublicRoute } from './components/PublicRoute';
 import { NotFound } from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
@@ -36,8 +37,16 @@ function AppContent() {
     <Routes>
       {/* Auth Routes - Navbar ve Footer olmayan sayfalar */}
       <Route element={<AuthLayout />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        <Route path="/register" element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        } />
         <Route path="/google-callback" element={<GoogleCallback />} />
       </Route>
 

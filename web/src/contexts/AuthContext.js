@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, clearUser } from '../store/userSlice';
 import { getMe } from '../lib/api';
@@ -8,6 +8,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(true);
 
   const login = (userData) => {
     dispatch(setUser(userData));
@@ -31,10 +32,11 @@ export const AuthProvider = ({ children }) => {
         logout();
       }
     }
+    setLoading(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, checkAuth }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, checkAuth, loading }}>
       {children}
     </AuthContext.Provider>
   );

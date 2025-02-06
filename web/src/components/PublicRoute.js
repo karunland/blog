@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Box, CircularProgress } from '@mui/material';
 
-export function PrivateRoute({ children }) {
+export function PublicRoute({ children }) {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -13,8 +13,8 @@ export function PrivateRoute({ children }) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
