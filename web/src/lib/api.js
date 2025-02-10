@@ -9,8 +9,6 @@ const api = axios.create({
   }
 });
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const getBlogsByCategory = async (params) => {
   try {
     const response = await api.get('/blog/list', { 
@@ -28,7 +26,6 @@ export const getBlogsByCategory = async (params) => {
 
 export const getBestBlogs = async () => {
   try {
-    await sleep(1000);
     const response = await api.get('/blog/list', {
       params: {
         sortBy: 2
@@ -66,7 +63,6 @@ export const getBlogBySlug = async (slug) => {
 
 export const getBlogPosts = async () => {
   try {
-    await sleep(1000);
     const response = await api.get('/user/Blogs', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -97,6 +93,7 @@ export const createBlog = async (blogData) => {
   try {
     const response = await api.post('/blog/create', blogData, {
       headers: {
+        'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
@@ -109,7 +106,6 @@ export const createBlog = async (blogData) => {
 
 export const getDashboardStats = async () => {
   try {
-    await sleep(1000);
     const response = await api.get('/dashboard/getStats', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -175,7 +171,6 @@ export const updateBlog = async (id, data) => {
 
 export const searchBlogs = async (search) => {
   try {
-    await sleep(1000);
     const response = await api.get(`/blog/search?search=${encodeURIComponent(search)}`);
     return response.data;
   } catch (error) {

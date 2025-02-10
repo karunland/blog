@@ -30,19 +30,19 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     }
     
     [HttpPost]
-    public async Task<ApiResult> Create(BlogAddDto blog)
+    public async Task<ApiResult> Create([FromBody] BlogAddDto blog)
     {
         return await blogRepo.Create(blog);
     }
     
     [HttpPost]
-    public async Task<ApiResult> Update(BlogUpdateDto blog)
+    public async Task<ApiResult> Update([FromBody] BlogUpdateDto blog)
     {
         return await blogRepo.Update(blog);
     }
     
-    [HttpDelete]
-    public async Task<ApiResult> Delete([FromRoute] string slug)
+    [HttpPost]
+    public async Task<ApiResult> Delete([FromQuery] string slug)
     {
         return await blogRepo.Delete(slug);
     }

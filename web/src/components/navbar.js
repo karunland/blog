@@ -18,13 +18,20 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Link
+  Link,
+  Divider,
+  ListItemIcon,
+  ListItemText
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import appIconAnimation from '../assets/icon.json';
 import { useLottie } from 'lottie-react';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import { useColorMode } from '../App';
+import PersonIcon from '@mui/icons-material/Person';
+import ArticleIcon from '@mui/icons-material/Article';
+import AddIcon from '@mui/icons-material/Add';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const pages = [
   { name: 'Ana Sayfa', path: '/' },
@@ -32,9 +39,9 @@ const pages = [
 ];
 
 const settings = [
-  { name: 'Profil', path: '/dashboard/profile' },
-  { name: 'Blog Yazılarım', path: '/dashboard/blogs' },
-  { name: 'Yeni Blog', path: '/dashboard/blogs/new' }
+  { name: 'Profil', path: '/dashboard/profile', icon: <PersonIcon fontSize="small" /> },
+  { name: 'Blog Yazılarım', path: '/dashboard/blogs', icon: <ArticleIcon fontSize="small" /> },
+  { name: 'Yeni Blog', path: '/dashboard/blogs/new', icon: <AddIcon fontSize="small" /> }
 ];
 
 export function Navbar() {
@@ -67,7 +74,6 @@ export function Navbar() {
     handleCloseUserMenu();
   };
 
-  // Lottie animasyonu için options
   const options = {
     animationData: appIconAnimation,
     loop: true,
@@ -90,107 +96,121 @@ export function Navbar() {
       elevation={0}
       sx={{ 
         bgcolor: theme.palette.mode === 'dark'
-          ? 'rgba(18, 18, 18, 0.85)'
-          : 'rgba(18, 18, 18, 0.4)',
-        backdropFilter: 'blur(10px)',
+          ? 'rgba(18, 18, 18, 0.8)'
+          : 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(8px)',
         borderBottom: 1,
         borderColor: theme.palette.mode === 'dark'
           ? 'rgba(255, 255, 255, 0.05)'
           : 'rgba(0, 0, 0, 0.05)',
         color: 'text.primary',
-        transition: 'all 0.3s ease-in-out',
-        zIndex: (theme) => theme.zIndex.drawer + 1
+        transition: 'all 0.2s ease-in-out',
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+        height: '72px'
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-          {/* Sol taraf - Logo ve başlık */}
+        <Toolbar disableGutters sx={{ minHeight: '72px', justifyContent: 'space-between' }}>
+          {/* Logo ve başlık */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box 
-              sx={{ 
-                width: 100, 
-                mr: 2,
-                cursor: 'pointer',
-                marginRight: '0px',
-                transition: 'width 0.3s ease'
-              }}
-              onMouseEnter={() => play()}
-              onMouseLeave={() => stop()}
-            >
-              {LottieView}
-            </Box>
-              <Typography
-              variant="h5"
-                noWrap
               component={RouterLink}
               to="/"
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                textDecoration: 'none'
+              }}
+            >
+              <Box 
+                sx={{ 
+                  width: 64,
+                  height: 'auto',
+                  mr: 1.5,
+                  cursor: 'pointer',
+                  transition: 'width 0.2s ease'
+                }}
+                onMouseEnter={() => play()}
+                onMouseLeave={() => stop()}
+              >
+                {LottieView}
+              </Box>
+              <Typography
+                variant="h5"
+                noWrap
                 sx={{
-                fontFamily: 'monospace',
+                  fontFamily: 'monospace',
                   fontWeight: 700,
-                letterSpacing: '.3rem',
+                  letterSpacing: '.05rem',
                   color: 'inherit',
                   textDecoration: 'none',
                 }}
               >
                 DEVLOG
+                <Box component="span" sx={{ opacity: 0.7 }}>.ONLINE</Box>
               </Typography>
+            </Box>
           </Box>
 
-          {/* Sağ taraf - Menü öğeleri, tema değiştirici ve kullanıcı menüsü */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/* Menü öğeleri ve kullanıcı */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {/* Desktop menü */}
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5 }}>
               {pages.map((page) => (
                 <Button
                   key={page.name}
                   onClick={() => navigate(page.path)}
-                  sx={{ color: 'inherit' }}
+                  sx={{ 
+                    color: 'inherit',
+                    fontSize: '1rem',
+                    textTransform: 'none',
+                    px: 2.5,
+                    py: 1
+                  }}
                 >
                   {page.name}
                 </Button>
               ))}
             </Box>
 
-            {/* Tema değiştirme butonu */}
-            {/* <IconButton
-              onClick={toggleTheme}
-              sx={{
-                ml: 2,
-                color: 'inherit',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                }
-              }}
-            >
-              {isDark ? <FaSun /> : <FaMoon />}
-            </IconButton> */}
-
             {/* Mobile menü */}
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-                aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
+              <IconButton
+                size="medium"
+                aria-label="menu"
+                onClick={handleOpenNavMenu}
+                color="inherit"
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
                   horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
                   horizontal: 'right',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: 'visible',
+                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
+                    mt: 1.5,
+                    borderRadius: 2,
+                    minWidth: 180,
+                    '& .MuiMenuItem-root': {
+                      px: 2,
+                      py: 1.5
+                    }
+                  }
+                }}
               >
                 {pages.map((page) => (
                   <MenuItem 
@@ -198,62 +218,113 @@ export function Navbar() {
                     onClick={() => {
                       handleCloseNavMenu();
                       navigate(page.path);
-              }}
-            >
-                    <Typography textAlign="center">{page.name}</Typography>
-              </MenuItem>
+                    }}
+                  >
+                    <Typography variant="body1">{page.name}</Typography>
+                  </MenuItem>
                 ))}
-            </Menu>
-          </Box>
+              </Menu>
+            </Box>
 
             {/* Kullanıcı menüsü */}
-            <Box sx={{ ml: 2 }}>
+            <Box>
               {isAuthenticated ? (
-              <>
-                  <Tooltip title="">
-                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <Avatar alt={user?.userName} src={user?.imageUrl} />
+                <>
+                  <Tooltip title="Hesap ayarları">
+                    <IconButton 
+                      onClick={handleOpenUserMenu} 
+                      sx={{ 
+                        p: 0,
+                        width: 40,
+                        height: 40,
+                        border: '2px solid transparent',
+                        '&:hover': {
+                          border: `2px solid ${theme.palette.primary.main}`
+                        }
+                      }}
+                    >
+                      <Avatar 
+                        alt={user?.userName} 
+                        src={user?.imageUrl}
+                        sx={{ width: 36, height: 36 }}
+                      />
                     </IconButton>
                   </Tooltip>
                   <Menu
-                    sx={{ mt: '45px' }}
-                    id="menu-appbar"
                     anchorEl={anchorElUser}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
+                    id="account-menu"
                     open={Boolean(anchorElUser)}
                     onClose={handleCloseUserMenu}
-                >
+                    onClick={handleCloseUserMenu}
+                    PaperProps={{
+                      elevation: 0,
+                      sx: {
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
+                        mt: 1.5,
+                        borderRadius: 2,
+                        minWidth: 220,
+                        '& .MuiMenuItem-root': {
+                          px: 2,
+                          py: 1.5
+                        }
+                      },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  >
+                    <Box sx={{ px: 2, py: 1.5 }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Hoş geldin,
+                      </Typography>
+                      <Typography variant="subtitle1" fontWeight="500">
+                        {user?.userName}
+                      </Typography>
+                    </Box>
+                    <Divider />
                     {settings.map((setting) => (
-                      <MenuItem key={setting.name} onClick={() => handleMenuClick(setting.path)}>
-                        <Typography textAlign="center">{setting.name}</Typography>
+                      <MenuItem 
+                        key={setting.name} 
+                        onClick={() => handleMenuClick(setting.path)}
+                      >
+                        <ListItemIcon>
+                          {setting.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={setting.name} />
                       </MenuItem>
                     ))}
-                    <MenuItem onClick={() => {
-                      handleCloseUserMenu();
-                      dispatch(clearUser());
-                      localStorage.removeItem('token');
-                      navigate('/');
-                    }}>
-                      <Typography textAlign="center">Çıkış Yap</Typography>
+                    <Divider />
+                    <MenuItem 
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        dispatch(clearUser());
+                        localStorage.removeItem('token');
+                        navigate('/');
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LogoutIcon fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText primary="Çıkış Yap" />
                     </MenuItem>
                   </Menu>
-              </>
-            ) : (
-              <Button
+                </>
+              ) : (
+                <Button
+                  variant="outlined"
                   onClick={() => navigate('/login')}
-                  sx={{ color: 'inherit' }}
-              >
+                  sx={{ 
+                    color: 'inherit',
+                    borderColor: 'currentColor',
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    height: 40,
+                    px: 3
+                  }}
+                >
                   Giriş Yap
-              </Button>
-            )}
+                </Button>
+              )}
             </Box>
           </Box>
         </Toolbar>

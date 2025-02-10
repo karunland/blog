@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/userSlice';
 import { login } from '../lib/api';
@@ -10,7 +10,6 @@ import {
   TextField,
   Box,
   Grid,
-  Link,
   Alert,
   Snackbar
 } from '@mui/material';
@@ -70,7 +69,9 @@ const Login = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 15 }}>
-      <Logo width={100} />
+      <Link to="/" style={{ display: 'block', textAlign: 'center' }}>
+        <Logo width={200} />
+      </Link>
       <Typography variant="h5" align="center" gutterBottom>
         Giriş Yap
       </Typography>

@@ -9,7 +9,7 @@ import { BlogCard } from '../components/BlogCard';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import heroImage from '../assets/default.jpg';
+import heroImage from '../assets/home.png';
 import { getBestBlogs } from '../lib/api';
 import { useState, useEffect } from 'react';
 
@@ -81,16 +81,8 @@ export function Home() {
       {/* Hero Section */}
       <Box
         sx={{
-          background: isDarkMode 
-            ? 'linear-gradient(45deg, #1a1a1a 30%, #2d2d2d 90%)'
-            : 'linear-gradient(45deg, #335C67 30%, #4B7C8B 90%)',
           color: isDarkMode ? '#f5f5f5' : 'white',
-          py: 12,
-          borderRadius: '0 0 20px 20px',
           mb: 8,
-          boxShadow: isDarkMode 
-            ? '0 3px 10px rgba(0,0,0,0.5)'
-            : '0 3px 10px rgba(0,0,0,0.2)'
         }}
       >
         <Container maxWidth="lg">
@@ -141,6 +133,7 @@ export function Home() {
               <Box
                 component="img"
                 src={heroImage}
+                // add filter to blue
                 alt="Blog Platform"
                 sx={{
                   width: '100%',

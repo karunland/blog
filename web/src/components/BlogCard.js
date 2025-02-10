@@ -44,7 +44,6 @@ export function BlogCard({ blog }) {
             }}
           />
         </Box>
-      </Link>
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Link 
           to={`/blog/${blog.slug}`} 
@@ -101,6 +100,8 @@ export function BlogCard({ blog }) {
           </Stack>
         </Box>
       </CardContent>
+      </Link>
+
     </Card>
   );
 } 

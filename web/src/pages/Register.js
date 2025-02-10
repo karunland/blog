@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../lib/api';
 import {
   Container,
@@ -9,7 +9,7 @@ import {
   Button,
   Box,
   Grid,
-  Link,
+  Link as MuiLink,
   Dialog,
   Alert,
   Snackbar
@@ -143,7 +143,9 @@ const Register = () => {
 
   return (
     <Container maxWidth="sm" sx={{ py: 5 }}>
-      <Logo width={100} />
+      <Link to="/" style={{ display: 'block', textAlign: 'center', marginBottom: '20px' }}>
+        <Logo width={200} />
+      </Link>
       
       <Typography variant="h5" align="center" gutterBottom>
         Kayıt Ol
@@ -266,13 +268,13 @@ const Register = () => {
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2">
               Zaten hesabınız var mı?{' '}
-              <Link
+              <MuiLink
                 href="/login"
                 underline="hover"
                 sx={{ cursor: 'pointer' }}
               >
                 Giriş Yap
-              </Link>
+              </MuiLink>
             </Typography>
           </Box>
         </Box>

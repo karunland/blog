@@ -60,12 +60,12 @@ export function MyBlogs() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4, mt: 8 }}>
       <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <ArticleIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
-            <Typography variant="h4" component="h1">
+            <ArticleIcon sx={{ fontSize: 24, mr: 2, color: 'primary.main' }} />
+            <Typography variant="h5" component="h1">
               Bloglarım
             </Typography>
           </Box>
@@ -83,22 +83,22 @@ export function MyBlogs() {
             blogs.map((blog, index) => (
               <Box key={blog.id}>
                 {index > 0 && <Divider />}
-                <ListItem sx={{ py: 2 }}>
+                <ListItem sx={{ py: 1 }}>
                   <ListItemText
                     primary={
-                      <Typography variant="h6" component="h2">
+                      <Typography variant="subtitle1">
                         {blog.title}
                       </Typography>
                     }
                     secondary={
-                      <Box sx={{ mt: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
+                      <Box sx={{ mt: 0.5 }}>
+                        <Typography variant="caption" color="text.secondary">
                           {new Date(blog.createdAt).toLocaleDateString('tr-TR')}
                         </Typography>
                         <Typography 
-                          variant="body2" 
+                          variant="caption"
                           sx={{ 
-                            mt: 0.5,
+                            ml: 1,
                             color: blog.status === 2 ? 'success.main' : 'warning.main'
                           }}
                         >
@@ -110,20 +110,22 @@ export function MyBlogs() {
                   <ListItemSecondaryAction>
                     <Tooltip title="Düzenle">
                       <IconButton 
+                        size="small"
                         edge="end" 
                         onClick={() => navigate(`/dashboard/blogs/edit/${blog.slug}`)}
                         sx={{ mr: 1 }}
                       >
-                        <EditIcon />
+                        <EditIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Sil">
                       <IconButton 
+                        size="small"
                         edge="end" 
                         onClick={() => handleDelete(blog.slug)}
                         color="error"
                       >
-                        <DeleteIcon />
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </ListItemSecondaryAction>
@@ -131,7 +133,7 @@ export function MyBlogs() {
               </Box>
             ))
           ) : (
-            <Typography color="text.secondary" align="center" sx={{ py: 4 }}>
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 3 }}>
               Henüz blog yazınız bulunmuyor.
             </Typography>
           )}

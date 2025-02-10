@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Typography, Avatar, Paper } from '@mui/material';
+import { Box, TextField, Button, Typography, Avatar, Paper, IconButton, Popover } from '@mui/material';
 import { useSelector } from 'react-redux';
 import SendIcon from '@mui/icons-material/Send';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import EmojiPicker from 'emoji-picker-react';
 import { formatDistance } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { getComments, addComment, deleteComment } from '../lib/api';
-import Swal from 'sweetalert2';
+import { toast } from '../utils/toast';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
 
 export function CommentSection({ blogSlug }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
@@ -37,30 +39,18 @@ export function CommentSection({ blogSlug }) {
     setLoading(true);
     try {
       const response = await addComment({
-        blogId: blogSlug,
+        blogSlug: blogSlug,
         content: newComment.trim()
       });
 
       if (response.isSuccess) {
         setNewComment('');
         await fetchComments();
-        Swal.fire({
-          title: 'Başarılı',
-          text: 'Yorumunuz eklendi',
-          icon: 'success',
-          background: '#0f172a',
-          color: '#f1f5f9',
-        });
+        toast.success('Yorumunuz eklendi');
       }
     } catch (error) {
       console.error('Error adding comment:', error);
-      Swal.fire({
-        title: 'Hata',
-        text: 'Yorum eklenirken bir hata oluştu',
-        icon: 'error',
-        background: '#0f172a',
-        color: '#f1f5f9',
-      });
+      toast.error('Yorum eklenirken bir hata oluştu');
     } finally {
       setLoading(false);
     }
@@ -68,31 +58,31 @@ export function CommentSection({ blogSlug }) {
 
   const handleDeleteComment = async (commentId) => {
     try {
-        // pop up  user with swal if he is sure to delete the comment
-        const result = await Swal.fire({
-          title: 'Yorum Silmek İstediğinizden Emin Misiniz?',
-          text: 'Bu işlem geri alınamaz',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Sil',
-          cancelButtonText: 'Vazgeç'
-        });
-        if (result.isConfirmed) {
-          const response = await deleteComment(commentId);
-          if (response.isSuccess) {
-            await fetchComments();
-          }
+      const confirmed = await toast.confirm('Bu işlem geri alınamaz', 'Yorum Silmek İstediğinizden Emin Misiniz?');
+      if (confirmed) {
+        const response = await deleteComment(commentId);
+        if (response.isSuccess) {
+          await fetchComments();
+          toast.success('Yorum başarıyla silindi');
+        }
       }
     } catch (error) {
       console.error('Error deleting comment:', error);
-      Swal.fire({
-        title: 'Hata',
-        text: 'Yorum silinirken bir hata oluştu',
-        icon: 'error',
-        background: '#0f172a',
-        color: '#f1f5f9',
-      });
+      toast.error('Yorum silinirken bir hata oluştu');
     }
+  };
+
+  const handleEmojiClick = (emojiData) => {
+    setNewComment(prev => prev + emojiData.emoji);
+    setAnchorEl(null);
+  };
+
+  const handleEmojiButtonClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseEmojiPicker = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -103,24 +93,54 @@ export function CommentSection({ blogSlug }) {
       
       {user ? (
         <Box component="form" onSubmit={handleSubmit} sx={{ mb: 4 }}>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            variant="outlined"
-            placeholder="Yorumunuzu yazın..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <Button
-            variant="contained"
-            type="submit"
-            disabled={loading}
-            endIcon={<SendIcon />}
+          <Box sx={{ position: 'relative' }}>
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              variant="outlined"
+              placeholder="Yorumunuzu yazın..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              sx={{ mb: 2 }}
+            />
+            <IconButton
+              onClick={handleEmojiButtonClick}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                bottom: 24,
+                color: 'text.secondary'
+              }}
+            >
+              <EmojiEmotionsIcon />
+            </IconButton>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={loading}
+              endIcon={<SendIcon />}
+            >
+              Yorum Yap
+            </Button>
+          </Box>
+          <Popover
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleCloseEmojiPicker}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
           >
-            Yorum Yap
-          </Button>
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
+          </Popover>
         </Box>
       ) : (
         <Typography color="text.secondary" sx={{ mb: 2 }}>

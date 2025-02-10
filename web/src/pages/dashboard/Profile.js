@@ -20,7 +20,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { updateProfile, updateProfilePhoto, verifyEmail, getMe, sendVerificationCode } from '../../lib/api';
 import { updateUserProfile } from '../../store/userSlice';
-import Swal from 'sweetalert2';
+import { toast } from '../../utils/toast';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
@@ -76,19 +76,10 @@ export function Profile() {
       console.log(response);
       if (response.isSuccess) {
         setVerificationModalOpen(true);
-        Swal.fire({
-          title: 'Başarılı!',
-          text: 'Doğrulama kodu email adresinize gönderildi.',
-          icon: 'success',
-          timer: 2000
-        });
+        toast.success('Doğrulama kodu email adresinize gönderildi.');
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Hata!',
-        text: 'Doğrulama kodu gönderilirken bir hata oluştu.',
-        icon: 'error'
-      });
+      toast.error('Doğrulama kodu gönderilirken bir hata oluştu.');
     } finally {
       setIsSendingCode(false);
     }
@@ -103,21 +94,11 @@ export function Profile() {
         if (meResponse.isSuccess) {
           dispatch(updateUserProfile(meResponse.data));
           setVerificationModalOpen(false);
-          Swal.fire({
-            title: 'Başarılı!',
-            text: 'Email adresiniz doğrulandı.',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
+          toast.success('Email adresiniz doğrulandı.');
         }
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Hata!',
-        text: 'Doğrulama kodu geçersiz veya süresi dolmuş.',
-        icon: 'error'
-      });
+      toast.error('Doğrulama kodu geçersiz veya süresi dolmuş.');
     } finally {
       setIsVerifying(false);
     }
@@ -161,20 +142,11 @@ export function Profile() {
           }
 
           setSelectedFile(null);
-          Swal.fire({
-            title: 'Başarılı!',
-            text: 'Profil fotoğrafınız güncellendi.',
-            icon: 'success',
-            timer: 2000
-          });
+          toast.success('Profil fotoğrafınız güncellendi.');
         }
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Hata!',
-        text: 'Profil fotoğrafı güncellenirken bir hata oluştu.',
-        icon: 'error'
-      });
+      toast.error('Profil fotoğrafı güncellenirken bir hata oluştu.');
     } finally {
       setIsUploading(false);
     }
@@ -188,20 +160,11 @@ export function Profile() {
         const meResponse = await getMe();
         if (meResponse.isSuccess) {
           dispatch(updateUserProfile(meResponse.data));
-          Swal.fire({
-            title: 'Başarılı!',
-            text: 'Profil bilgileriniz güncellendi.',
-            icon: 'success',
-            timer: 2000
-          });
+          toast.success('Profil bilgileriniz güncellendi.');
         }
       }
     } catch (error) {
-      Swal.fire({
-        title: 'Hata!',
-        text: 'Profil bilgileri güncellenirken bir hata oluştu.',
-        icon: 'error'
-      });
+      toast.error('Profil bilgileri güncellenirken bir hata oluştu.');
     } finally {
       setIsUpdating(false);
     }
@@ -249,10 +212,7 @@ export function Profile() {
 
   return (
     <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
-      <Paper elevation={3} sx={{ p: 4, mb: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Profil Fotoğrafı
-        </Typography>
+      <Paper elevation={3} sx={{ p: 4, mb: 3, mt: 8 }}>
         
         <Stack direction="column" spacing={3} alignItems="center">
           {!selectedFile && (
@@ -334,9 +294,6 @@ export function Profile() {
       </Paper>
 
       <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Profil Bilgileri
-        </Typography>
 
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>

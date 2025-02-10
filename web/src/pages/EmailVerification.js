@@ -9,7 +9,7 @@ import {
   Typography,
   CircularProgress,
 } from '@mui/material';
-import Swal from 'sweetalert2';
+import { toast } from '../utils/toast';
 
 export default function EmailVerification() {
   const { code } = useParams();
@@ -30,26 +30,15 @@ export default function EmailVerification() {
             dispatch(setUser(meResponse.data));
           }
 
-          Swal.fire({
-            title: 'Başarılı!',
-            text: 'Email adresiniz doğrulandı. Yönlendiriliyorsunuz...',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
+          toast.success('Email adresiniz doğrulandı. Yönlendiriliyorsunuz...');
 
           setTimeout(() => {
             navigate('/dashboard');
           }, 2000);
         }
       } catch (error) {
-        Swal.fire({
-          title: 'Hata!',
-          text: 'Email doğrulama işlemi başarısız oldu.',
-          icon: 'error'
-        }).then(() => {
-          navigate('/login');
-        });
+        toast.error('Email doğrulama işlemi başarısız oldu.');
+        navigate('/login');
       } finally {
         setIsVerifying(false);
       }

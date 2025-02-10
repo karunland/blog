@@ -99,6 +99,7 @@ export function AddBlog() {
 
     try {
       const formDataToSend = new FormData();
+
       Object.keys(formData).forEach(key => {
         if (formData[key] !== null) {
           formDataToSend.append(key, formData[key]);
@@ -121,11 +122,11 @@ export function AddBlog() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper elevation={1} sx={{ p: 4, borderRadius: 2 }}>
+    <Container maxWidth="lg" sx={{ color: isDarkMode ? '#ffffff' : '#2d3436', mt: 12, backgroundColor: isDarkMode ? 'transparent' : '#ffffff' }}>
+      <Paper elevation={1} sx={{ p: 4, borderRadius: 2, backgroundColor: isDarkMode ? 'transparent' : '#ffffff', color: isDarkMode ? '#ffffff' : '#2d3436' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
           <CreateIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
-          <Typography variant="h4" component="h1">
+          <Typography variant="h5" component="h1">
             Yeni Blog Yazısı
           </Typography>
         </Box>
@@ -137,6 +138,7 @@ export function AddBlog() {
                 fullWidth
                 label="Başlık"
                 name="title"
+                size="small"
                 value={formData.title}
                 onChange={handleInputChange}
                 required
@@ -147,6 +149,7 @@ export function AddBlog() {
                 fullWidth
                 label="URL Slug"
                 name="slug"
+                size="small"
                 value={formData.slug}
                 onChange={handleInputChange}
                 required
@@ -163,6 +166,7 @@ export function AddBlog() {
                   onChange={handleInputChange}
                   required
                   label="Kategori"
+                  size="small"
                 >
                   <MenuItem value="" disabled>
                     Kategori seçin
@@ -179,6 +183,7 @@ export function AddBlog() {
                 <InputLabel>Durum</InputLabel>
                 <Select
                   name="status"
+                  size="small"
                   value={formData.status}
                   onChange={handleInputChange}
                   required
@@ -253,7 +258,10 @@ export function AddBlog() {
                       }
                     `,
                     skin: isDarkMode ? 'oxide-dark' : 'oxide',
-                    content_css: isDarkMode ? 'dark' : 'default'
+                    content_css: isDarkMode ? 'dark' : 'default',
+
+                    // make default font size 16px
+                    font_size: '6px',
                   }}
                 />
               </Box>

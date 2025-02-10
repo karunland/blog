@@ -3,16 +3,15 @@ import { Stats } from './dashboard/Stats';
 import { MyBlogs } from './dashboard/Blogs';
 import { AddBlog } from './dashboard/Add';
 import { EditBlog } from './dashboard/Edit';
-import '../styles/Dashboard.css';
 import { DashboardNav } from '../components/DashboardNav';
 import { Grid, Box } from '@mui/material';
 import { Profile } from './dashboard/Profile';
 
 export function Dashboard() {
   return (
-    <Box className="dashboard-container">
-      <Grid container spacing={3} flexDirection="column">
-        <Grid item xs={12} md={3} style={{ minWidth: '100%' }}>
+    <Box>
+      <Grid container flexDirection="column">
+        <Grid item xs={12} style={{ minWidth: '100%' }}>
           <DashboardNav />
         </Grid>
         <Grid item xs={12} md={9}>

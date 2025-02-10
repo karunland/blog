@@ -59,7 +59,7 @@ export function Stats() {
   ];
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} sx={{ py: 3, mt: 3 }}>
       {statCards.map((card, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
           <Paper

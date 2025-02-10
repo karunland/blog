@@ -5,7 +5,7 @@ import { Button } from '@mui/material';
 import { setUser } from '../store/userSlice';
 import { googleLogin, googleRegister, getMe } from '../lib/api';
 import GoogleIcon from '@mui/icons-material/Google';
-import Swal from 'sweetalert2';
+import { toast } from '../utils/toast';
 
 export function GoogleLoginBlog({ buttonName, onError }) {
   const navigate = useNavigate();
@@ -26,18 +26,11 @@ export function GoogleLoginBlog({ buttonName, onError }) {
           navigate('/dashboard');
         }
       } else {
-        // dark or light mode
-        Swal.fire({
-          title: 'Hata',
-          text: apiResponse.message,
-          icon: 'error',
-          button: 'Tamam',
-          background: '#0f172a',
-          color: '#f1f5f9',
-        });
+        toast.error(apiResponse.message);
       }
     } catch (error) {
       console.error('Google login error:', error);
+      toast.error('Google ile giriş yapılırken bir hata oluştu');
     }
   };
 
