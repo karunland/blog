@@ -1,7 +1,14 @@
 #!/bin/bash
+git stash --include-untracked
 
-git pull
+# Check for merge conflicts before proceeding
+if git pull | grep -q "CONFLICT"; then
+    echo "Merge conflict detected! Please resolve conflicts manually."
+    git stash pop
+    exit 1
+fi
 
+git stash pop
 docker stop blog-api web || true
 docker rm blog-api web || true
 
