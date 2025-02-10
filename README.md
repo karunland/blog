@@ -66,39 +66,6 @@ npm start
 
 The application will be available at `http://localhost:3000`
 
-## Features
-
-### Blog Management
-- Create, read, update, and delete blog posts
-- Rich text editor with image upload support
-- Blog categories and tags
-- SEO-friendly URLs with slugs
-
-### User Features
-- User authentication with JWT
-- Email verification
-- Google OAuth integration
-- User profile management
-- Profile picture upload and cropping
-
-### Comments & Interaction
-- Comment system on blog posts
-- Emoji support in comments
-- Real-time comment updates
-- Comment moderation for authors
-
-### UI/UX Features
-- Responsive Material-UI design
-- Dark/Light theme support
-- Toast notifications
-- Loading states and animations
-- Mobile-friendly interface
-
-### Security
-- JWT authentication
-- Protected API endpoints
-- Secure password handling
-- CORS configuration
 
 ## Contributing
 
