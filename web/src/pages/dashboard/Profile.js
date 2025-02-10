@@ -122,7 +122,6 @@ export function Profile() {
         setIsUploading(true);
         const formData = new FormData();
         formData.append('image', file);
-        formData.append('type', '2'); // ProfileGif type
 
         updateProfilePhoto(formData)
           .then(response => {

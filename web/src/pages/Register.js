@@ -22,6 +22,13 @@ import Cropper from 'react-easy-crop';
 import { LoadingButton } from '@mui/lab';
 import Logo from '../components/Logo';
 
+const generateDiceBearAvatar = (name) => {
+  // DiceBear'in farklı stilleri: adventurer, avataaars, bottts, initials, micah, miniavs, pixel-art
+  const style = 'adventurer';
+  const seed = name.replace(/\s+/g, '-').toLowerCase();
+  return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=b6e3f4`;
+};
+
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -119,6 +126,8 @@ const Register = () => {
 
     try {
       const data = new FormData();
+      
+      // Form verilerini ekle
       Object.keys(formData).forEach(key => {
         if (formData[key] !== null) {
           data.append(key, formData[key]);
@@ -224,7 +233,7 @@ const Register = () => {
                   component="label"
                   startIcon={<PhotoCamera />}
                 >
-                  {imagePreview ? 'Fotoğrafı Değiştir' : 'Profil Fotoğrafı Yükle'}
+                  {imagePreview ? 'Fotoğrafı Değiştir' : 'Profil Fotoğrafı Yükle (İsteğe Bağlı)'}
                   <input
                     type="file"
                     hidden

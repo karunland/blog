@@ -42,6 +42,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             AuthorName = x.User.FullName,
             Slug = x.Slug,
             CategoryName = x.Category.Name,
+            AuthorPhoto = x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
             ViewCount = x.ViewCount,
             ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
             CommentCount = x.Comments.Count
@@ -165,6 +166,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
                 CategoryId = x.CategoryId,
                 ViewCount = x.ViewCount,
                 StatusEnumId = x.BlogStatusEnum,
+                AuthorPhoto = x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
                 Status = x.BlogStatusEnum.ToString(),
                 CommentCount = x.Comments.Where(x => !x.IsDeleted).Count(),
                 ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl

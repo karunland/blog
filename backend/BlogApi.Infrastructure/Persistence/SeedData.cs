@@ -75,6 +75,7 @@ public static class SeedData
                     Extension = ".jpg",
                     IsMailVerified = true,
                     IsGoogleRegister = false,
+                    CreatedAt = new DateTime(2024, 1, 2),
                 }
             };
             context.Users.AddRange(users);

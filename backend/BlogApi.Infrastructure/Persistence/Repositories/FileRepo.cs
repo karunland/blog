@@ -29,7 +29,7 @@ public class FileRepo
             FileTypeEnum.ProfilePicture => "ProfilePicture",
             FileTypeEnum.Thumbnail => "Thumbnail",
             FileTypeEnum.BlogImage => "BlogImage",
-            FileTypeEnum.ProfileGif => "ProfileGif",
+            // FileTypeEnum.ProfileGif => "ProfileGif",
             _ => "",
         };
 

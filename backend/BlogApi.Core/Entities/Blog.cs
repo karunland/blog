@@ -11,7 +11,7 @@ public class Blog
     public string Content { get; set; }
     public string ImageUrl { get; set; }
     public BlogStatusEnum BlogStatusEnum { get; set; } = BlogStatusEnum.Published;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; } = false;
     public DateTime? DeletedAt { get; set; }

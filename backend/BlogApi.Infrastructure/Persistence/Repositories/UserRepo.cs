@@ -222,7 +222,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             IsMailVerified = user.IsMailVerified,
             ExternalProviderId = user.ExternalProvider,
             ExternalProvider = user.ExternalProvider.GetEnumDescription(),
-            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google && user.FileUrl.StartsWith("http") ? user.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
+            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google && user.FileUrl != null && user.FileUrl.StartsWith("http") ? user.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
         };
     }
 
@@ -303,6 +303,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 Content = x.Content,
                 CreatedAt = x.CreatedAt,
                 AuthorName = x.User.FullName,
+                AuthorPhoto = x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
                 Slug = x.Slug,
                 ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
                 CategoryName = x.Category.Name,

@@ -10,6 +10,7 @@ public record BlogsDto
     public string Slug { get; set; }
     public DateTime CreatedAt { get; set; }
     public string AuthorName { get; set; }
+    public string AuthorPhoto { get; set; }
     public string CategoryName { get; set; }
     public int CategoryId { get; set; }
     public int ViewCount { get; set; }
