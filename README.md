@@ -1,6 +1,6 @@
 # Full-Stack Blog Application
 
-A modern blog application built with .NET 9 backend and React frontend.
+A modern blog application built with .NET 9 backend and React frontend, featuring a rich user interface and interactive features.
 
 ## Project Structure
 
@@ -15,6 +15,7 @@ A modern blog application built with .NET 9 backend and React frontend.
     │   ├── components/     # Reusable React components
     │   ├── pages/         # Page components
     │   ├── styles/        # CSS styles
+    │   ├── store/         # Redux store configuration
     │   └── lib/           # Utility functions and API clients
 ```
 
@@ -22,7 +23,8 @@ A modern blog application built with .NET 9 backend and React frontend.
 
 ### Prerequisites
 - .NET 9 SDK
-- SQL Server (currently inmemory database active)
+- PostgreSQL
+- Email service gmail for now
 
 ### Setup and Running
 
@@ -31,25 +33,13 @@ A modern blog application built with .NET 9 backend and React frontend.
 cd backend
 ```
 
-2. Restore dependencies:
-```bash
-dotnet restore
-```
-
-3. Run the application:
+2. Run the application:
 ```bash
 dotnet run --project BlogApi.API
 ```
 
 The API will be available at `https://localhost:5001` by default.
 
-### API Endpoints
-
-- `GET /api/blog` - Get all blogs (paginated)
-- `GET /api/blog/detail` - Get blog details by slug
-- `POST /api/blog` - Create new blog
-- `POST /api/blog/update` - Update existing blog
-- `DELETE /api/blog` - Delete blog by slug
 
 ## Frontend (React)
 
@@ -78,21 +68,37 @@ The application will be available at `http://localhost:3000`
 
 ## Features
 
-- Blog post creation and management
-- User authentication and authorization
-- Responsive design
-- Rich text editing
-- Category management
-- Search and filtering
+### Blog Management
+- Create, read, update, and delete blog posts
+- Rich text editor with image upload support
+- Blog categories and tags
+- SEO-friendly URLs with slugs
 
-## CI/CD
+### User Features
+- User authentication with JWT
+- Email verification
+- Google OAuth integration
+- User profile management
+- Profile picture upload and cropping
 
-The project uses GitHub Actions for continuous integration and deployment:
+### Comments & Interaction
+- Comment system on blog posts
+- Emoji support in comments
+- Real-time comment updates
+- Comment moderation for authors
 
-- Backend workflow: Builds, tests, and publishes the .NET application
-- Frontend workflow: Builds and tests the React application
+### UI/UX Features
+- Responsive Material-UI design
+- Dark/Light theme support
+- Toast notifications
+- Loading states and animations
+- Mobile-friendly interface
 
-Workflows are triggered on pushes and pull requests to the main branch.
+### Security
+- JWT authentication
+- Protected API endpoints
+- Secure password handling
+- CORS configuration
 
 ## Contributing
 
@@ -101,7 +107,3 @@ Workflows are triggered on pushes and pull requests to the main branch.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details 
