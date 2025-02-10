@@ -210,10 +210,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserService.Id);
         
-        if (user == null)
-        {
-            return ApiError.Failure(Messages.NotFound);
-        }
+        if (user == null) return ApiError.Failure(Messages.NotFound);
         
         return new UserDto
         {

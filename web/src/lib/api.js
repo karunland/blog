@@ -324,4 +324,24 @@ export const deleteComment = async (id) => {
   }
 };
 
+//changeBlogStatus
+export const changeBlogStatus = async (slug, status) => {
+  try {
+    const response = await api.post(`/blog/changeStatus`, {
+      slug,
+      status
+    }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Change Blog Status Error:', error);
+    throw error;
+  }
+};
+
+
+
 export default api;

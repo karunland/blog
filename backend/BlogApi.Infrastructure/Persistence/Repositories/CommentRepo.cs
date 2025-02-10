@@ -27,7 +27,7 @@ public class CommentRepo(BlogContext _context, ICurrentUserService _currentUserS
 
         var newComment = new Comment
         {
-            BlogId = blog.Id == null ? 0 : blog.Id,
+            BlogId = blog.Id,
             Content = input.Content,
             UserId = _currentUserService.Id,
             CreatedAt = DateTime.UtcNow,
@@ -36,19 +36,7 @@ public class CommentRepo(BlogContext _context, ICurrentUserService _currentUserS
 
         _context.Comments.Add(newComment);
         await _context.SaveChangesAsync();
-
-        // Send email notification to blog owner
-        var emailSubject = "Yeni Yorum Bildirimi";
-        var emailBody = $@"
-            <h3>Blog yazınıza yeni bir yorum yapıldı</h3>
-            <p><strong>Blog Başlığı:</strong> {blog.Title}</p>
-            <p><strong>Yorum Yapan:</strong> {commenter.FullName}</p>
-            <p><strong>Yorum:</strong> {input.Content}</p>
-            <p><strong>Tarih:</strong> {newComment.CreatedAt:dd.MM.yyyy HH:mm}</p>
-        ";
-
-        await _emailService.SendEmailAsync(blog.User.Email, emailSubject, emailBody, true);
-
+        
         return ApiResult.Success();
     }
     

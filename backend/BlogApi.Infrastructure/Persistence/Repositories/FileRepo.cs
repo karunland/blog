@@ -13,6 +13,7 @@ public class FileRepo
         ".png",
         ".jpg",
         ".jpeg",
+        ".gif",
     ];
 
     public FileRepo()
@@ -28,6 +29,7 @@ public class FileRepo
             FileTypeEnum.ProfilePicture => "ProfilePicture",
             FileTypeEnum.Thumbnail => "Thumbnail",
             FileTypeEnum.BlogImage => "BlogImage",
+            FileTypeEnum.ProfileGif => "ProfileGif",
             _ => "",
         };
 

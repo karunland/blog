@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FiUpload } from 'react-icons/fi';
-import { getCategories, createBlog } from '../../lib/api';
+import { getCategories, createBlog, getBlogDetail, updateBlog } from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
 import {
   Container,
@@ -15,14 +15,19 @@ import {
   IconButton,
   FormControl,
   InputLabel,
-  Select
+  Select,
+  CircularProgress
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import CreateIcon from '@mui/icons-material/Create';
+import EditIcon from '@mui/icons-material/Edit';
 import '../../styles/AddBlog.css';
+
 export function AddBlog() {
   const navigate = useNavigate();
+  const { slug } = useParams();
+  const isEditMode = Boolean(slug);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -33,6 +38,7 @@ export function AddBlog() {
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(isEditMode);
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   
@@ -40,21 +46,47 @@ export function AddBlog() {
   const isDarkMode = localStorage.getItem('theme') === 'dark';
 
   useEffect(() => {
-    fetchCategories();
-    document.title = 'Yeni Blog Yazısı | BlogApp';
-  }, []);
+    document.title = isEditMode 
+      ? formData.title 
+        ? `${formData.title} Düzenle | BlogApp` 
+        : 'Blog Düzenle | BlogApp'
+      : 'Yeni Blog Yazısı | BlogApp';
+  }, [isEditMode, formData.title]);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await getCategories();
-      if (response.isSuccess) {
-        setCategories(response.data);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categoriesResponse = await getCategories();
+        if (categoriesResponse.isSuccess) {
+          setCategories(categoriesResponse.data);
+        }
+
+        if (isEditMode) {
+          const blogResponse = await getBlogDetail(slug);
+          if (blogResponse.isSuccess) {
+            const blogData = blogResponse.data;
+            setFormData({
+              title: blogData.title,
+              content: blogData.content,
+              categoryId: blogData.categoryId,
+              status: blogData.statusEnumId,
+              slug: blogData.slug
+            });
+            if (blogData.imageUrl) {
+              setImagePreview(blogData.imageUrl);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Veri yüklenirken hata:', error);
+        setError('Veriler yüklenirken bir hata oluştu.');
+      } finally {
+        setInitialLoading(false);
       }
-    } catch (error) {
-      console.error('Kategoriler yüklenirken hata oluştu:', error);
-      setError('Kategoriler yüklenirken bir hata oluştu.');
-    }
-  };
+    };
+
+    fetchData();
+  }, [isEditMode, slug]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -99,14 +131,15 @@ export function AddBlog() {
 
     try {
       const formDataToSend = new FormData();
-
       Object.keys(formData).forEach(key => {
         if (formData[key] !== null) {
           formDataToSend.append(key, formData[key]);
         }
       });
 
-      const response = await createBlog(formDataToSend);
+      const response = isEditMode
+        ? await updateBlog(slug, formDataToSend)
+        : await createBlog(formDataToSend);
 
       if (response.isSuccess) {
         navigate('/dashboard/blogs');
@@ -114,20 +147,32 @@ export function AddBlog() {
         setError(response.errors?.join(', ') || 'Bir hata oluştu');
       }
     } catch (error) {
-      setError('Blog eklenirken bir hata oluştu.');
-      console.error('Blog eklenirken hata:', error);
+      setError(`Blog ${isEditMode ? 'güncellenirken' : 'eklenirken'} bir hata oluştu.`);
+      console.error(`Blog ${isEditMode ? 'güncellenirken' : 'eklenirken'} hata:`, error);
     } finally {
       setLoading(false);
     }
   };
 
+  if (initialLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <Container maxWidth="lg" sx={{ color: isDarkMode ? '#ffffff' : '#2d3436', mt: 12, backgroundColor: isDarkMode ? 'transparent' : '#ffffff' }}>
       <Paper elevation={1} sx={{ p: 4, borderRadius: 2, backgroundColor: isDarkMode ? 'transparent' : '#ffffff', color: isDarkMode ? '#ffffff' : '#2d3436' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-          <CreateIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
+          {isEditMode ? (
+            <EditIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
+          ) : (
+            <CreateIcon sx={{ fontSize: 32, mr: 2, color: 'primary.main' }} />
+          )}
           <Typography variant="h5" component="h1">
-            Yeni Blog Yazısı
+            {isEditMode ? `"${formData.title}" Düzenle` : 'Yeni Blog Yazısı'}
           </Typography>
         </Box>
 

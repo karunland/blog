@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import { Stats } from './dashboard/Stats';
 import { MyBlogs } from './dashboard/Blogs';
 import { AddBlog } from './dashboard/Add';
-import { EditBlog } from './dashboard/Edit';
 import { DashboardNav } from '../components/DashboardNav';
 import { Grid, Box } from '@mui/material';
 import { Profile } from './dashboard/Profile';
@@ -19,7 +18,7 @@ export function Dashboard() {
             <Route path="/" element={<Stats />} />
             <Route path="/blogs" element={<MyBlogs />} />
             <Route path="/add-blog" element={<AddBlog />} />
-            <Route path="/blogs/edit/:slug" element={<EditBlog />} />
+            <Route path="/add-blog/:slug" element={<AddBlog />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/profile" element={<Profile />} />
           </Routes>

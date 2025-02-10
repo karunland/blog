@@ -53,4 +53,10 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     {
         return await blogRepo.Search(search);
     }
+
+    [HttpPost]
+    public async Task<ApiResult> ChangeStatus([FromBody] ChangeStatusRequest request)
+    {
+        return await blogRepo.ChangeStatus(request);
+    }
 }

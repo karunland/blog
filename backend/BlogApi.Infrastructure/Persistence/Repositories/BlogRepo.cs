@@ -192,4 +192,18 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             AuthorName = x.User.FullName,
         }).ToListAsync();
     }
+
+    public async Task<ApiResult> ChangeStatus(ChangeStatusRequest request)
+    {
+        var blog = await context.Blogs.FirstOrDefaultAsync(x => x.Slug == request.slug && x.UserId == currentUserService.Id);
+
+        if (blog == null) return ApiError.Failure("Blog bulunamadı veya düzenleme yetkiniz yok.");
+
+        blog.BlogStatusEnum = (BlogStatusEnum)request.status;
+        blog.UpdatedAt = DateTime.UtcNow;
+
+        await context.SaveChangesAsync();
+
+        return ApiResult.Success();
+    }
 }
