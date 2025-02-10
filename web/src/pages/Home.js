@@ -28,6 +28,8 @@ export function Home() {
             title: blog.title,
             slug: blog.slug,
             imageUrl: blog.imageUrl,
+            authorName: blog.authorName,
+            authorPhoto: blog.authorPhoto,
             createdAt: blog.createdAt,
             categoryName: blog.categoryName,
             viewCount: blog.viewCount
