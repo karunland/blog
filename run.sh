@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git pull
+
 docker stop blog-api web || true
 docker rm blog-api web || true
 
