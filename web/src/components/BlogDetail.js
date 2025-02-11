@@ -13,7 +13,8 @@ import {
   useTheme,
   useMediaQuery,
   Grid,
-  IconButton
+  IconButton,
+  Avatar
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -168,17 +169,32 @@ export function BlogDetail() {
             spacing={3} 
             sx={{ mb: 4 }}
           >
-            <Stack direction="row" spacing={1} alignItems="center">
-              <PersonIcon sx={{ color: 'text.secondary' }} fontSize="small" />
-              <Typography variant="body2" color="text.secondary">
-                {blog.authorName}
-              </Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <CalendarTodayIcon sx={{ color: 'text.secondary' }} fontSize="small" />
-              <Typography variant="body2" color="text.secondary">
-                {blog.updatedAt ? new Date(blog.updatedAt).toLocaleDateString() : new Date(blog.createdAt).toLocaleDateString()}
-              </Typography>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Avatar
+                src={blog.authorPhoto}
+                alt={blog.authorName}
+                sx={{ 
+                  width: 48,
+                  height: 48,
+                  border: '2px solid',
+                  borderColor: 'primary.light',
+                  backgroundColor: 'grey.200',
+                  '& img': {
+                    objectFit: 'cover',
+                    width: '100%',
+                    height: '100%',
+                    aspectRatio: '1/1'
+                  }
+                }}
+              />
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                  {blog.authorName}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {blog.updatedAt ? new Date(blog.updatedAt).toLocaleDateString() : new Date(blog.createdAt).toLocaleDateString()}
+                </Typography>
+              </Box>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <RemoveRedEyeIcon sx={{ color: 'text.secondary' }} fontSize="small" />

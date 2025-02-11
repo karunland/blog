@@ -51,12 +51,27 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
         return await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
     }
 
-    public async Task<ApiResult> Create(BlogAddDto blog)
+    public async Task<ApiResult> Create(BlogDto blog)
     {
-        // İçerik kontrolü
-        // var contentCheck = await contentModerationService.CheckTextContent(blog.Content);
-        // if (!contentCheck.isAppropriate)
-        //     return ApiError.Failure(contentCheck.reason);
+        // Slug oluştur
+        var slug = blog.Title.ToLower()
+            .Replace(" ", "-")
+            .Replace("ğ", "g")
+            .Replace("ü", "u")
+            .Replace("ş", "s")
+            .Replace("ı", "i")
+            .Replace("ö", "o")
+            .Replace("ç", "c")
+            .Replace("-", " ")
+            .Trim()
+            .Replace(" ", "-");
+
+        // Slug'ın benzersiz olduğundan emin ol
+        var slugExists = await context.Blogs.AnyAsync(x => x.Slug == slug);
+        if (slugExists)
+        {
+            return ApiError.Failure("Bu başlık ile daha önce bir blog oluşturulmuş. Lütfen farklı bir başlık seçin.");
+        }
 
         var newBlog = new Blog
         {
@@ -65,18 +80,14 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             UserId = currentUserService.Id,
             BlogStatusEnum = Enum.Parse<BlogStatusEnum>(blog.Status),
             CategoryId = int.Parse(blog.CategoryId),
-            Slug = blog.Slug,
+            Slug = slug,
             CreatedAt = DateTime.UtcNow
         };
 
         if (blog.Image != null)
         {
-            // Resim içerik kontrolü
             using var memoryStream = new MemoryStream();
             await blog.Image.CopyToAsync(memoryStream);
-            // var imageCheck = await contentModerationService.CheckImage(memoryStream.ToArray());
-            // if (!imageCheck.isAppropriate)
-            //     return ApiError.Failure(imageCheck.reason);
 
             var imagePath = await fileRepo.UploadFileAsync(new UploadFileAsyncDto {
                 File = blog.Image,
@@ -92,7 +103,7 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
         {
             To = currentUserService.Email,
             Subject = "Yeni Blog Oluşturuldu",
-            Body = "Yeni blog oluşturuldu."
+            Body = $"'{blog.Title}' başlıklı blog yazınız başarıyla oluşturuldu."
         };
 
         await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
@@ -100,31 +111,56 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
         return ApiResult.Success();
     }
 
-    public async Task<ApiResult> Update(BlogUpdateDto blog)
+    public async Task<ApiResult> Update(BlogDto blog)
     {
+        if (blog.Id == null)
+            return ApiError.Failure("Blog ID gereklidir.");
+
         var blogToUpdate = await context.Blogs
             .FirstOrDefaultAsync(x => x.Id == blog.Id && x.UserId == currentUserService.Id);
 
-        if (blogToUpdate == null) return ApiError.Failure("Blog bulunamadı veya düzenleme yetkiniz yok.");
+        if (blogToUpdate == null) 
+            return ApiError.Failure("Blog bulunamadı veya düzenleme yetkiniz yok.");
 
-        blogToUpdate.Title = blog.Title;
-        blogToUpdate.Content = blog.Content;
-        blogToUpdate.CategoryId = blog.CategoryId;
-        blogToUpdate.BlogStatusEnum = blog.Status;
-        blogToUpdate.UpdatedAt = DateTime.UtcNow;
+        // Validate required fields
+        if (string.IsNullOrWhiteSpace(blog.Title) || string.IsNullOrWhiteSpace(blog.Content))
+            return ApiError.Failure("Başlık ve içerik alanları zorunludur.");
 
-        await context.SaveChangesAsync();
-
-        var emailMessage = new EmailMessage
+        try
         {
-            To = currentUserService.Email,
-            Subject = "Blog Güncellendi",
-            Body = "Blog güncellendi."
-        };
+            blogToUpdate.Title = blog.Title;
+            blogToUpdate.Content = blog.Content;
+            blogToUpdate.CategoryId = int.Parse(blog.CategoryId);
+            blogToUpdate.BlogStatusEnum = Enum.Parse<BlogStatusEnum>(blog.Status);
+            blogToUpdate.UpdatedAt = DateTime.UtcNow;
+            // Slug güncellenmeyecek
 
-        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+            if (blog.Image != null)
+            {
+                var imagePath = await fileRepo.UploadFileAsync(new UploadFileAsyncDto {
+                    File = blog.Image,
+                    Type = FileTypeEnum.Thumbnail
+                });
+                blogToUpdate.ImageUrl = imagePath.FileUrl;
+            }
 
-        return ApiResult.Success();
+            await context.SaveChangesAsync();
+
+            var emailMessage = new EmailMessage
+            {
+                To = currentUserService.Email,
+                Subject = "Blog Güncellendi",
+                Body = $"'{blog.Title}' başlıklı blog yazınız başarıyla güncellendi."
+            };
+
+            await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+
+            return ApiResult.Success();
+        }
+        catch (Exception ex)
+        {
+            return ApiError.Failure("Blog güncellenirken bir hata oluştu: " + ex.Message);
+        }
     }
 
     public async Task<ApiResult> Delete(string slug)

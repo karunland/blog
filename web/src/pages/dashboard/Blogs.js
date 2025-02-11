@@ -147,7 +147,9 @@ export function MyBlogs() {
                   <ListItemText
                     primary={
                       <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        {blog.title}
+                         <Link to={`/blog/${blog.slug}`} style={{  }}>
+                          {blog.title}
+                         </Link>
                       </Typography>
                     }
                     secondary={

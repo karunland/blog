@@ -51,7 +51,7 @@ const Login = () => {
         dispatch(setUser(response.data));
         setSuccess(true);
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/blog');
         }, 2000);
       } else {
         setError(response.errorMessage);

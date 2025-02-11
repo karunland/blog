@@ -30,7 +30,7 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     }
     
     [HttpPost]
-    public async Task<ApiResult> Create([FromBody] BlogAddDto blog)
+    public async Task<ApiResult> Create([FromBody] BlogDto blog)
     {
         return await blogRepo.Create(blog);
     }

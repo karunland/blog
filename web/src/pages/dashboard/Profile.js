@@ -183,7 +183,17 @@ export function Profile() {
     setIsUploading(true);
     try {
       const canvas = previewCanvasRef.current;
-      canvas.toBlob(async (blob) => {
+      
+      // Standart boyutlarda bir canvas oluştur
+      const standardCanvas = document.createElement('canvas');
+      standardCanvas.width = 200;  // Minimum önerilen çözünürlük
+      standardCanvas.height = 200;
+      
+      const ctx = standardCanvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(canvas, 0, 0, 200, 200);
+
+      standardCanvas.toBlob(async (blob) => {
         const formData = new FormData();
         formData.append('image', blob, 'profile.jpg');
         formData.append('type', '1'); // ProfilePicture type
@@ -263,7 +273,8 @@ export function Profile() {
                       borderRadius: '50%',
                       border: '4px solid',
                       borderColor: 'primary.light',
-                      objectFit: 'cover'
+                      objectFit: 'cover',
+                      backgroundColor: 'grey.200'
                     }}
                   />
                 ) : (
@@ -275,6 +286,13 @@ export function Profile() {
                       height: 120,
                       border: '4px solid',
                       borderColor: 'primary.light',
+                      backgroundColor: 'grey.200',
+                      '& img': {
+                        objectFit: 'cover',
+                        width: '100%',
+                        height: '100%',
+                        aspectRatio: '1/1'
+                      }
                     }}
                   />
                 )}

@@ -1,11 +1,13 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  AppBar,
-  Toolbar,
-  Button,
-  Container,
+  Paper,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Box,
-  useTheme
+  useTheme,
+  alpha,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AddIcon from '@mui/icons-material/Add';
@@ -14,57 +16,89 @@ import PersonIcon from '@mui/icons-material/Person';
 
 export function DashboardNav() {
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useTheme();
 
   const pages = [
-    { name: 'Dashboard', path: '/dashboard', icon: <DashboardIcon sx={{mr: 1}} /> },
-    { name: 'Blog Ekle', path: '/dashboard/add-blog', icon: <AddIcon sx={{mr: 1}} /> },
-    { name: 'Bloglarım', path: '/dashboard/blogs', icon: <ArticleIcon sx={{mr: 1}} /> },
-    { name: 'Profil', path: '/dashboard/profile', icon: <PersonIcon sx={{mr: 1}} /> }
+    { name: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+    { name: 'Blog Ekle', path: '/dashboard/add-blog', icon: <AddIcon /> },
+    { name: 'Bloglarım', path: '/dashboard/blogs', icon: <ArticleIcon /> },
+    { name: 'Profil', path: '/dashboard/profile', icon: <PersonIcon /> }
   ];
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
+    <Box
       sx={{
-        top: 72,
-        bgcolor: theme.palette.mode === 'dark' 
-          ? 'rgba(18, 18, 18, 0.8)'
-          : 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(8px)',
-        borderBottom: 1,
-        borderColor: theme.palette.mode === 'dark'
-          ? 'rgba(255, 255, 255, 0.05)'
-          : 'rgba(0, 0, 0, 0.05)',
-        color: 'text.primary',
+        position: 'fixed',
+        left: theme.spacing(3),
+        top: '50%',
+        transform: 'translateY(-50%)',
         zIndex: (theme) => theme.zIndex.drawer + 1
       }}
     >
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ minHeight: '64px' }}>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            {pages.map((page) => (
-              <Button
+      <Paper
+        elevation={3}
+        sx={{
+          py: 2,
+          px: 1.5,
+          borderRadius: 3,
+          backgroundColor: theme.palette.mode === 'dark' 
+            ? alpha(theme.palette.background.paper, 0.8)
+            : alpha(theme.palette.background.paper, 0.9),
+          backdropFilter: 'blur(8px)',
+          border: '1px solid',
+          borderColor: theme.palette.mode === 'dark'
+            ? 'rgba(255, 255, 255, 0.05)'
+            : 'rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.3s ease-in-out',
+          '&:hover': {
+            transform: 'translateX(5px)'
+          }
+        }}
+      >
+        <List>
+          {pages.map((page) => {
+            const isActive = location.pathname === page.path;
+            return (
+              <ListItem
                 key={page.name}
                 onClick={() => navigate(page.path)}
                 sx={{
-                  color: 'inherit',
-                  fontSize: '0.9rem',
-                  textTransform: 'none',
+                  cursor: 'pointer',
+                  mb: 1,
+                  borderRadius: 2,
                   px: 2,
-                  py: 1,
-                  display: 'flex',
-                  alignItems: 'center'
+                  backgroundColor: isActive 
+                    ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.1)
+                    : 'transparent',
+                  color: isActive ? 'primary.main' : 'text.primary',
+                  '&:hover': {
+                    backgroundColor: isActive
+                      ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.2 : 0.1)
+                      : alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.1 : 0.05)
+                  }
                 }}
               >
-                {page.icon}
-                {page.name}
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+                <ListItemIcon 
+                  sx={{ 
+                    minWidth: 36,
+                    color: isActive ? 'primary.main' : 'inherit'
+                  }}
+                >
+                  {page.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={page.name}
+                  primaryTypographyProps={{
+                    fontSize: '0.9rem',
+                    fontWeight: isActive ? 600 : 400
+                  }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </Paper>
+    </Box>
   );
 }

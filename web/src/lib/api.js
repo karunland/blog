@@ -154,9 +154,9 @@ export const getBlogDetail = async (id) => {
   }
 };
 
-export const updateBlog = async (id, data) => {
+export const updateBlog = async (data) => {
   try {
-    const response = await api.post(`/blog/update/${id}`, data, {
+    const response = await api.post('/blog/update', data, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -60,7 +60,14 @@ export function BlogCard({ blog }) {
               width: 40,
               height: 40,
               border: '2px solid',
-              borderColor: 'primary.light'
+              borderColor: 'primary.light',
+              backgroundColor: 'grey.200',
+              '& img': {
+                objectFit: 'cover',
+                width: '100%',
+                height: '100%',
+                aspectRatio: '1/1'
+              }
             }}
           />
           <Box>

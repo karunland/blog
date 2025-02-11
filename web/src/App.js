@@ -22,6 +22,12 @@ import { useAuth } from './contexts/AuthContext';
 import GoogleCallback from './pages/GoogleCallback';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
+import { AddBlog } from './pages/dashboard/Add';
+import { MyBlogs } from './pages/dashboard/Blogs';
+import { Profile } from './pages/dashboard/Profile';
+import { DashboardLayout } from './components/DashboardLayout';
+import { Navbar } from './components/navbar';
+import { Toaster } from 'react-hot-toast';
 
 // Tema context'ini oluştur
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
@@ -58,10 +64,16 @@ function AppContent() {
           path="/dashboard/*" 
           element={
             <PrivateRoute>
-              <Dashboard />
+              <DashboardLayout />
             </PrivateRoute>
           }
-        />
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="add-blog" element={<AddBlog />} />
+          <Route path="add-blog/:slug" element={<AddBlog />} />
+          <Route path="blogs" element={<MyBlogs />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
         <Route path="/blog" element={<Blog />} />
         <Route path="/search" element={<Search />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
@@ -203,7 +215,9 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
+          <Navbar />
           <AppContent />
+          <Toaster position="top-center" />
         </AuthProvider>
       </ThemeProvider>
     </ColorModeContext.Provider>
