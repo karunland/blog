@@ -25,7 +25,8 @@ import {
   Tabs,
   Tab,
   Avatar,
-  Divider
+  Divider,
+  Tooltip
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
@@ -35,6 +36,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ImageIcon from '@mui/icons-material/Image';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import InfoIcon from '@mui/icons-material/Info';
 import '../../styles/AddBlog.css';
 
 const MIN_WORD_COUNT = 100; // Minimum kelime sayısı
@@ -75,8 +77,6 @@ export function AddBlog() {
   const [imagePreview, setImagePreview] = useState(null);
   const [wordCount, setWordCount] = useState(0);
   
-  // get theme info from local storage
-  const isDarkMode = localStorage.getItem('theme') === 'dark';
 
   useEffect(() => {
     document.title = isEditMode 
@@ -326,7 +326,7 @@ export function AddBlog() {
   }
 
   return (
-    <Paper elevation={1} sx={{ p: 4, borderRadius: 2, paddingTop: 1, backgroundColor: isDarkMode ? 'transparent' : '#ffffff', color: isDarkMode ? '#ffffff' : '#2d3436' }}>
+    <Paper elevation={1} sx={{ p: 4, borderRadius: 2, paddingTop: 1, backgroundColor: 'transparent', color: '#2d3436' }}>
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -521,10 +521,15 @@ export function AddBlog() {
                 </Box>
               </Card>
 
-              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="subtitle2">
-                  İçerik
-                </Typography>
+              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'start', gap: 2, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="subtitle2">
+                    İçerik
+                  </Typography>
+                  <Tooltip title={`Blog yazınız en az ${MIN_WORD_COUNT} kelime içermelidir`}>
+                    <InfoIcon sx={{ fontSize: 16, color: 'text.secondary', cursor: 'help' }} />
+                  </Tooltip>
+                </Box>
                 <Chip 
                   label={`${wordCount} kelime`}
                   color={wordCount >= MIN_WORD_COUNT ? "success" : "warning"}
@@ -561,20 +566,20 @@ export function AddBlog() {
                       body { 
                         font-family: Inter, Arial, sans-serif; 
                         font-size: 16px;
-                        background-color: ${isDarkMode ? '#2d2d2d' : '#ffffff'};
-                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                        background-color: ${'#2d2d2d'};
+                        color: ${'#ffffff'};
                       }
                       p { 
-                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                        color: ${'#ffffff'};
                         line-height: 1.6;
                       }
                       h1, h2, h3, h4, h5, h6 { 
-                        color: ${isDarkMode ? '#ffffff' : '#2d3436'};
+                        color: ${'#ffffff'};
                         font-weight: 600;
                       }
                     `,
-                    skin: isDarkMode ? 'oxide-dark' : 'oxide',
-                    content_css: isDarkMode ? 'dark' : 'default',
+                    skin: 'oxide-dark',
+                    content_css: 'dark',
                     font_size_formats: '12px 14px 16px 18px 24px 36px 48px',
                     font_size: '16px',
                   }}

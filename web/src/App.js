@@ -29,7 +29,6 @@ import { DashboardLayout } from './components/DashboardLayout';
 import { Navbar } from './components/navbar';
 import { Toaster } from 'react-hot-toast';
 
-// Tema context'ini oluştur
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function AppContent() {
@@ -37,11 +36,10 @@ function AppContent() {
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   return (
     <Routes>
-      {/* Auth Routes - Navbar ve Footer olmayan sayfalar */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={
           <PublicRoute>
@@ -56,7 +54,6 @@ function AppContent() {
         <Route path="/google-callback" element={<GoogleCallback />} />
       </Route>
 
-      {/* Main Routes - Normal sayfalar */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -88,24 +85,12 @@ function AppContent() {
 }
 
 export default function App() {
-  const getInitialMode = () => {
-    const savedMode = localStorage.getItem('themeMode');
-    if (savedMode) {
-      return savedMode;
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  };
-
-  const [mode, setMode] = useState(getInitialMode);
-
+  const [mode, setMode] = useState('dark');
+  
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => {
-          const newMode = prevMode === 'light' ? 'dark' : 'light';
-          localStorage.setItem('themeMode', newMode);
-          return newMode;
-        });
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
       },
     }),
     [],
@@ -116,55 +101,28 @@ export default function App() {
       createTheme({
         palette: {
           mode,
-          ...(mode === 'light'
-            ? {
-                primary: {
-                  main: '#2563eb',
-                  light: '#3b82f6',
-                  dark: '#1d4ed8',
-                },
-                secondary: {
-                  main: '#4f46e5',
-                  light: '#6366f1',
-                  dark: '#4338ca',
-                },
-                error: {
-                  main: '#dc2626',
-                },
-                background: {
-                  default: '#f8fafc',
-                  paper: '#ffffff',
-                },
-                text: {
-                  primary: '#0f172a',
-                  secondary: '#475569',
-                },
-                divider: 'rgba(226, 232, 240, 1)',
-              }
-            : {
-                primary: {
-                  main: '#3b82f6',
-                  light: '#60a5fa',
-                  dark: '#2563eb',
-                },
-                secondary: {
-                  main: '#6366f1',
-                  light: '#818cf8',
-                  dark: '#4f46e5',
-                },
-                error: {
-                  main: '#ef4444',
-                },
-                background: {
-                  default: '#0f172a',
-                  paper: '#1e293b',
-                },
-                text: {
-                  primary: '#f1f5f9',
-                  secondary: '#cbd5e1',
-                },
-                divider: 'rgba(51, 65, 85, 1)',
-              }),
+          primary: {
+            main: '#3b82f6',
+            light: '#60a5fa', 
+            dark: '#2563eb',
+          },
+          secondary: {
+            main: '#6366f1',
+            light: '#818cf8',
+            dark: '#4f46e5',
+          },
+          error: {
+            main: '#ef4444',
+          },
+          background: {
+            default: '#0f172a',
+            paper: '#1e293b',
+          },
+          text: {
+            primary: '#f1f5f9',
+            secondary: '#cbd5e1',
+          },
+          divider: 'rgba(51, 65, 85, 1)',
         },
         typography: {
           fontFamily: [
@@ -199,9 +157,7 @@ export default function App() {
           MuiCard: {
             styleOverrides: {
               root: {
-                boxShadow: mode === 'dark' 
-                  ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3)'
-                  : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3)'
               },
             },
           },
@@ -215,7 +171,6 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <Navbar />
           <AppContent />
           <Toaster position="top-center" />
         </AuthProvider>

@@ -12,7 +12,7 @@ export function DashboardLayout() {
       <Box 
         sx={{ 
         //   minHeight: '100vh',
-          backgroundColor: isDarkMode ? 'transparent' : '#ffffff',
+          backgroundColor: 'transparent',
         //   pt: 3
         }}
       >
