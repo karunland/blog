@@ -1,14 +1,27 @@
 #!/bin/bash
-git stash --include-untracked
 
-# Check for merge conflicts before proceeding
-if git pull | grep -q "CONFLICT"; then
-    echo "Merge conflict detected! Please resolve conflicts manually."
-    git stash pop
-    exit 1
+git fetch origin
+
+if ! git diff-index --quiet HEAD --; then
+    echo "Stashing local changes..."
+    git stash --include-untracked
+    STASHED=true
 fi
 
-git stash pop
+if [ "$(git rev-list HEAD..origin/main --count)" != "0" ]; then
+    if git pull | grep -q "CONFLICT"; then
+        echo "Merge conflict detected! Please resolve conflicts manually."
+        if [ "$STASHED" = true ]; then
+            git stash pop
+        fi
+        exit 1
+    fi
+fi
+
+if [ "$STASHED" = true ]; then
+    git stash pop
+fi
+
 docker stop blog-api web || true
 docker rm blog-api web || true
 

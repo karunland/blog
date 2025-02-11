@@ -36,7 +36,7 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     }
     
     [HttpPost]
-    public async Task<ApiResult> Update([FromBody] BlogUpdateDto blog)
+    public async Task<ApiResult> Update([FromBody] BlogDto blog)
     {
         return await blogRepo.Update(blog);
     }
