@@ -1,15 +1,15 @@
-﻿
+
 namespace BlogApi.Application.DTOs.User;
 
-public record UserDto
+public record MeResponse
 (
-    int Id,
     string Email,
     string FirstName,
     string LastName,
-    string UserName,
+    string Token,
     string? ImageUrl,
     bool IsMailVerified,
     ExternalProviderEnum ExternalProviderId,
     string ExternalProvider
 );
+

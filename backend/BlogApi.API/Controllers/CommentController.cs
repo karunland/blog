@@ -10,25 +10,25 @@ public class CommentController(CommentRepo commentRepo) : BaseApiController
 {
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResultPagination<CommentsDto>> List([FromQuery] string blogSlug, [FromQuery] FilterModel filter)
+    public async Task<ApiResultPagination<CommentListResponse>> List([FromQuery] string blogSlug, [FromQuery] FilterModel filter)
     {
         return await commentRepo.GetByBlogId(blogSlug, filter);
     }
 
     [HttpPost]
-    public async Task<ApiResult> Create(CommentAddDto comment)
+    public async Task<ApiResult> Create(CommentAddRequest comment)
     {
         return await commentRepo.Create(comment);
     }
     
     [HttpPost]
-    public async Task<ApiResult> Update(CommentAddDto comment)
+    public async Task<ApiResult> Update(CommentAddRequest comment)
     {
         return await commentRepo.Update(comment);
     }
 
     [HttpDelete]
-    public async Task<ApiResult> Delete([FromQuery] int id)
+    public async Task<ApiResult> Delete(int id)
     {
         return await commentRepo.Delete(id);
     }

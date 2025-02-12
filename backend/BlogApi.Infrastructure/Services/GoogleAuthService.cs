@@ -15,7 +15,7 @@ namespace BlogApi.Infrastructure.Services;
 
 public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, IEmailService emailService, TokenHelper tokenHelper)
 {
-    public async Task<ApiResult<MeDto>> GoogleLogin(string idToken)
+    public async Task<ApiResult<MeResponse>> GoogleLogin(string idToken)
     {
         var payload = await tokenHelper.VerifyGoogleAccessToken(idToken);
         if (!payload)
@@ -48,26 +48,26 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
             await context.SaveChangesAsync();
         }
 
-        return new MeDto
-        {
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Token = TokenHelper.GenerateToken(new JwtTokenDto()
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Id = user.Id,
-            }),
-            ImageUrl = user.FileUrl,
-            ExternalProvider = user.ExternalId,
-            ExternalProviderId = ExternalProviderEnum.Google,
-            IsMailVerified = true
-        };
+        return new MeResponse
+        (
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            TokenHelper.GenerateToken(new JwtTokenDto(
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                user.FileUrl
+            )),
+            baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl,
+            user.IsMailVerified,
+            user.ExternalProvider,
+            user.ExternalProvider.GetEnumDescription()
+        );
     }
 
-    public async Task<ApiResult<MeDto>> GoogleRegisterAsync(string credential)
+    public async Task<ApiResult<MeResponse>> GoogleRegisterAsync(string credential)
     {
         var isValidToken = await tokenHelper.VerifyGoogleAccessToken(credential);
         if (!isValidToken)
@@ -113,22 +113,19 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
         };
 
         await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        
+        var returnDto = new MeResponse
+        (
+            newUser.Email,
+            newUser.FirstName,
+            newUser.LastName,
+            TokenHelper.GenerateToken(new JwtTokenDto(newUser.Id, newUser.Email, newUser.FirstName, newUser.LastName, newUser.FileUrl)),
+            baseSettings.BackendUrl + "/api/file/image/" + newUser.FileUrl,
+            newUser.IsMailVerified,
+            newUser.ExternalProvider,
+            newUser.ExternalProvider.GetEnumDescription()
+        );
 
-        return new MeDto
-        {
-            Email = newUser.Email,
-            FirstName = newUser.FirstName,
-            LastName = newUser.LastName,
-            Token = TokenHelper.GenerateToken(new JwtTokenDto()
-            {
-                Email = newUser.Email,
-                FirstName = newUser.FirstName,
-                LastName = newUser.LastName,
-                Id = newUser.Id,
-            }),
-            ImageUrl = newUser.FileUrl,
-            ExternalProvider = newUser.ExternalProvider.GetEnumDescription(),
-            ExternalProviderId = newUser.ExternalProvider,
-        };
+        return returnDto;
     }
 }

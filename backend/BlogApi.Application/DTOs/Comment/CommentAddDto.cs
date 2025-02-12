@@ -1,8 +1,9 @@
-﻿namespace BlogApi.Application.DTOs.Comment;
+﻿
+namespace BlogApi.Application.DTOs.Comment;
 
-public record CommentAddDto
-{
-    public int Id { get; set; }
-    public string Content { get; set; }
-    public string BlogSlug { get; set; }
-}
+public record CommentAddRequest
+(
+    int Id,
+    string Content,
+    string BlogSlug
+);

@@ -133,7 +133,7 @@ export function BlogDetail() {
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Grid container spacing={4}>
-        <Grid item xs={12} lg={headings.length > 0 ? 8 : 12}>
+        <Grid item xs={12} lg={8}>
           {blog.imageUrl && (
             <Box
               component="img"
@@ -178,13 +178,7 @@ export function BlogDetail() {
                   height: 48,
                   border: '2px solid',
                   borderColor: 'primary.light',
-                  backgroundColor: 'grey.200',
-                  '& img': {
-                    objectFit: 'cover',
-                    width: '100%',
-                    height: '100%',
-                    aspectRatio: '1/1'
-                  }
+                  backgroundColor: 'grey.200'
                 }}
               />
               <Box>
@@ -192,21 +186,9 @@ export function BlogDetail() {
                   {blog.authorName}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {blog.updatedAt ? new Date(blog.updatedAt).toLocaleDateString() : new Date(blog.createdAt).toLocaleDateString()}
+                  {new Date(blog.createdAt).toLocaleDateString()}
                 </Typography>
               </Box>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <RemoveRedEyeIcon sx={{ color: 'text.secondary' }} fontSize="small" />
-              <Typography variant="body2" color="text.secondary">
-                {blog.viewCount}
-              </Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <CommentIcon sx={{ color: 'text.secondary' }} fontSize="small" />
-              <Typography variant="body2" color="text.secondary">
-                {blog.commentCount}
-              </Typography>
             </Stack>
           </Stack>
 
@@ -227,10 +209,7 @@ export function BlogDetail() {
                 backgroundColor: 'background.paper',
                 p: 2,
                 borderRadius: 1,
-                overflow: 'auto',
-                '& code': {
-                  color: 'text.primary'
-                }
+                overflow: 'auto'
               },
               '& blockquote': {
                 borderLeft: 4,
@@ -248,29 +227,29 @@ export function BlogDetail() {
           <CommentSection blogSlug={slug} />
         </Grid>
 
-        {headings.length > 0 && (
-          <Grid item xs={12} lg={4}>
-            <Paper
-              elevation={1}
-              sx={{
-                position: isMobile ? 'relative' : 'sticky',
-                top: isMobile ? 0 : 100,
-                p: 3,
-                borderRadius: 2,
-                bgcolor: 'background.paper'
+        <Grid item xs={12} lg={4}>
+          <Paper
+            elevation={1}
+            sx={{
+              position: isMobile ? 'relative' : 'sticky',
+              top: isMobile ? 0 : 100,
+              p: 3,
+              borderRadius: 2,
+              bgcolor: 'background.paper'
+            }}
+          >
+            <Typography 
+              variant="h6" 
+              gutterBottom
+              sx={{ 
+                color: 'text.primary',
+                fontWeight: 600,
+                mb: 2
               }}
             >
-              <Typography 
-                variant="h6" 
-                gutterBottom
-                sx={{ 
-                  color: 'text.primary',
-                  fontWeight: 600,
-                  mb: 2
-                }}
-              >
-                İçindekiler
-              </Typography>
+              İçindekiler
+            </Typography>
+            {headings.length > 0 ? (
               <Stack spacing={0.5}>
                 {headings.map((heading) => (
                   <Button
@@ -295,9 +274,13 @@ export function BlogDetail() {
                   </Button>
                 ))}
               </Stack>
-            </Paper>
-          </Grid>
-        )}
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                Bu yazıda başlık bulunmuyor.
+              </Typography>
+            )}
+          </Paper>
+        </Grid>
       </Grid>
     </Container>
   );

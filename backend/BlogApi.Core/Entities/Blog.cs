@@ -32,4 +32,5 @@ public class Like
     public DateTime CreatedAt { get; set; }
     public Blog Blog { get; set; }
     public User User { get; set; }
+    public bool IsDeleted { get; set; } = false;
 }

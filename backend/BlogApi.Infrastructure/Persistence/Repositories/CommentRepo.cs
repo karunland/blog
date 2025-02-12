@@ -13,7 +13,7 @@ public class CommentRepo(BlogContext _context, ICurrentUserService _currentUserS
 {
 
 
-    public async Task<ApiResult> Create(CommentAddDto input)
+    public async Task<ApiResult> Create(CommentAddRequest input)
     {
         var blog = await _context.Blogs
             .Include(b => b.User)
@@ -40,26 +40,26 @@ public class CommentRepo(BlogContext _context, ICurrentUserService _currentUserS
         return ApiResult.Success();
     }
     
-    public async Task<ApiResultPagination<CommentsDto>> GetByBlogId(string slug, FilterModel filter)
+    public async Task<ApiResultPagination<CommentListResponse>> GetByBlogId(string slug, FilterModel filter)
     {
         var comments = _context.Comments
             .Where(x => x.Blog.Slug == slug)
             .OrderByDescending(x => x.CreatedAt)
-            .Select(x => new CommentsDto
-            {
-                Id = x.Id,
-                Content = x.Content,
-                CreatedAt = x.CreatedAt,
-                AuthorName = x.User.FullName,
-                UpdatedAt = x.UpdatedAt,
-                IsMyComment = x.UserId == _currentUserService.Id,
-                AuthorImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl
-            });
+            .Select(x => new CommentListResponse
+            (
+                x.Id,
+                x.Content,
+                x.CreatedAt,
+                x.User.FullName,
+                x.UpdatedAt,
+                baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
+                x.UserId == _currentUserService.Id
+            ));
 
         return await comments.PaginatedListAsync(filter.PageNumber, filter.PageSize);
     }
     
-    public async Task<ApiResult> Update(CommentAddDto input)
+    public async Task<ApiResult> Update(CommentAddRequest input)
     {
         var commentToUpdate = await _context.Comments.SingleOrDefaultAsync(x => x.Id == input.Id && x.UserId == _currentUserService.Id);
 

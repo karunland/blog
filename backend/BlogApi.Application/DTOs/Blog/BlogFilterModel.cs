@@ -2,11 +2,11 @@
 
 namespace BlogApi.Application.DTOs.Blog;
 
-public class BlogFilterModel
-{
-    public int PageNumber { get; set; } = 1;
-    public int PageSize { get; set; } = 9;
-    public string? Search { get; set; }
-    public string? CategoryId { get; set; }
-    public BlogSortType SortBy { get; set; } = BlogSortType.Newest;
-}
+public record BlogFilterModel
+(
+    int PageNumber = 1,
+    int PageSize = 9,
+    string? Search = null,
+    string? CategoryId = null,
+    BlogSortType SortBy = BlogSortType.Newest
+);

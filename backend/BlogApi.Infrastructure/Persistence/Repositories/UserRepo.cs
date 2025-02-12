@@ -159,7 +159,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         return ApiResult.Success();
     }
 
-    public async Task<ApiResult> Update(UserUpdateDto user)
+    public async Task<ApiResult> Update(UserUpdateRequest user)
     {
         var currentUser = await context.Users.FindAsync(currentUserService.Id);
         if (currentUser == null)
@@ -178,32 +178,31 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         return ApiResult.Success();
     }
 
-    public async Task<ApiResult<MeDto>> Login(UserLoginDto input)
+    public async Task<ApiResult<MeResponse>> Login(UserLoginDto input)
     {
         var user = await context.Users
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Email == input.Email && x.Password == input.Password.ToSha1());
         
-        if (user == null)
-        {
-            return ApiError.Failure(Messages.NotFound);
-        }
+        if (user == null) return ApiError.Failure(Messages.NotFound);
         
-        return new MeDto
-        {
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            IsMailVerified = user.IsMailVerified,
-            Token = TokenHelper.GenerateToken(new JwtTokenDto()
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Id = user.Id,
-            }),
-            ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
-        };
+        return new MeResponse
+        (
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            TokenHelper.GenerateToken(new JwtTokenDto(
+                user.Id,
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
+            )),
+            baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl,
+            user.IsMailVerified,
+            user.ExternalProvider,
+            user.ExternalProvider.GetEnumDescription()
+        );
     }
     
     public async Task<ApiResult<UserDto>> Me()
@@ -213,105 +212,100 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         if (user == null) return ApiError.Failure(Messages.NotFound);
         
         return new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            UserName = user.Username,
-            IsMailVerified = user.IsMailVerified,
-            ExternalProviderId = user.ExternalProvider,
-            ExternalProvider = user.ExternalProvider.GetEnumDescription(),
-            ImageUrl = user.ExternalProvider == ExternalProviderEnum.Google && user.FileUrl != null && user.FileUrl.StartsWith("http") ? user.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
-        };
+        (
+            user.Id,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.Username,
+            baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl,
+            user.IsMailVerified,
+            user.ExternalProvider,
+            user.ExternalProvider.GetEnumDescription()
+        );
     }
 
-    public async Task<ApiResult<MeDto>> ExternalLogin(ExternalAuthDto externalUser)
+    public async Task<ApiResult<MeResponse>> ExternalLogin(ExternalAuthRequest externalUser)
     {
-        try
+        var user = await context.Users
+            .FirstOrDefaultAsync(u => u.Email == externalUser.Email);
+
+        if (user == null)
         {
-            var user = await context.Users
-                .FirstOrDefaultAsync(u => u.Email == externalUser.Email);
-
-            if (user == null)
+            user = new User
             {
-                // Create new user
-                user = new User
-                {
-                    Email = externalUser.Email,
-                    FirstName = externalUser.FirstName,
-                    LastName = externalUser.LastName,
-                    Username = externalUser.Email.Split('@')[0],
-                    ExternalId = externalUser.ExternalId,
-                    ExternalProvider = ExternalProviderEnum.Google,
-                    ExternalPictureUrl = externalUser.ExternalPictureUrl,
-                    IsExternalAuth = true
-                };
-
-                await context.Users.AddAsync(user);
-                await context.SaveChangesAsync();
-            }
-            else
-            {
-                if (!user.IsExternalAuth || user.ExternalId != externalUser.ExternalId)
-                {
-                    user.ExternalId = externalUser.ExternalId;
-                    user.ExternalProvider = ExternalProviderEnum.Google;
-                    user.ExternalPictureUrl = externalUser.ExternalPictureUrl;
-                    user.IsExternalAuth = true;
-                    await context.SaveChangesAsync();
-                }
-            }
-
-            var token = TokenHelper.GenerateToken(new JwtTokenDto()
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Id = user.Id,
-                ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
-            });
-
-            var meDto = new MeDto
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Token = token,
-                ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
+                Email = externalUser.Email,
+                FirstName = externalUser.FirstName,
+                LastName = externalUser.LastName,
+                Username = externalUser.Email.Split('@')[0],
+                ExternalId = externalUser.ExternalId,
+                ExternalProvider = ExternalProviderEnum.Google,
+                ExternalPictureUrl = externalUser.ExternalPictureUrl,
+                IsExternalAuth = true
             };
 
-            return meDto;
+            await context.Users.AddAsync(user);
+            await context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        else
         {
-            return ApiError.Failure($"External login failed: {ex.Message}");
+            if (!user.IsExternalAuth || user.ExternalId != externalUser.ExternalId)
+            {
+                user.ExternalId = externalUser.ExternalId;
+                user.ExternalProvider = ExternalProviderEnum.Google;
+                user.ExternalPictureUrl = externalUser.ExternalPictureUrl;
+                user.IsExternalAuth = true;
+                await context.SaveChangesAsync();
+            }
         }
+
+        var token = TokenHelper.GenerateToken(new JwtTokenDto(
+            user.Id,
+            user.FirstName,
+            user.LastName,
+            user.Email,
+            baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
+        ));
+
+        var meDto = new MeResponse
+        (
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            token,
+            baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl,
+            user.IsMailVerified,
+            user.ExternalProvider,
+            user.ExternalProvider.GetEnumDescription()
+        );
+
+        return meDto;
     }
 
-    public async Task<ApiResultPagination<BlogsDto>> Blogs(FilterModel filter)
+    public async Task<ApiResultPagination<BlogListResponse>> Blogs(FilterModel filter)
     {
         var blogs = context.Blogs
             .OrderByDescending(x => x.UpdatedAt)
             .ThenByDescending(x => x.CreatedAt)
             .AsNoTracking()
             .Where(x => x.UserId == currentUserService.Id)
-            .Select(x => new BlogsDto
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Content = x.Content,
-                CreatedAt = x.CreatedAt,
-                AuthorName = x.User.FullName,
-                AuthorPhoto = x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
-                Slug = x.Slug,
-                ImageUrl = baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
-                CategoryName = x.Category.Name,
-                CategoryId = x.CategoryId,
-                ViewCount = x.ViewCount,
-                StatusEnumId = x.BlogStatusEnum,
-                Status = x.BlogStatusEnum.GetEnumDescription()
-            });
+            .Select(x => new BlogListResponse
+            (
+                x.Id,
+                x.Title,
+                x.Content,
+                x.Slug,
+                x.CreatedAt,
+                x.User.FullName,
+                x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
+                x.Category.Name,
+                x.CategoryId,
+                x.ViewCount,
+                x.BlogStatusEnum,
+                x.BlogStatusEnum.ToString(),
+                x.ImageUrl,
+                x.Comments.Count
+            ));
 
         return await blogs.PaginatedListAsync(filter.PageNumber, filter.PageSize);
     }

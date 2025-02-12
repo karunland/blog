@@ -42,27 +42,27 @@ public class UserController(UserRepo userRepo, GoogleAuthService googleAuthServi
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ApiResult<MeDto>> GoogleRegister(justString credential)
+    public async Task<ApiResult<MeResponse>> GoogleRegister(justString credential)
     {
         return await googleAuthService.GoogleRegisterAsync(credential.credential);
     }
     
     [HttpPost]
-    public async Task<ApiResult> Update(UserUpdateDto user)
+    public async Task<ApiResult> Update(UserUpdateRequest user)
     {
         return await userRepo.Update(user);
     }
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ApiResult<MeDto>> Login(UserLoginDto user)
+    public async Task<ApiResult<MeResponse>> Login(UserLoginDto user)
     {
         return await userRepo.Login(user);
     }
     
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ApiResult<MeDto>> GoogleLogin(justString credential)
+    public async Task<ApiResult<MeResponse>> GoogleLogin(justString credential)
     {
         return await googleAuthService.GoogleLogin(credential.credential);
     }
@@ -74,7 +74,7 @@ public class UserController(UserRepo userRepo, GoogleAuthService googleAuthServi
     }
     
     [HttpGet]
-    public async Task<ApiResultPagination<BlogsDto>> Blogs([FromQuery] FilterModel filter)
+    public async Task<ApiResultPagination<BlogListResponse>> Blogs([FromQuery] FilterModel filter)
     {
         return await userRepo.Blogs(filter);
     }

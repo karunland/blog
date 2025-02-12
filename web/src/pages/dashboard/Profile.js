@@ -80,7 +80,6 @@ export function Profile() {
     setIsSendingCode(true);
     try {
       const response = await sendVerificationCode();
-      console.log(response);
       if (response.isSuccess) {
         setVerificationModalOpen(true);
         toast.success('Doğrulama kodu email adresinize gönderildi.');

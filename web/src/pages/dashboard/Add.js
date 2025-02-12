@@ -67,8 +67,7 @@ export function AddBlog() {
     content: '',
     categoryId: '',
     image: null,
-    status: 1,
-    slug: ''
+    status: 1
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,7 +75,6 @@ export function AddBlog() {
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [wordCount, setWordCount] = useState(0);
-  
 
   useEffect(() => {
     document.title = isEditMode 
@@ -103,7 +101,6 @@ export function AddBlog() {
               content: blogData.content,
               categoryId: blogData.categoryId,
               status: blogData.statusEnumId,
-              slug: blogData.slug,
               image: blogData.imageUrl,
               id: blogData.id
             });
@@ -129,18 +126,7 @@ export function AddBlog() {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value,
-      ...(name === 'title' ? {
-        slug: value.toLowerCase()
-          .replace(/[^a-z0-9\s-ğüşıöç]/g, '')
-          .replace(/[ğ]/g, 'g')
-          .replace(/[ü]/g, 'u')
-          .replace(/[ş]/g, 's')
-          .replace(/[ı]/g, 'i')
-          .replace(/[ö]/g, 'o')
-          .replace(/[ç]/g, 'c')
-          .replace(/\s+/g, '-')
-      } : {})
+      [name]: value
     }));
   };
 
@@ -189,23 +175,29 @@ export function AddBlog() {
 
     try {
       const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (formData[key] !== null) {
-          formDataToSend.append(key, formData[key]);
+      
+      if (isEditMode) {
+        formDataToSend.append('Id', parseInt(formData.id));
+        formDataToSend.append('Title', formData.title);
+        formDataToSend.append('Content', formData.content);
+        formDataToSend.append('CategoryId', parseInt(formData.categoryId));
+        formDataToSend.append('Status', parseInt(formData.status));
+        // Sadece yeni bir resim yüklendiğinde gönder
+        if (formData.image instanceof File) {
+          formDataToSend.append('Image', formData.image);
         }
-      });
-
-      const updateData = {
-        Id: formData.id,
-        Title: formData.title,
-        Content: formData.content,
-        CategoryId: formData.categoryId,
-        Status: formData.status,
-        Image: formData.image
-      };
+      } else {
+        formDataToSend.append('title', formData.title);
+        formDataToSend.append('content', formData.content);
+        formDataToSend.append('categoryId', formData.categoryId);
+        formDataToSend.append('status', formData.status === 1 ? 'Draft' : formData.status === 2 ? 'Published' : 'Archived');
+        if (formData.image) {
+          formDataToSend.append('image', formData.image);
+        }
+      }
 
       const response = isEditMode
-        ? await updateBlog(updateData)
+        ? await updateBlog(formDataToSend)
         : await createBlog(formDataToSend);
 
       if (response.isSuccess) {

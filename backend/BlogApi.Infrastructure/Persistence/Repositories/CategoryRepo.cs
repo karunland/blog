@@ -22,16 +22,16 @@ public partial class CategoryRepo(BlogContext context)
         return ApiResult.Success();
     }
 
-    public async Task<ApiResultPagination<CategoriesDto>> GetAll(FilterModel filter)
+    public async Task<ApiResultPagination<CategoryListResponse>> GetAll(FilterModel filter)
     {
         var categories = context.Categories
-            .Select(x => new CategoriesDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                CreatedAt = x.CreatedAt,
-                BlogsCount = x.Blogs.Count
-            });
+            .Select(x => new CategoryListResponse
+            (
+                x.Id,
+                x.Name,
+                x.CreatedAt,
+                x.Blogs.Count
+            ));
 
         return await categories.PaginatedListAsync(filter.PageNumber, filter.PageSize);
     }
@@ -50,15 +50,16 @@ public partial class CategoryRepo(BlogContext context)
         return ApiResult.Success();
     }
 
-    // /api/categeory/categories
-    public async Task<ApiResult<List<CategoriesDto>>> GetCategories()
+    public async Task<ApiResult<List<CategoryListResponse>>> GetCategories()
     {
         var categories = await context.Categories
-            .Select(x => new CategoriesDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-            })
+            .Select(x => new CategoryListResponse
+            (
+                x.Id,
+                x.Name,
+                x.CreatedAt,
+                x.Blogs.Count
+            ))
             .ToListAsync();
 
         return categories;

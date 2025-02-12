@@ -1,5 +1,6 @@
 using BlogApi.Application.DTOs;
 using BlogApi.Application.DTOs.Blog;
+using BlogApi.Application.DTOs.Dashboard;
 using BlogApi.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,47 +8,61 @@ namespace BlogApi.Infrastructure.Persistence.Repositories;
 
 public class DashboardRepo(BlogContext context, ICurrentUserService currentUserService)
 {
-    public async Task<ApiResult<DashboardStatsDto>> GetUserStats()
+    public async Task<ApiResult<StatsResponse>> GetUserStats()
     {
         var userId = currentUserService.Id;
-        try
-        {
-            var stats = new DashboardStatsDto
-            {
-                TotalBlogs = await context.Blogs
-                    .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
-                    .CountAsync(),
-                    
-                TotalComments = await context.Comments
-                    .Where(x => x.UserId == userId && !x.IsDeleted)
-                    .CountAsync(),
-                    
-                TotalViews = await context.Blogs
-                    .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
-                    .SumAsync(x => x.ViewCount),
-                    
-                RecentBlogs = await context.Blogs
-                    .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
-                    .OrderByDescending(x => x.CreatedAt)
-                    .Take(5)
-                    .Select(x => new BlogsDto
-                    {
-                        Title = x.Title,
-                        Slug = x.Slug,
-                        CreatedAt = x.CreatedAt,
-                        ViewCount = x.ViewCount,
-                        CategoryName = x.Category.Name,
-                        AuthorName = x.User.FullName,
-                        Content = x.Content,
-                    })
-                    .ToListAsync()
-            };
+        
+        var totalBlogs = await context.Blogs
+                .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
+                .CountAsync();
 
-            return stats;
-        }
-        catch (Exception ex)
-        {
-            return ApiError.Failure(ex.Message);
-        }
+        var totalViews = await context.Blogs
+                .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
+                .SumAsync(x => x.ViewCount);
+
+        var totalComments = await context.Comments
+                .Where(x => x.UserId == userId && !x.IsDeleted)
+                .CountAsync();
+
+        var totalLikes = await context.Likes
+                .Where(x => x.UserId == userId && !x.IsDeleted)
+                .CountAsync();
+
+        var recentBlogs = await context.Blogs
+                .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
+                .OrderByDescending(x => x.CreatedAt)
+                .Take(5)
+                .Select(x => new BlogStatsResponse
+                (
+                    x.Title,
+                    x.Slug,
+                    x.CreatedAt,
+                    x.ViewCount,
+                    x.Category.Name,
+                    x.User.FullName,
+                    x.Content
+                ))
+                .ToListAsync();
+
+        var categoryStats = await context.Categories
+                .Where(x => !x.IsDeleted)
+                .Select(x => new CategoryStatsResponse
+                (
+                    x.Name,
+                    x.Blogs.Count(b => b.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !b.IsDeleted)
+                ))
+                .ToListAsync();
+
+        var stats = new StatsResponse
+        (
+            totalBlogs,
+            totalViews,
+            totalComments,
+            totalLikes,
+            categoryStats,
+            recentBlogs
+        );
+
+        return stats;
     }
 }
