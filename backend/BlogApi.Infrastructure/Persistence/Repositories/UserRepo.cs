@@ -12,12 +12,22 @@ using BlogApi.Core.Interfaces;
 using BlogApi.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Messages = BlogApi.Application.Common.Messages.Messages;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings)
+public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings, IMemoryCache cache)
 {
+    private const string USER_CACHE_KEY = "USER_INFO";
+
+    private string GetUserCacheKey(int userId) => $"{USER_CACHE_KEY}_{userId}";
+
+    private void InvalidateUserCache(int userId)
+    {
+        cache.Remove(GetUserCacheKey(userId));
+    }
+
     public async Task<ApiResult> Register(UserAddDto user)
     {
         if (await context.Users.AnyAsync(x => (x.Email == user.Email && x.IsGoogleRegister == false) || (x.ExternalId == user.Email && x.IsGoogleRegister == true)))
@@ -156,6 +166,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         user.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
+        InvalidateUserCache(currentUserService.Id);
         return ApiResult.Success();
     }
 
@@ -175,6 +186,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         currentUser.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
+        InvalidateUserCache(currentUserService.Id);
         return ApiResult.Success();
     }
 
@@ -207,11 +219,18 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
     
     public async Task<ApiResult<UserDto>> Me()
     {
+        var cacheKey = GetUserCacheKey(currentUserService.Id);
+        
+        if (cache.TryGetValue(cacheKey, out UserDto cachedUser))
+        {
+            return cachedUser;
+        }
+
         var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserService.Id);
         
         if (user == null) return ApiError.Failure(Messages.NotFound);
         
-        return new UserDto
+        var userDto = new UserDto
         (
             user.Id,
             user.Email,
@@ -223,6 +242,14 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             user.ExternalProvider,
             user.ExternalProvider.GetEnumDescription()
         );
+
+        var cacheOptions = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(10))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+
+        cache.Set(cacheKey, userDto, cacheOptions);
+        
+        return userDto;
     }
 
     public async Task<ApiResult<MeResponse>> ExternalLogin(ExternalAuthRequest externalUser)
