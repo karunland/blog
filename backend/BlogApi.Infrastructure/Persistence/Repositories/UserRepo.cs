@@ -300,7 +300,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
                 x.Category.Name,
                 x.CategoryId,
-                x.ViewCount,
+                context.Views.Count(x => x.BlogId == x.Id),
                 x.BlogStatusEnum,
                 x.BlogStatusEnum.ToString(),
                 x.ImageUrl,

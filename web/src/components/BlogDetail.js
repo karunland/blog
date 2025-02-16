@@ -14,13 +14,16 @@ import {
   useMediaQuery,
   Grid,
   IconButton,
+
   Avatar
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import PersonIcon from '@mui/icons-material/Person';
 import CommentIcon from '@mui/icons-material/Comment';
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { LikeButton } from './LikeButton';
 export function BlogDetail() {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
@@ -189,6 +192,21 @@ export function BlogDetail() {
                   {new Date(blog.createdAt).toLocaleDateString()}
                 </Typography>
               </Box>
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <VisibilityIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                  <Typography variant="caption" color="text.secondary">
+                    {blog.viewCount}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <CommentIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                  <Typography variant="caption" color="text.secondary">
+                    {blog.commentCount}
+                  </Typography>
+                </Box>
+              </Stack>
+              <LikeButton blog={blog} />
             </Stack>
           </Stack>
 

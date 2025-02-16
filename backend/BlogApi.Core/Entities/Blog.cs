@@ -19,6 +19,6 @@ public class Blog
     public Category Category { get; set; }
     public int CategoryId { get; set; }
     public List<Comment> Comments { get; set; } = [];
-    public int ViewCount { get; set; } = 0;
+    public int ViewCount { get; set; } = 0; //TODO: will be deleted
     public List<Like> Likes { get; set; } = [];
 }
