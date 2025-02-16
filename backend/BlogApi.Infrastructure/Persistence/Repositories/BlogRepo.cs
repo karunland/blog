@@ -221,7 +221,8 @@ public class BlogRepo(
 
         if (blog == null) return ApiError.Failure();
         
-        var ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        var forwardedFor = httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"];
+        var ipAddress = forwardedFor.Count > 0 ? forwardedFor[0] : httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
         if (!await context.Views.AnyAsync(x => x.BlogId == blog.Id && x.IpAddress == ipAddress))
         {
