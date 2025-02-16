@@ -28,6 +28,23 @@ public class DashboardRepo(BlogContext context, ICurrentUserService currentUserS
                 .Where(x => x.UserId == userId && !x.IsDeleted)
                 .CountAsync();
 
+        // your popular blogs
+        var popularBlogs = await context.Blogs
+                .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
+                .OrderByDescending(x => x.ViewCount)
+                .Take(5)
+                .Select(x => new BlogStatsResponse
+                (
+                    x.Title,
+                    x.Slug,
+                    x.CreatedAt,
+                    x.ViewCount,
+                    x.Category.Name,
+                    x.User.FullName,
+                    x.Content
+                ))
+                .ToListAsync();
+
         var recentBlogs = await context.Blogs
                 .Where(x => x.UserId == userId && x.BlogStatusEnum == Core.Enums.BlogStatusEnum.Published && !x.IsDeleted)
                 .OrderByDescending(x => x.CreatedAt)
@@ -60,7 +77,8 @@ public class DashboardRepo(BlogContext context, ICurrentUserService currentUserS
             totalComments,
             totalLikes,
             categoryStats,
-            recentBlogs
+            recentBlogs,
+            popularBlogs
         );
 
         return stats;

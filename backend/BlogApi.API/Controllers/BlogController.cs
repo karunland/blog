@@ -59,4 +59,11 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     {
         return await blogRepo.ChangeStatus(request);
     }
+
+    [HttpPost]
+    public async Task<ApiResult<LikeResponse>> Like(LikeRequest request)
+    {
+        return await blogRepo.ToggleLikeBlog(request);
+    }
+
 }

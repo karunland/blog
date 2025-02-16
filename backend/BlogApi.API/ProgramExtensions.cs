@@ -110,7 +110,16 @@ public static class ProgramExtensions
         if (env.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blog API V1");
+                c.DocumentTitle = "Blog API - Swagger UI";
+                c.EnableTryItOutByDefault();
+                c.InjectStylesheet("/swagger-ui/custom.css");
+            });
+
+            // Serve the custom CSS file
+            app.UseStaticFiles();
         }
 
         using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();

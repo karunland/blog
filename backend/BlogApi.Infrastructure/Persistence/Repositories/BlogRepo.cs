@@ -6,18 +6,28 @@ using BlogApi.Application.Interfaces;
 using BlogApi.Core.Entities;
 using BlogApi.Core.Enums;
 using BlogApi.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class BlogRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings)
+public class BlogRepo(
+    BlogContext context,
+    ICurrentUserService currentUserService,
+    FileRepo fileRepo,
+    IEmailService emailService,
+    BaseSettings baseSettings,
+    IHttpContextAccessor httpContextAccessor
+)
 {
     public async Task<ApiResultPagination<BlogListResponse>> GetAll(BlogFilterModel filter)
     {
-        var query = context.Blogs.AsQueryable();
+        var query = context.Blogs
+            .Where(x => !x.IsDeleted && x.BlogStatusEnum == BlogStatusEnum.Published)
+            .AsQueryable();
 
         if (!string.IsNullOrEmpty(filter.Search)) 
-            query = query.Where(x => x.Title.Contains(filter.Search));
+            query = query.Where(x => x.Title.Contains(filter.Search) );
 
         if (!string.IsNullOrEmpty(filter.CategoryId))
             query = query.Where(x => x.CategoryId == int.Parse(filter.CategoryId));
@@ -44,8 +54,10 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             x.ViewCount,
             x.BlogStatusEnum,
             x.BlogStatusEnum.ToString(),
-            x.ImageUrl,
-            x.Comments.Count
+            baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
+            x.Comments.Count,
+            x.Likes.Count,
+            x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
         ));
 
         return await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
@@ -201,12 +213,24 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
                 x.BlogStatusEnum,
                 x.BlogStatusEnum.ToString(),
                 baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
-                x.Comments.Where(x => !x.IsDeleted).Count()
+                x.Comments.Where(x => !x.IsDeleted).Count(),
+                x.Likes.Count,
+                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
             ))
             .FirstOrDefaultAsync();
 
-        if (blog == null)
-            return ApiError.Failure();
+        if (blog == null) return ApiError.Failure();
+        
+        var ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
+        if (!await context.Views.AnyAsync(x => x.BlogId == blog.Id && x.IpAddress == ipAddress))
+        {
+            context.Views.Add(new View{
+                BlogId = blog.Id,
+                IpAddress = ipAddress,
+            });
+            await context.SaveChangesAsync();
+        }
 
         return blog;
     }
@@ -232,7 +256,9 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
             x.BlogStatusEnum,
             x.BlogStatusEnum.ToString(),
             baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
-            x.Comments.Count
+            x.Comments.Count,
+            x.Likes.Count,
+            x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
         )).ToListAsync();
     }
 
@@ -248,5 +274,40 @@ public class BlogRepo(BlogContext context, ICurrentUserService currentUserServic
         await context.SaveChangesAsync();
 
         return ApiResult.Success();
+    }
+
+    public async Task<ApiResult<LikeResponse>> ToggleLikeBlog(LikeRequest request)
+    {
+        var blog = await context.Blogs.Where(x => x.Slug == request.slug).FirstOrDefaultAsync();  
+
+        if (blog == null) return ApiError.Failure("Blog bulunamadı");
+
+        var likesOfUser = await context.Likes.Where(x => x.BlogId == blog.Id && x.UserId == currentUserService.Id && !x.IsDeleted).ToListAsync();
+        var isLiked = false;
+        if (!likesOfUser.Any())
+        {
+            context.Likes.Add(new Like {
+                UserId = currentUserService.Id,
+                BlogId = blog.Id
+            });
+            isLiked = true;
+        }
+        else
+        {
+            context.Likes.RemoveRange(likesOfUser);
+            isLiked = false;
+        }
+
+        var res = await context.SaveChangesAsync();
+
+        if (res > 0)
+        {   
+            var likeCount = await context.Likes.AsNoTracking().CountAsync(x => x.BlogId == blog.Id && x.UserId == currentUserService.Id);
+            return new LikeResponse(isLiked, likeCount);
+        }
+        else
+        {
+            return ApiError.Failure("Blog beğenilirken bir hata oluştu");
+        }
     }
 }

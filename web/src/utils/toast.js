@@ -1,30 +1,45 @@
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 
-// Configure toastr
+// Toastr genel ayarları
 toastr.options = {
-    closeButton: true,
+    closeButton: false,
     debug: false,
-    newestOnTop: true,
-    progressBar: true,
+    newestOnTop: true, // En son gelen en üstte görünsün
+    progressBar: false,
     positionClass: "toast-top-right",
-    preventDuplicates: false,
+    preventDuplicates: true, // Aynı mesajların tekrarını engelle
     onclick: null,
     showDuration: "300",
     hideDuration: "1000",
-    timeOut: "5000",
+    timeOut: "3000",
     extendedTimeOut: "1000",
     showEasing: "swing",
     hideEasing: "linear",
     showMethod: "fadeIn",
-    hideMethod: "fadeOut"
+    hideMethod: "fadeOut",
+    maxOpened: 1, // Aynı anda maksimum 1 toast göster
+    autoDismiss: true // Yeni toast geldiğinde eskisini kapat
 };
 
+// Toast fonksiyonları
 export const toast = {
-    success: (message, title = '') => toastr.success(message, title),
-    error: (message, title = '') => toastr.error(message, title),
-    warning: (message, title = '') => toastr.warning(message, title),
-    info: (message, title = '') => toastr.info(message, title),
+    success: (message) => {
+        toastr.clear(); // Önceki toastları temizle
+        toastr.success(message);
+    },
+    error: (message) => {
+        toastr.clear(); // Önceki toastları temizle
+        toastr.error(message);
+    },
+    warning: (message) => {
+        toastr.clear(); // Önceki toastları temizle
+        toastr.warning(message);
+    },
+    info: (message) => {
+        toastr.clear(); // Önceki toastları temizle
+        toastr.info(message);
+    },
     confirm: async (message, title = 'Are you sure?') => {
         return new Promise((resolve) => {
             toastr.options.onclick = () => resolve(true);
@@ -32,4 +47,6 @@ export const toast = {
             toastr.warning(message + '<br/><small>(Click to confirm)</small>', title);
         });
     }
-}; 
+};
+
+export default toast; 

@@ -1,5 +1,4 @@
 ﻿using BlogApi.Core.Enums;
-using System.Collections.Generic;
 
 namespace BlogApi.Core.Entities;
 
@@ -11,7 +10,7 @@ public class Blog
     public string Content { get; set; }
     public string ImageUrl { get; set; }
     public BlogStatusEnum BlogStatusEnum { get; set; } = BlogStatusEnum.Published;
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; } = false;
     public DateTime? DeletedAt { get; set; }
@@ -22,15 +21,4 @@ public class Blog
     public List<Comment> Comments { get; set; } = [];
     public int ViewCount { get; set; } = 0;
     public List<Like> Likes { get; set; } = [];
-}
-
-public class Like
-{
-    public int Id { get; set; }
-    public int BlogId { get; set; }
-    public int UserId { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public Blog Blog { get; set; }
-    public User User { get; set; }
-    public bool IsDeleted { get; set; } = false;
 }

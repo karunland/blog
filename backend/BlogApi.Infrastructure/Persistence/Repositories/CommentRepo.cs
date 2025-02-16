@@ -9,7 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class CommentRepo(BlogContext _context, ICurrentUserService _currentUserService, IEmailService _emailService, BaseSettings baseSettings)
+public class CommentRepo(
+    BlogContext _context,
+    ICurrentUserService _currentUserService,
+    IEmailService _emailService,
+    BaseSettings baseSettings
+)
 {
 
 

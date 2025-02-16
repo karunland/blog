@@ -9,5 +9,6 @@ public record StatsResponse
     int TotalComments,
     int TotalLikes,
     List<CategoryStatsResponse> CategoryStats,
-    List<BlogStatsResponse> RecentBlogs
+    List<BlogStatsResponse> RecentBlogs,
+    List<BlogStatsResponse> PopularBlogs
 );

@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import toastr from 'toastr';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const api = axios.create({
@@ -20,6 +20,7 @@ export const getBlogsByCategory = async (params) => {
     return response.data;
   } catch (error) {
     console.error('Get Blogs By Category Error:', error.response?.data || error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -37,6 +38,7 @@ export const getBestBlogs = async () => {
     return response.data;
   } catch (error) {
     console.error('Get Blogs Error:', error.response?.data || error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -47,6 +49,7 @@ export const getAllCategories = async () => {
     return response.data;
   } catch (error) {
     console.error('Get Categories Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -57,6 +60,7 @@ export const getBlogBySlug = async (slug) => {
     return response.data;
   } catch (error) {
     console.error('Get Blog By Slug Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -71,6 +75,7 @@ export const getBlogPosts = async () => {
     return response.data;
   } catch (error) {
     console.error('Get Blog Posts Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -85,6 +90,7 @@ export const register = async (formData) => {
     return response.data;
   } catch (error) {
     console.error('Register Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -125,6 +131,7 @@ export const getCategories = async () => {
     return response.data;
   } catch (error) {
     console.error('Get Categories Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -140,6 +147,7 @@ export const deleteBlog = async (slug) => {
     return await response.json();
   } catch (error) {
     console.error('Error deleting blog:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -150,6 +158,7 @@ export const getBlogDetail = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching blog details:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -165,6 +174,7 @@ export const updateBlog = async (data) => {
     return response.data;
   } catch (error) {
     console.error('Error updating blog:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -175,6 +185,7 @@ export const searchBlogs = async (search) => {
     return response.data;
   } catch (error) {
     console.error('Search Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -185,6 +196,7 @@ export const googleRegister = async (credential) => {
     return response.data;
   } catch (error) {
     console.error('Google Register Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -195,6 +207,7 @@ export const googleLogin = async (credential) => {
     return response.data;
   } catch (error) {
     console.error('Google Login Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -209,6 +222,7 @@ export const verifyEmail = async (code) => {
     return response.data;
   } catch (error) {
     console.error('Verify Code Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -223,6 +237,7 @@ export const getMe = async () => {
     return response.data;
   } catch (error) {
     console.error('Get Me Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -238,6 +253,7 @@ export const updateProfile = async (data) => {
     return response.data;
   } catch (error) {
     console.error('Update Profile Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -253,6 +269,7 @@ export const updateProfilePhoto = async (data) => {
     return response.data;
   } catch (error) {
     console.error('Update Profile Photo Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -268,6 +285,7 @@ export const sendVerificationCode = async () => {
     return response.data;
   } catch (error) {
     console.error('Send Verification Code Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -278,6 +296,7 @@ export const login = async (data) => {
     return response.data;
   } catch (error) {
     console.error('Login Error:', error.response?.data?.error?.errorMessage || 'Giriş yapılırken bir hata oluştu');
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -292,6 +311,7 @@ export const getComments = async (blogSlug, page = 1, pageSize = 100) => {
     return response.data;
   } catch (error) {
     console.error('Get Comments Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -306,6 +326,7 @@ export const addComment = async (data) => {
     return response.data;
   } catch (error) {
     console.error('Add Comment Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -320,6 +341,7 @@ export const deleteComment = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Delete Comment Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
@@ -338,10 +360,26 @@ export const changeBlogStatus = async (slug, status) => {
     return response.data;
   } catch (error) {
     console.error('Change Blog Status Error:', error);
+    toastr.error(error.response.data.errorMessage);
     throw error;
   }
 };
 
-
+export const likeBlog = async (slug) => {
+  try {
+    const response = await api.post('/blog/like', {
+      slug,
+    }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    toastr.error(error.response.data.errorMessage);
+    console.error('Like Blog Error:', error);
+    throw error;
+  }
+};
 
 export default api;

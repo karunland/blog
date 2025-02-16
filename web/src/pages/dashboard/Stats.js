@@ -120,7 +120,7 @@ export function Stats() {
         </Paper>
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      {/* <Grid item xs={12} md={6}>
         <Paper sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>
             Son Aktiviteler
@@ -136,9 +136,9 @@ export function Stats() {
             ))}
           </List>
         </Paper>
-      </Grid>
+      </Grid> */}
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Paper sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>
             Kategori Dağılımı
@@ -159,7 +159,7 @@ export function Stats() {
             ))}
           </Box>
         </Paper>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

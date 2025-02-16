@@ -17,5 +17,7 @@ public record BlogListResponse
     BlogStatusEnum StatusEnumId,
     string Status,
     string ImageUrl,
-    int CommentCount
+    int CommentCount,
+    int LikeCount,
+    bool Liked
 );

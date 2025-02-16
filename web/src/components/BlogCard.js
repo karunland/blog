@@ -1,9 +1,9 @@
 import { Card, CardContent, Typography, Box, Stack, CardMedia, Chip, Avatar } from '@mui/material';
 import { Link } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import CommentIcon from '@mui/icons-material/Comment';
+import { LikeButton } from './LikeButton';
 import '../styles/BlogCard.css';
 
 const formatDate = (dateString) => {
@@ -146,6 +146,14 @@ export function BlogCard({ blog }) {
                   {blog.viewCount || 0}
                 </Typography>
               </Box>
+
+              <LikeButton 
+                blog={blog}
+                onLikeUpdate={(updates) => {
+                  blog.liked = updates.liked;
+                  blog.likeCount = updates.likeCount;
+                }}
+              />
             </Stack>
 
             <Chip
