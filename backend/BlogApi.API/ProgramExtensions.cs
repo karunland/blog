@@ -30,6 +30,9 @@ public static class ProgramExtensions
             if (connectionString != null) options.UseNpgsql(connectionString);
         });
         
+        // Add Memory Cache
+        services.AddMemoryCache();
+        
         services.AddScoped<BlogRepo>();
         services.AddScoped<UserRepo>();
         services.AddScoped<CategoryRepo>();

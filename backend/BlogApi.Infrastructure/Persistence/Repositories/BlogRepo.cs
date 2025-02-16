@@ -6,28 +6,57 @@ using BlogApi.Application.Interfaces;
 using BlogApi.Core.Entities;
 using BlogApi.Core.Enums;
 using BlogApi.Core.Interfaces;
+using BlogApi.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class BlogRepo(
-    BlogContext context,
-    ICurrentUserService currentUserService,
-    FileRepo fileRepo,
-    IEmailService emailService,
-    BaseSettings baseSettings,
-    IHttpContextAccessor httpContextAccessor
-)
+public class BlogRepo
 {
+    private readonly BlogContext _context;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly FileRepo _fileRepo;
+    private readonly IEmailService _emailService;
+    private readonly BaseSettings _baseSettings;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMemoryCache _cache;
+    private const string BLOG_LIST_CACHE_KEY = "BLOG_LIST";
+
+    public BlogRepo(
+        BlogContext context,
+        ICurrentUserService currentUserService,
+        FileRepo fileRepo,
+        IEmailService emailService,
+        BaseSettings baseSettings,
+        IHttpContextAccessor httpContextAccessor,
+        IMemoryCache cache)
+    {
+        _context = context;
+        _currentUserService = currentUserService;
+        _fileRepo = fileRepo;
+        _emailService = emailService;
+        _baseSettings = baseSettings;
+        _httpContextAccessor = httpContextAccessor;
+        _cache = cache;
+    }
+
     public async Task<ApiResultPagination<BlogListResponse>> GetAll(BlogFilterModel filter)
     {
-        var query = context.Blogs
+        var cacheKey = $"{BLOG_LIST_CACHE_KEY}_{filter.PageNumber}_{filter.PageSize}_{filter.Search}_{filter.CategoryId}_{filter.SortBy}";
+        
+        if (_cache.TryGetValue(cacheKey, out ApiResultPagination<BlogListResponse> cachedResult))
+        {
+            return cachedResult;
+        }
+
+        var query = _context.Blogs
             .Where(x => !x.IsDeleted && x.BlogStatusEnum == BlogStatusEnum.Published)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(filter.Search)) 
-            query = query.Where(x => x.Title.Contains(filter.Search) );
+            query = query.Where(x => x.Title.Contains(filter.Search));
 
         if (!string.IsNullOrEmpty(filter.CategoryId))
             query = query.Where(x => x.CategoryId == int.Parse(filter.CategoryId));
@@ -48,19 +77,32 @@ public class BlogRepo(
             x.Slug,
             x.CreatedAt,
             x.User.FullName,
-            x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
+            x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : _baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
             x.Category.Name,
             x.CategoryId,
-            context.Views.Count(v => v.BlogId == x.Id),
+            _context.Views.Count(v => v.BlogId == x.Id),
             x.BlogStatusEnum,
             x.BlogStatusEnum.ToString(),
-            baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
+            _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
             x.Comments.Count,
             x.Likes.Count,
-            x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
+            x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted)
         ));
 
-        return await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
+        var paginatedResult = await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
+        
+        var cacheOptions = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(10))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+            
+        _cache.Set(cacheKey, paginatedResult, cacheOptions);
+
+        return paginatedResult;
+    }
+
+    private void InvalidateCache()
+    {
+        _cache.Remove(BLOG_LIST_CACHE_KEY); 
     }
 
     public async Task<ApiResult> Create(BlogAddRequest blog)
@@ -80,7 +122,7 @@ public class BlogRepo(
         var slug = baseSlug;
         var counter = 1;
 
-        while (await context.Blogs.AnyAsync(x => x.Slug == slug))
+        while (await _context.Blogs.AnyAsync(x => x.Slug == slug))
         {
             slug = $"{baseSlug}-{counter}";
             counter++;
@@ -90,7 +132,7 @@ public class BlogRepo(
         {
             Title = blog.Title,
             Content = blog.Content,
-            UserId = currentUserService.Id,
+            UserId = _currentUserService.Id,
             BlogStatusEnum = Enum.Parse<BlogStatusEnum>(blog.Status),
             CategoryId = int.Parse(blog.CategoryId),
             Slug = slug,
@@ -99,35 +141,33 @@ public class BlogRepo(
 
         if (blog.Image != null)
         {
-            using var memoryStream = new MemoryStream();
-            await blog.Image.CopyToAsync(memoryStream);
-
-            var imagePath = await fileRepo.UploadFileAsync(new UploadFileAsyncDto {
+            var imagePath = await _fileRepo.UploadFileAsync(new UploadFileAsyncDto {
                 File = blog.Image,
                 Type = FileTypeEnum.Thumbnail
             });
             newBlog.ImageUrl = imagePath.FileUrl;
         }
 
-        context.Blogs.Add(newBlog);
-        await context.SaveChangesAsync();
+        _context.Blogs.Add(newBlog);
+        await _context.SaveChangesAsync();
 
         var emailMessage = new EmailMessage
         {
-            To = currentUserService.Email,
+            To = _currentUserService.Email,
             Subject = "Yeni Blog Oluşturuldu",
             Body = $"'{blog.Title}' başlıklı blog yazınız başarıyla oluşturuldu."
         };
 
-        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        await _emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
+        InvalidateCache();
         return ApiResult.Success();
     }
 
     public async Task<ApiResult> Update(BlogUpdateRequest blog)
     {
-        var blogToUpdate = await context.Blogs
-            .FirstOrDefaultAsync(x => x.Id == blog.Id && x.UserId == currentUserService.Id);
+        var blogToUpdate = await _context.Blogs
+            .FirstOrDefaultAsync(x => x.Id == blog.Id && x.UserId == _currentUserService.Id);
 
         if (blogToUpdate == null) 
             return ApiError.Failure("Blog bulunamadı veya düzenleme yetkiniz yok.");
@@ -145,24 +185,15 @@ public class BlogRepo(
 
             if (blog.Image != null)
             {
-                var imagePath = await fileRepo.UploadFileAsync(new UploadFileAsyncDto {
+                var imagePath = await _fileRepo.UploadFileAsync(new UploadFileAsyncDto {
                     File = blog.Image,
                     Type = FileTypeEnum.Thumbnail
                 });
                 blogToUpdate.ImageUrl = imagePath.FileUrl;
             }
 
-            await context.SaveChangesAsync();
-
-            // var emailMessage = new EmailMessage
-            // {
-            //     To = currentUserService.Email,
-            //     Subject = "Blog Güncellendi",
-            //     Body = $"'{blog.Title}' başlıklı blog yazınız başarıyla güncellendi."
-            // };
-
-            // await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
-
+            await _context.SaveChangesAsync();
+            InvalidateCache();
             return ApiResult.Success();
         }
         catch (Exception ex)
@@ -173,30 +204,31 @@ public class BlogRepo(
 
     public async Task<ApiResult> Delete(string slug)
     {
-        var blogToDelete = await context.Blogs.FirstOrDefaultAsync(x => x.Slug == slug && x.UserId == currentUserService.Id);
+        var blogToDelete = await _context.Blogs.FirstOrDefaultAsync(x => x.Slug == slug && x.UserId == _currentUserService.Id);
 
         if (blogToDelete == null) return ApiError.Failure(Messages.NotFound);
 
         blogToDelete.IsDeleted = true;
         blogToDelete.DeletedAt = DateTime.UtcNow;
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         var emailMessage = new EmailMessage
         {
-            To = currentUserService.Email,
+            To = _currentUserService.Email,
             Subject = "Blog Silindi",
             Body = "Blog silindi."
         };
 
-        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        await _emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
+        InvalidateCache();
         return ApiResult.Success();
     }
 
     public async Task<ApiResult<BlogListResponse>> Detail(string slug)
     {
-        var blog = await context.Blogs
+        var blog = await _context.Blogs
             .Where(x => x.Slug == slug)
             .Select(x => new BlogListResponse
             (
@@ -206,31 +238,31 @@ public class BlogRepo(
                 x.Slug,
                 x.CreatedAt,
                 x.User.FullName,
-                x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
+                x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : _baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
                 x.Category.Name,
                 x.CategoryId,
-                context.Views.Count(v => v.BlogId == x.Id), // View count'u direkt olarak sorguda hesapla
+                _context.Views.Count(v => v.BlogId == x.Id), // View count'u direkt olarak sorguda hesapla
                 x.BlogStatusEnum,
                 x.BlogStatusEnum.ToString(),
-                baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
+                _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
                 x.Comments.Where(x => !x.IsDeleted).Count(),
                 x.Likes.Count,
-                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
+                x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted)
             ))
             .FirstOrDefaultAsync();
 
         if (blog == null) return ApiError.Failure();
         
-        var forwardedFor = httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"];
-        var ipAddress = forwardedFor.Count > 0 ? forwardedFor[0] : httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        var forwardedFor = _httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"];
+        var ipAddress = forwardedFor.Count > 0 ? forwardedFor[0] : _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-        if (!await context.Views.AnyAsync(x => x.BlogId == blog.Id && x.IpAddress == ipAddress))
+        if (!await _context.Views.AnyAsync(x => x.BlogId == blog.Id && x.IpAddress == ipAddress))
         {
-            context.Views.Add(new View{
+            _context.Views.Add(new View{
                 BlogId = blog.Id,
                 IpAddress = ipAddress,
             });
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             
             // View count'u güncelle
             blog = blog with { ViewCount = blog.ViewCount + 1 };
@@ -241,7 +273,7 @@ public class BlogRepo(
 
     public async Task<ApiResult<List<BlogListResponse>>> Search(string search)
     {
-        var blogs = context.Blogs
+        var blogs = _context.Blogs
             .Where(x => x.Title.Contains(search) || x.Content.Contains(search) || x.Slug.Contains(search))
             .OrderByDescending(x => x.CreatedAt);
 
@@ -254,60 +286,60 @@ public class BlogRepo(
             x.CreatedAt,
             x.User.FullName,
             x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") 
-                ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
+                ? x.User.FileUrl : _baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
             x.Category.Name,
             x.CategoryId,
-            context.Views.Count(x => x.BlogId == x.Id),
+            _context.Views.Count(x => x.BlogId == x.Id),
             x.BlogStatusEnum,
             x.BlogStatusEnum.ToString(),
-            baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
+            _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
             x.Comments.Count,
             x.Likes.Count,
-            x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
+            x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted)
         )).ToListAsync();
     }
 
     public async Task<ApiResult> ChangeStatus(ChangeStatusRequest request)
     {
-        var blog = await context.Blogs.FirstOrDefaultAsync(x => x.Slug == request.slug && x.UserId == currentUserService.Id);
+        var blog = await _context.Blogs.FirstOrDefaultAsync(x => x.Slug == request.slug && x.UserId == _currentUserService.Id);
 
         if (blog == null) return ApiError.Failure("Blog bulunamadı veya düzenleme yetkiniz yok.");
 
         blog.BlogStatusEnum = (BlogStatusEnum)request.status;
         blog.UpdatedAt = DateTime.UtcNow;
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         return ApiResult.Success();
     }
 
     public async Task<ApiResult<LikeResponse>> ToggleLikeBlog(LikeRequest request)
     {
-        var blog = await context.Blogs.Where(x => x.Slug == request.slug).FirstOrDefaultAsync();  
+        var blog = await _context.Blogs.Where(x => x.Slug == request.slug).FirstOrDefaultAsync();  
 
         if (blog == null) return ApiError.Failure("Blog bulunamadı");
 
-        var likesOfUser = await context.Likes.Where(x => x.BlogId == blog.Id && x.UserId == currentUserService.Id && !x.IsDeleted).ToListAsync();
+        var likesOfUser = await _context.Likes.Where(x => x.BlogId == blog.Id && x.UserId == _currentUserService.Id && !x.IsDeleted).ToListAsync();
         var isLiked = false;
         if (!likesOfUser.Any())
         {
-            context.Likes.Add(new Like {
-                UserId = currentUserService.Id,
+            _context.Likes.Add(new Like {
+                UserId = _currentUserService.Id,
                 BlogId = blog.Id
             });
             isLiked = true;
         }
         else
         {
-            context.Likes.RemoveRange(likesOfUser);
+            _context.Likes.RemoveRange(likesOfUser);
             isLiked = false;
         }
 
-        var res = await context.SaveChangesAsync();
+        var res = await _context.SaveChangesAsync();
 
         if (res > 0)
         {   
-            var likeCount = await context.Likes.AsNoTracking().CountAsync(x => x.BlogId == blog.Id && x.UserId == currentUserService.Id);
+            var likeCount = await _context.Likes.AsNoTracking().CountAsync(x => x.BlogId == blog.Id && x.UserId == _currentUserService.Id);
             return new LikeResponse(isLiked, likeCount);
         }
         else
