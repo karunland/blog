@@ -1,7 +1,7 @@
 
 namespace BlogApi.Core.Entities;
 
-public class View
+public sealed class View
 {
     public int Id { get; set; }
     public int BlogId { get; set; }

@@ -1,7 +1,7 @@
 
 namespace BlogApi.Core.Entities;
 
-public class Like
+public sealed class Like
 {
     public int Id { get; set; }
     public int BlogId { get; set; }

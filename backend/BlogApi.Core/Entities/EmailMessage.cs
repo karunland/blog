@@ -1,6 +1,6 @@
 namespace BlogApi.Core.Entities;
 
-public class EmailMessage
+public sealed class EmailMessage
 {
     public string To { get; set; }
     public string Subject { get; set; }

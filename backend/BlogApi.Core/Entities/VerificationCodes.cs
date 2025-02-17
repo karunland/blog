@@ -1,6 +1,6 @@
 namespace BlogApi.Core.Entities;
 
-public class VerificationCodes : BaseEntity
+public sealed class VerificationCodes : BaseEntity
 {
     public string Code { get; set; }
     public string Email { get; set; }

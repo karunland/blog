@@ -2,7 +2,7 @@
 
 namespace BlogApi.Core.Entities;
 
-public class Blog
+public sealed class Blog
 {
     public int Id { get; set; }
     public string Title { get; set; }

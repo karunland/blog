@@ -1,6 +1,6 @@
 ﻿namespace BlogApi.Core.Entities;
 
-public class Comment
+public sealed class Comment
 {
     public int Id { get; set; }
     public string Content { get; set; }

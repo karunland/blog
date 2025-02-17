@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace BlogApi.Core.Entities;
 
-public class User : BaseEntity
+public sealed class User : BaseEntity
 {
     public string Username { get; set; }
     public string LastName { get; set; }

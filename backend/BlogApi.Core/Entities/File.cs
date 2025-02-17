@@ -1,6 +1,6 @@
 ﻿namespace BlogApi.Core.Entities;
 
-public class File
+public sealed class File
 {
     public int Id { get; set; }
     public string Name { get; set; }
