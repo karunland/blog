@@ -35,6 +35,7 @@ public class UserController(UserRepo userRepo, GoogleAuthService googleAuthServi
 
     [HttpPost]
     [Authorize]
+    [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<ApiResult> UpdateProfilePhoto(IFormFile image)
     {
         return await userRepo.UpdateProfilePhoto(image);
@@ -78,9 +79,4 @@ public class UserController(UserRepo userRepo, GoogleAuthService googleAuthServi
     {
         return await userRepo.Blogs(filter);
     }
-}
-
-public class justString
-{
-    public string credential { get; set; }
 }

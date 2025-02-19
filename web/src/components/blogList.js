@@ -233,6 +233,9 @@ export function BlogList() {
                     <ListItem
                       key={blog.slug}
                       button
+                      sx={{
+                        cursor: 'pointer',
+                      }}
                       onClick={() => handleSuggestionClick(blog.slug)}
                     >
                       <ListItemText primary={blog.title} />
@@ -240,7 +243,7 @@ export function BlogList() {
                         <Chip 
                           size="small"
                           label={blog.categoryName}
-                          sx={{ ml: 1 }}
+                          sx={{ ml: 1}}
                         />
                       </ListItemSecondaryAction>
                     </ListItem>

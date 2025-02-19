@@ -107,6 +107,21 @@ public class BlogRepo
 
     public async Task<ApiResult> Create(BlogAddRequest blog)
     {
+
+        // if app is in production, check if user is admin
+        if (_baseSettings.Environmnt == "Production")
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == _currentUserService.Id);
+            if (user == null || !user.IsMailVerified)
+                return ApiError.Failure("Bu işlemi yapmak için yeterince yetkiniz yok.");
+        }
+        else
+        {
+            var blogs = await _context.Blogs.Where(x => x.UserId == _currentUserService.Id && x.CreatedAt > DateTime.UtcNow.AddDays(-30)).ToListAsync();
+            if (blogs.Count >= 3)
+                return ApiError.Failure("Test ortamında 1 ayda en fazla 3 blog oluşturabilirsiniz.");
+        }
+
         var baseSlug = blog.Title.ToLower()
             .Replace(" ", "-")
             .Replace("ğ", "g")

@@ -30,12 +30,14 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     }
     
     [HttpPost]
+    [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<ApiResult> Create([FromForm] BlogAddRequest blog)
     {
         return await blogRepo.Create(blog);
     }
     
     [HttpPost]
+    [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<ApiResult> Update([FromForm] BlogUpdateRequest blog)
     {
         return await blogRepo.Update(blog);
