@@ -10,6 +10,15 @@ ENV=$1
 IMAGE_SUFFIX="-$ENV"
 CONTAINER_SUFFIX="-$ENV"
 
+# Set ports based on environment
+if [ "$ENV" = "development" ]; then
+    BACKEND_PORT=5011
+    FRONTEND_PORT=3001
+else
+    BACKEND_PORT=5001
+    FRONTEND_PORT=3000
+fi
+
 git fetch origin
 
 if ! git diff-index --quiet HEAD --; then
@@ -43,7 +52,7 @@ if ! docker build -t "blog$IMAGE_SUFFIX" --build-arg ENV=$ENV .; then
     exit 1
 fi
 
-if ! docker run -d --restart unless-stopped --name "blog-api$CONTAINER_SUFFIX" -p 5001:5001 -v /home/karun/git/blog/backend/BlogApi.API/BlogApiFiles:/app/BlogApiFiles "blog$IMAGE_SUFFIX"; then
+if ! docker run -d --restart unless-stopped --name "blog-api$CONTAINER_SUFFIX" -p $BACKEND_PORT:5001 -v /home/karun/git/blog/backend/BlogApi.API/BlogApiFiles:/app/BlogApiFiles "blog$IMAGE_SUFFIX"; then
     echo "Failed to start backend container"
     exit 1
 fi
@@ -54,7 +63,7 @@ if ! docker build -t "web$IMAGE_SUFFIX" --build-arg ENV=$ENV .; then
     exit 1
 fi
 
-if ! docker run -d --restart unless-stopped --name "web$CONTAINER_SUFFIX" -p 3000:3000 "web$IMAGE_SUFFIX"; then
+if ! docker run -d --restart unless-stopped --name "web$CONTAINER_SUFFIX" -p $FRONTEND_PORT:3000 "web$IMAGE_SUFFIX"; then
     echo "Failed to start frontend container"
     exit 1
 fi
