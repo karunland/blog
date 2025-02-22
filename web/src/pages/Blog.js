@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { Container, Grid, TextField, Typography, Box, InputAdornment } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Container, Grid } from '@mui/material';
 import { BlogList } from '../components/blogList';
 
 export function Blog() {
@@ -10,7 +8,7 @@ export function Blog() {
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <BlogList searchQuery={searchQuery} />
+          <BlogList />
         </Grid>
       </Grid>
     </Container>
