@@ -148,7 +148,9 @@ export function BlogCard({ blog }) {
               </Box>
 
               <LikeButton 
-                blog={blog}
+                slug={blog.slug}
+                likeCount={blog.likeCount}
+                liked={blog.liked}
               />
             </Stack>
 

@@ -204,7 +204,11 @@ export function BlogDetail() {
                   </Typography>
                 </Box>
               </Stack>
-              <LikeButton blog={blog} />
+              <LikeButton 
+                slug={blog.slug}
+                likeCount={blog.likeCount}
+                liked={blog.liked}
+              />
             </Stack>
           </Stack>
 

@@ -33,7 +33,8 @@ export const getBestBlogs = async () => {
         sortBy: 2
       },
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
     return response.data;

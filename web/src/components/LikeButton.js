@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -8,13 +8,12 @@ import { toast } from '../utils/toast';
 import { LoginModal } from './LoginModal';
 import { styled } from '@mui/material/styles';
 
-export function LikeButton({ blog }) {
+export function LikeButton({ slug, likeCount, liked }) {
   const { isAuthenticated } = useAuth();
-  const [isLiked, setIsLiked] = useState(blog.liked);
-  const [likeCount, setLikeCount] = useState(blog.likeCount);
+  const [isLikedState, setIsLikedState] = useState(liked || false);
+  const [likeCountState, setLikeCountState] = useState(likeCount || 0);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  
   const StyledIconButton = styled(IconButton)({
     padding: 0,
     fontSize: '18px',
@@ -48,10 +47,10 @@ export function LikeButton({ blog }) {
     }
 
     try {
-      const response = await likeBlog(blog.slug);
+      const response = await likeBlog(slug);
       if (response.isSuccess) {
-        setIsLiked(response.data.liked);
-        setLikeCount(response.data.likeCount);
+        setIsLikedState(response.data.liked);
+        setLikeCountState(response.data.likeCount);
       }
     } catch (error) {
       toast.error('Bir hata oluştu');
@@ -74,10 +73,10 @@ export function LikeButton({ blog }) {
           size="small" 
           color="error"
         >
-          {isLiked ? <LikeIcon /> : <StyledFavoriteBorderIcon />}
+          {isLikedState ? <LikeIcon /> : <StyledFavoriteBorderIcon />}
         </StyledIconButton>
         <Typography variant="body2" color="text.secondary">
-          {likeCount || 0}
+          {likeCountState || 0}
         </Typography>
       </Box>
 
