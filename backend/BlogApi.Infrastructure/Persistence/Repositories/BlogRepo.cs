@@ -69,7 +69,8 @@ public class BlogRepo(
             _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
             x.Comments.Count(c => !c.IsDeleted),
             x.Likes.Count(l => !l.IsDeleted),
-            x.Likes.Any(l => l.UserId == currentUserId && !l.IsDeleted)
+            x.Likes.Any(l => l.UserId == currentUserId && !l.IsDeleted),
+            currentUserId
         ));
 
         var paginatedResult = await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
@@ -249,10 +250,12 @@ public class BlogRepo(
                 _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
                 x.Comments.Where(x => !x.IsDeleted).Count(),
                 x.Likes.Where(x => !x.IsDeleted).Count(),
-                x.Likes.Any(l => l.UserId == currentUserId && !l.IsDeleted)
+                x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted),
+                _currentUserService.Id
             ))
             .FirstOrDefaultAsync();
 
+        Console.WriteLine($"blog: {_currentUserService.Id}");
         if (blog == null) return ApiError.Failure();
 
         var forwardedFor = _httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"];
