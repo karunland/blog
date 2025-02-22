@@ -22,17 +22,7 @@ export function Home() {
       try {
         const response = await getBestBlogs();
         if (response.isSuccess) {
-          const blogsArray = response.data.map((blog) => ({
-            title: blog.title,
-            slug: blog.slug,
-            imageUrl: blog.imageUrl,
-            authorName: blog.authorName,
-            authorPhoto: blog.authorPhoto,
-            createdAt: blog.createdAt,
-            categoryName: blog.categoryName,
-            viewCount: blog.viewCount
-          }));
-          setBlogs(blogsArray);
+          setBlogs(response.data);
         }
       } catch (error) {
         console.error('Blog verileri yüklenirken hata:', error);

@@ -20,7 +20,7 @@ public class CommentController(CommentRepo commentRepo) : BaseApiController
     {
         return await commentRepo.Create(comment);
     }
-    
+
     [HttpPost]
     public async Task<ApiResult> Update(CommentAddRequest comment)
     {

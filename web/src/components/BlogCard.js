@@ -149,10 +149,6 @@ export function BlogCard({ blog }) {
 
               <LikeButton 
                 blog={blog}
-                onLikeUpdate={(updates) => {
-                  blog.liked = updates.liked;
-                  blog.likeCount = updates.likeCount;
-                }}
               />
             </Stack>
 

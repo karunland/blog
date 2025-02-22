@@ -32,15 +32,15 @@ public class TokenHelper(BaseSettings baseSettings)
         return tokenHandler.WriteToken(token);
     }
 
-     public async Task<bool> VerifyGoogleAccessToken(string token)
+    public async Task<bool> VerifyGoogleAccessToken(string token)
     {
         HttpClient client = new();
         var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={token}");
         if (response.IsSuccessStatusCode)
         {
             await response.Content.ReadAsStringAsync();
-            
-            
+
+
             // JSON'dan gerekli bilgileri çıkarın ve doğrulayın.
             return true;
         }

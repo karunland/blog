@@ -23,23 +23,39 @@ builder.Services.Configure<EmailSettings>(
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
+    options.AddPolicy("Dev",
         builder =>
         {
             builder
-                .WithOrigins("http://localhost:3000") // React uygulamanızın adresi
+                .WithOrigins("http://localhost:3000", "https://devnotes.online",
+                "https://hkorkmaz.com")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
+
+    options.AddPolicy("Prod",
+        builder =>
+        {
+            builder
+                .WithOrigins("https://devnotes.online", "https://hkorkmaz.com")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
         });
 });
 
-// builder.Services.AddScoped<ContentModerationService>();
-
 var app = builder.Build();
-await app.UseAppServicesAsync(configuration, app.Environment);
 
-// Use CORS before other middleware
-app.UseCors("AllowReactApp");
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("Dev");
+}
+else
+{
+    app.UseCors("Prod");
+}
+
+await app.UseAppServicesAsync(configuration, app.Environment);
 
 app.Run();

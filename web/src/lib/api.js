@@ -14,7 +14,8 @@ export const getBlogsByCategory = async (params) => {
     const response = await api.get('/blog/list', { 
       params,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
     return response.data;

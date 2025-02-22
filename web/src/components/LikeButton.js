@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -8,13 +8,13 @@ import { toast } from '../utils/toast';
 import { LoginModal } from './LoginModal';
 import { styled } from '@mui/material/styles';
 
-export function LikeButton({ blog, onLikeUpdate }) {
+export function LikeButton({ blog }) {
   const { isAuthenticated } = useAuth();
   const [isLiked, setIsLiked] = useState(blog.liked);
   const [likeCount, setLikeCount] = useState(blog.likeCount);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
- 
+  
   const StyledIconButton = styled(IconButton)({
     padding: 0,
     fontSize: '18px',
@@ -40,6 +40,8 @@ export function LikeButton({ blog, onLikeUpdate }) {
 
   const handleLike = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
     if (!isAuthenticated) {
       setShowLoginModal(true);
       return;
@@ -47,20 +49,9 @@ export function LikeButton({ blog, onLikeUpdate }) {
 
     try {
       const response = await likeBlog(blog.slug);
-      const newLikeState = response.data.isLiked;
-
       if (response.isSuccess) {
-        setIsLiked(newLikeState);
-        const newLikeCount = response.data.likeCount;
-        setLikeCount(newLikeCount);
-        
-        // Notify parent component about the update
-        if (onLikeUpdate) {
-          onLikeUpdate({
-            liked: newLikeState,
-            likeCount: newLikeCount
-          });
-        }
+        setIsLiked(response.data.liked);
+        setLikeCount(response.data.likeCount);
       }
     } catch (error) {
       toast.error('Bir hata oluştu');

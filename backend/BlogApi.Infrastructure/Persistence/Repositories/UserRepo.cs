@@ -309,18 +309,17 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         return meDto;
     }
 
-    public async Task<ApiResultPagination<BlogListResponse>> Blogs(FilterModel filter)
+    public async Task<ApiResultPagination<MyListResponse>> Blogs(FilterModel filter)
     {
         var blogs = context.Blogs
             .OrderByDescending(x => x.UpdatedAt)
             .ThenByDescending(x => x.CreatedAt)
             .AsNoTracking()
             .Where(x => x.UserId == currentUserService.Id)
-            .Select(x => new BlogListResponse
+            .Select(x => new MyListResponse
             (
                 x.Id,
                 x.Title,
-                x.Content,
                 x.Slug,
                 x.CreatedAt,
                 x.User.FullName,
@@ -333,7 +332,8 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 x.ImageUrl,
                 x.Comments.Count,
                 x.Likes.Count,
-                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
+                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted),
+                x.UserId
             ));
 
         return await blogs.PaginatedListAsync(filter.PageNumber, filter.PageSize);
