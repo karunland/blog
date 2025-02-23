@@ -65,12 +65,12 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         var emailMessage = new EmailMessage
         {
             To = newUser.Email,
-            Subject = "DevLog - Welcome",
+            Subject = "devnotes.online - Welcome",
             IsHtml = true,
             Body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
                     <h2>Hello {newUser.FirstName} {newUser.LastName}!</h2>
-                    <p>Welcome to DevLog. We are glad to see you here.</p>
+                    <p>Welcome to devnotes.online. We are glad to see you here.</p>
                 </div>"
         };
         
@@ -101,7 +101,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         var emailMessage = new EmailMessage
         {
             To = user.Email,
-            Subject = "DevLog - Email Verification Code",
+            Subject = "devnotes.online - Email Verification Code",
             IsHtml = true,
             Body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
@@ -138,7 +138,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         var emailMessage = new EmailMessage
         {
             To = user.Email,
-            Subject = "DevLog - Email Doğrulama Başarılı",
+            Subject = "devnotes.online - Email Doğrulama Başarılı",
             IsHtml = true,
             Body = $"Email doğrulama işlemi başarıyla tamamlandı."
         };

@@ -146,7 +146,7 @@ export function Navbar() {
                   textDecoration: 'none',
                 }}
               >
-                DEVLOG
+                DEVNOTES
                 <Box component="span" sx={{ opacity: 0.7 }}>.ONLINE</Box>
               </Typography>
             </Box>
