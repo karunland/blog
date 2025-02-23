@@ -58,7 +58,13 @@ export const getAllCategories = async () => {
 
 export const getBlogBySlug = async (slug) => {
   try {
-    const response = await api.get(`/blog/detail?slug=${slug}`);
+    const response = await api.get(`/blog/detail?slug=${slug}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Get Blog By Slug Error:', error);

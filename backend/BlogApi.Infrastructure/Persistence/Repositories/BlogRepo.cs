@@ -227,6 +227,8 @@ public class BlogRepo(
 
     public async Task<ApiResult<DetailResponse>> Detail(string slug)
     {
+        var currentUserId = _currentUserService.Id;
+
         var blog = await _context.Blogs
             .Where(x => x.Slug == slug)
             .Select(x => new DetailResponse
@@ -246,11 +248,10 @@ public class BlogRepo(
                 _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
                 x.Comments.Where(x => !x.IsDeleted).Count(),
                 x.Likes.Where(x => !x.IsDeleted).Count(),
-                x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted)
+                x.Likes.Any(l => l.UserId == currentUserId && !l.IsDeleted)
             ))
             .FirstOrDefaultAsync();
 
-        Console.WriteLine($"blog: {_currentUserService.Id}");
         if (blog == null) return ApiError.Failure();
 
         var forwardedFor = _httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"];
