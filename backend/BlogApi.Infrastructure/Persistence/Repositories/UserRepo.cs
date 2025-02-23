@@ -332,8 +332,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 x.ImageUrl,
                 x.Comments.Count,
                 x.Likes.Count,
-                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted),
-                x.UserId
+                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
             ));
 
         return await blogs.PaginatedListAsync(filter.PageNumber, filter.PageSize);

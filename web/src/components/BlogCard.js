@@ -151,12 +151,6 @@ export function BlogCard({ blog }) {
                   {blog.viewCount == 0 ? '' : blog.viewCount}
                 </Typography>
               </Box>
-
-              <LikeButton 
-                slug={blog.slug}
-                likeCount={blog.likeCount}
-                liked={blog.liked}
-              />
             </Stack>
             <Chip
               icon={<LocalOfferIcon sx={{ fontSize: '16px !important' }} />}

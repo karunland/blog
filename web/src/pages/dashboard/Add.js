@@ -165,8 +165,9 @@ export function AddBlog() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (wordCount < MIN_WORD_COUNT) {
-      setError(`Blog yazın en az ${MIN_WORD_COUNT} kelime içermelidir. Şu an: ${wordCount} kelime`);
+    // if environment is production, check if the word count is greater than 100
+    if (process.env.NODE_ENV === 'production' && wordCount < MIN_WORD_COUNT) {
+      setError(`Blog yazınız en az ${MIN_WORD_COUNT} kelime içermelidir. Şu an: ${wordCount} kelime`);
       return;
     }
 

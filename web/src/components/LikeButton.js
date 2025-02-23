@@ -43,7 +43,7 @@ export function LikeButton({ slug, likeCount, liked }) {
   const handleLike = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!isAuthenticated) {
       setShowLoginModal(true);
       return;
@@ -86,7 +86,7 @@ export function LikeButton({ slug, likeCount, liked }) {
           {isLikedState ? <LikeIcon /> : <StyledFavoriteBorderIcon />}
         </StyledIconButton>
         <Typography variant="body2" color="text.secondary">
-          {likeCountState || 0}
+          {likeCountState == 0 ? '' : likeCountState}
         </Typography>
       </Box>
 
