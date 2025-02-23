@@ -33,6 +33,7 @@ import PublishIcon from '@mui/icons-material/Publish';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import { toast } from '../../utils/toast';
 import '../../styles/MyBlogs.css';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 export function MyBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -176,6 +177,14 @@ export function MyBlogs() {
                               {blog.commentCount || 0}
                             </Typography>
                           </Box>
+
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <FavoriteIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="caption" color="text.secondary">
+                              {blog.likeCount || 0}
+                            </Typography>
+                          </Box>
+
                         </Box>
                       </Stack>
                     }

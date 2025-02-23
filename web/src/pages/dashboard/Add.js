@@ -165,7 +165,8 @@ export function AddBlog() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (wordCount < MIN_WORD_COUNT) {
+    // if environment is production, check if the word count is greater than 100
+    if (process.env.NODE_ENV === 'production' && wordCount < MIN_WORD_COUNT) {
       setError(`Blog yazınız en az ${MIN_WORD_COUNT} kelime içermelidir. Şu an: ${wordCount} kelime`);
       return;
     }
@@ -182,7 +183,6 @@ export function AddBlog() {
         formDataToSend.append('Content', formData.content);
         formDataToSend.append('CategoryId', parseInt(formData.categoryId));
         formDataToSend.append('Status', parseInt(formData.status));
-        // Sadece yeni bir resim yüklendiğinde gönder
         if (formData.image instanceof File) {
           formDataToSend.append('Image', formData.image);
         }
@@ -190,7 +190,8 @@ export function AddBlog() {
         formDataToSend.append('title', formData.title);
         formDataToSend.append('content', formData.content);
         formDataToSend.append('categoryId', formData.categoryId);
-        formDataToSend.append('status', formData.status === 1 ? 'Draft' : formData.status === 2 ? 'Published' : 'Archived');
+        formDataToSend.append('status', formData.status === 1 ? 'Draft' : formData.status === 2 ?
+          'Published' : 'Archived');
         if (formData.image) {
           formDataToSend.append('image', formData.image);
         }

@@ -312,8 +312,8 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
     public async Task<ApiResultPagination<MyListResponse>> Blogs(FilterModel filter)
     {
         var blogs = context.Blogs
-            .OrderByDescending(x => x.UpdatedAt)
-            .ThenByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
+            // .ThenByDescending(x => x.)
             .AsNoTracking()
             .Where(x => x.UserId == currentUserService.Id)
             .Select(x => new MyListResponse
@@ -326,14 +326,13 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
                 x.Category.Name,
                 x.CategoryId,
-                context.Views.Count(x => x.BlogId == x.Id),
+                context.Views.Count(v => v.BlogId == x.Id && !v.IsDeleted),
                 x.BlogStatusEnum,
                 x.BlogStatusEnum.ToString(),
                 x.ImageUrl,
                 x.Comments.Count,
                 x.Likes.Count,
-                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted),
-                x.UserId
+                x.Likes.Any(l => l.UserId == currentUserService.Id && !l.IsDeleted)
             ));
 
         return await blogs.PaginatedListAsync(filter.PageNumber, filter.PageSize);

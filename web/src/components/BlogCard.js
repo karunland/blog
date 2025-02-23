@@ -133,27 +133,25 @@ export function BlogCard({ blog }) {
             alignItems="center"
           >
             <Stack direction="row" spacing={2} alignItems="center">
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <LikeButton 
+                  slug={blog.slug}
+                  likeCount={blog.likeCount}
+                  liked={blog.liked}
+                />
+              <Box display={{ xs: 'none', md: 'flex' }} sx={{ alignItems: 'center', gap: 0.5 }}>
                 <CommentIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
                 <Typography variant="body2" color="text.secondary">
-                  {blog.commentCount || 0}
+                  {blog.commentCount == 0 ? '' : blog.commentCount}
                 </Typography>
               </Box>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box display={{ xs: 'none', md: 'flex' }} sx={{ alignItems: 'center', gap: 0.5 }}>
                 <VisibilityIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
                 <Typography variant="body2" color="text.secondary">
-                  {blog.viewCount || 0}
+                  {blog.viewCount == 0 ? '' : blog.viewCount}
                 </Typography>
               </Box>
-
-              <LikeButton 
-                slug={blog.slug}
-                likeCount={blog.likeCount}
-                liked={blog.liked}
-              />
             </Stack>
-
             <Chip
               icon={<LocalOfferIcon sx={{ fontSize: '16px !important' }} />}
               label={blog.categoryName}

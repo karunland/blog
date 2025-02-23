@@ -18,6 +18,5 @@ public record ListResponse
     string ImageUrl,
     int CommentCount,
     int LikeCount,
-    bool Liked,
-    int UserId
+    bool Liked
 );

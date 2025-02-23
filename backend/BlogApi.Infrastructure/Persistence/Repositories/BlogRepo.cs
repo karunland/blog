@@ -69,8 +69,7 @@ public class BlogRepo(
             _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
             x.Comments.Count(c => !c.IsDeleted),
             x.Likes.Count(l => !l.IsDeleted),
-            x.Likes.Any(l => l.UserId == currentUserId && !l.IsDeleted),
-            currentUserId
+            x.Likes.Any(l => l.UserId == currentUserId && !l.IsDeleted)
         ));
 
         var paginatedResult = await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
@@ -102,8 +101,8 @@ public class BlogRepo(
         else
         {
             var blogs = await _context.Blogs.Where(x => x.UserId == _currentUserService.Id && x.CreatedAt > DateTime.UtcNow.AddDays(-30)).ToListAsync();
-            if (blogs.Count >= 3)
-                return ApiError.Failure("Test ortamında 1 ayda en fazla 3 blog oluşturabilirsiniz.");
+            // if (blogs.Count >= 3)
+            //     return ApiError.Failure("Test ortamında 1 ayda en fazla 3 blog oluşturabilirsiniz.");
         }
 
         var baseSlug = blog.Title.ToLower()
@@ -134,8 +133,7 @@ public class BlogRepo(
             UserId = _currentUserService.Id,
             BlogStatusEnum = Enum.Parse<BlogStatusEnum>(blog.Status),
             CategoryId = int.Parse(blog.CategoryId),
-            Slug = slug,
-            CreatedAt = DateTime.UtcNow
+            Slug = slug
         };
 
         if (blog.Image != null)
@@ -158,9 +156,9 @@ public class BlogRepo(
             Body = $"'{blog.Title}' başlıklı blog yazınız başarıyla oluşturuldu."
         };
 
-        await _emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        // await _emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
-        InvalidateCache();
+        // InvalidateCache();
         return ApiResult.Success();
     }
 
@@ -248,8 +246,7 @@ public class BlogRepo(
                 _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
                 x.Comments.Where(x => !x.IsDeleted).Count(),
                 x.Likes.Where(x => !x.IsDeleted).Count(),
-                x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted),
-                _currentUserService.Id
+                x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted)
             ))
             .FirstOrDefaultAsync();
 
