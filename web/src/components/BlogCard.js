@@ -49,7 +49,7 @@ export function BlogCard({ blog }) {
       }}
     >
       <Link 
-        to={`/blog/${blog.slug}`} 
+        to={`/${blog.slug}`} 
         style={{ textDecoration: 'none', color: 'inherit', height: '100%', display: 'flex', flexDirection: 'column' }}
       >
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5, paddingBottom: 1 }}>

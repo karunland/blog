@@ -56,6 +56,18 @@ export const getAllCategories = async () => {
   }
 };
 
+export const getCategoriesAnyBlog = async () => {
+  try {
+    const response = await api.get('/Category/CategoriesAnyBlog');
+    return response.data;
+  } catch (error) {
+    console.error('Get Categories Any Blog Error:', error);
+    toastr.error(error.response.data.errorMessage);
+    throw error;
+  }
+};
+
+
 export const getBlogBySlug = async (slug) => {
   try {
     const response = await api.get(`/blog/detail?slug=${slug}`,

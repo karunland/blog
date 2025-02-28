@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BlogCard } from './BlogCard';
-import { getBlogsByCategory, getAllCategories, searchBlogs } from '../lib/api';
+import { getBlogsByCategory, getAllCategories, searchBlogs, getCategoriesAnyBlog } from '../lib/api';
 import { PulseLoader } from 'react-spinners';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -158,7 +158,7 @@ export function BlogList() {
 
   const loadCategories = async () => {
     try {
-      const response = await getAllCategories();
+      const response = await getCategoriesAnyBlog();
       if (response.isSuccess) {
         setCategories(response.data);
       }
@@ -195,7 +195,7 @@ export function BlogList() {
   };
 
   const handleSuggestionClick = (slug) => {
-    navigate(`/blog/${slug}`);
+    navigate(`/${slug}`);
     setShowSuggestions(false);
   };
 

@@ -23,7 +23,7 @@ export function GoogleLoginBlog({ buttonName, onError }) {
         const meResponse = await getMe();
         if (meResponse.isSuccess) {
           dispatch(setUser(meResponse.data));
-          navigate('/blog');
+          navigate('/');
         }
       } else {
         toast.error(apiResponse.message);

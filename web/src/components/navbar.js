@@ -35,7 +35,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 const pages = [
   { name: 'Ana Sayfa', path: '/' },
-  { name: 'Blog', path: '/blog' }
+  { name: 'Hakkımızda', path: '/about' },
+  { name: 'Motivasyon', path: '/motivasyon' }
 ];
 
 const settings = [

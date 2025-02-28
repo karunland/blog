@@ -28,7 +28,7 @@ import { Profile } from './pages/dashboard/Profile';
 import { DashboardLayout } from './components/DashboardLayout';
 import { Navbar } from './components/navbar';
 import { Toaster } from 'react-hot-toast';
-
+import { Landing } from './pages/Landing';
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 function AppContent() {
@@ -55,8 +55,16 @@ function AppContent() {
       </Route>
 
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Blog />} />
         <Route path="/about" element={<About />} />
+        <Route path="/motivasyon" element={<Home />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/:slug" element={<BlogDetail />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/google-login" element={<GoogleLoginBlog />} />
+        <Route path="/verify/:code" element={<EmailVerification />} />
+        <Route path="*" element={<NotFound />} />
         <Route 
           path="/dashboard/*" 
           element={
@@ -71,14 +79,6 @@ function AppContent() {
           <Route path="blogs" element={<MyBlogs />} />
           <Route path="profile" element={<Profile />} />
         </Route>
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/blog/:slug" element={<BlogDetail />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/google-login" element={<GoogleLoginBlog />} />
-        <Route path="/verify/:code" element={<EmailVerification />} />
-        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

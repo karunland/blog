@@ -33,4 +33,11 @@ public class CategoryController(CategoryRepo categoryRepo) : BaseApiController
     {
         return await categoryRepo.GetCategories();
     }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<ApiResult<List<CategoryListResponse>>> CategoriesAnyBlog()
+    {
+        return await categoryRepo.CategoriesAnyBlog();
+    }
 }

@@ -14,7 +14,7 @@ export function PublicRoute({ children }) {
   }
 
   if (user) {
-    return <Navigate to="/blog" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
