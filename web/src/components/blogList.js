@@ -258,7 +258,9 @@ export function BlogList() {
   }, [searchParams.get('CategoryId'), searchParams.get('Search'), searchParams.get('SortBy')]);
 
   useEffect(() => {
-    loadPosts();
+    if (page > 1) {
+      loadPosts();
+    }
   }, [page]);
 
   if (loading && posts.length === 0) {
@@ -341,7 +343,7 @@ export function BlogList() {
                 <Chip 
                   size="small"
                   label={category.blogsCount || 0}
-                  sx={{ ml: 1 }}
+                  sx={{ ml: 'auto' }}
                 />
               </MenuItem>
             ))}
