@@ -87,7 +87,7 @@ public static class ProgramExtensions
                 {
                     builder
                         .WithOrigins("http://localhost:3000", "https://devnotes.online",
-                            "https://hkorkmaz.com")
+                            "https://hkorkmaz.com", "http://localhost:3001", "http://127.0.0.1:3000")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
@@ -116,18 +116,11 @@ public static class ProgramExtensions
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Basesettings:JwtSecret"]!)),
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["BaseSettings:JwtSecret"]!)),
                 ValidateIssuer = false,
                 ValidateAudience = false
             };
         });
-        
-        services.AddCors(options => options.AddPolicy("AllowAllOrigins",
-            builder => builder
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials()
-                .SetIsOriginAllowed(_ => true)));
 
         return services;
     }
