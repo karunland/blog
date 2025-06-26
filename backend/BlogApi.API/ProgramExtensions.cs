@@ -153,7 +153,7 @@ public static class ProgramExtensions
 
         using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var blogContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-        // await blogContext.Database.MigrateAsync();
+        await blogContext.Database.MigrateAsync();
         blogContext.SeedDatabase();
         app.UseCors("Dev");
         app.UseHttpsRedirection();
