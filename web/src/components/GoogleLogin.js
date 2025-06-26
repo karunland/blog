@@ -19,11 +19,13 @@ export function GoogleLoginBlog({ buttonName, onError }) {
 
       if (apiResponse.isSuccess) {
         const token = apiResponse.data.token;
+        console.log(token);
         localStorage.setItem('token', token);
         const meResponse = await getMe();
+        console.log(meResponse);
         if (meResponse.isSuccess) {
           dispatch(setUser(meResponse.data));
-          navigate('/blog');
+          navigate('/');
         }
       } else {
         toast.error(apiResponse.message);

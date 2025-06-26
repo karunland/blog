@@ -131,7 +131,7 @@ export function Profile() {
           .then(meResponse => {
             if (meResponse?.isSuccess) {
               dispatch(updateUserProfile(meResponse.data));
-              toast.success('Profil fotoğrafınız güncellendi.');
+              toast.success('Profil fotoğrafın güncellendi.');
             }
           })
           .catch(() => {
@@ -203,7 +203,7 @@ export function Profile() {
           if (meResponse.isSuccess) {
             dispatch(updateUserProfile(meResponse.data));
             setSelectedFile(null);
-            toast.success('Profil fotoğrafınız güncellendi.');
+            toast.success('Profil fotoğrafın güncellendi.');
           }
         }
       }, 'image/jpeg', 0.95);

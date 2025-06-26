@@ -276,7 +276,7 @@ const Register = () => {
 
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2">
-              Zaten hesabınız var mı?{' '}
+              Zaten hesabın var mı?{' '}
               <MuiLink
                 href="/login"
                 underline="hover"

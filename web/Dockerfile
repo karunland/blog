@@ -10,13 +10,10 @@ COPY package*.json ./
 RUN npm install --legacy-peer-deps --no-audit
 COPY . .
 
-ARG REACT_APP_API_URL
-ARG REACT_APP_GOOGLE_CLIENT_ID
-ARG REACT_APP_TINYMCE_API_KEY
-
-ENV REACT_APP_API_URL=$REACT_APP_API_URL
-ENV REACT_APP_GOOGLE_CLIENT_ID=$REACT_APP_GOOGLE_CLIENT_ID
-ENV REACT_APP_TINYMCE_API_KEY=$REACT_APP_TINYMCE_API_KEY
+# # Set environment variables directly
+# ENV REACT_APP_API_URL=http://localhost:5001
+# ENV REACT_APP_GOOGLE_CLIENT_ID=312877528405-qa9ko52v5jse2tpcl3ce3io4vpr8qkd0.apps.googleusercontent.com
+# ENV REACT_APP_TINYMCE_API_KEY=hkjlrkjgdo2wklip7jqlleavme3j8zs511k8lgbjx6u8o51j
 
 RUN npm run build
 

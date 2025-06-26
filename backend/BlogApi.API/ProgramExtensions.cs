@@ -24,11 +24,13 @@ public static class ProgramExtensions
         services.AddHttpContextAccessor();
         services.Configure<BaseSettings>(configuration.GetSection("BaseSettings"));
         // use postgresql
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<BlogContext>(options =>
-        {
-            if (connectionString != null) options.UseNpgsql(connectionString);
-        });
+        var connectionString = configuration.GetConnectionString("BlogConnection");
+        Console.WriteLine(connectionString);
+        if (connectionString != null)
+            services.AddDbContext<BlogContext>(options =>
+            {
+                 options.UseNpgsql(connectionString);
+            });
         
         // Add Memory Cache
         services.AddMemoryCache();
@@ -76,6 +78,30 @@ public static class ProgramExtensions
                     Array.Empty<string>()
                 }
             });
+        });
+        
+        services.AddCors(options =>
+        {
+            options.AddPolicy("Dev",
+                builder =>
+                {
+                    builder
+                        .WithOrigins("http://localhost:3000", "https://devnotes.online",
+                            "https://hkorkmaz.com")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+
+            options.AddPolicy("Prod",
+                builder =>
+                {
+                    builder
+                        .WithOrigins("https://devnotes.online", "https://hkorkmaz.com")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
         });
 
         services.AddAuthentication(x =>
@@ -127,9 +153,9 @@ public static class ProgramExtensions
 
         using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
         var blogContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-        blogContext.SeedDatabaseAsync();
-        
-        app.UseCors("AllowAllOrigins");
+        // await blogContext.Database.MigrateAsync();
+        blogContext.SeedDatabase();
+        app.UseCors("Dev");
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();

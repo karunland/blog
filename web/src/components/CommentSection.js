@@ -144,7 +144,7 @@ export function CommentSection({ blogSlug }) {
         </Box>
       ) : (
         <Typography color="text.secondary" sx={{ mb: 2 }}>
-          Yorum yapmak için giriş yapmalısınız.
+          Yorum yapmak için giriş yapmalısın.
         </Typography>
       )}
 

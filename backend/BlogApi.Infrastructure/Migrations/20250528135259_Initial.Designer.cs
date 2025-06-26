@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlogApi.Infrastructure.Migrations
 {
     [DbContext(typeof(BlogContext))]
-    [Migration("20250216080855_views")]
-    partial class views
+    [Migration("20250528135259_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

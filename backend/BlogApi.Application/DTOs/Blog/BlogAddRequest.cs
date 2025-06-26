@@ -7,6 +7,5 @@ public record BlogAddRequest(
     string Content,
     string CategoryId,
     string Status,
-    IFormFile? Image,
-    string? Slug
+    IFormFile? Image
 );

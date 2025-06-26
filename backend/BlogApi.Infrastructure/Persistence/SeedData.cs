@@ -6,7 +6,7 @@ namespace BlogApi.Infrastructure.Persistence;
 
 public static class SeedData
 {
-    public static void SeedDatabaseAsync(this BlogContext context)
+    public static void SeedDatabase(this BlogContext context)
     {
         var ss = @"<div>
                         <h1>What is Lorem Ipsum?</h1>
@@ -75,7 +75,7 @@ public static class SeedData
                     Extension = ".jpg",
                     IsMailVerified = true,
                     IsGoogleRegister = false,
-                    CreatedAt = new DateTime(2024, 1, 2),
+                    CreatedAt = DateTime.SpecifyKind(new DateTime(2024, 1, 2), DateTimeKind.Utc),
                 }
             };
             context.Users.AddRange(users);
@@ -118,7 +118,7 @@ public static class SeedData
                     ViewCount = 300,
                     Likes = [new() { UserId = 2 }],
                     ImageUrl = "Thumbnail_old-people.jpg",
-                    CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(9),
+                    CreatedAt = DateTime.UtcNow,
                     Comments = [new() { UserId = context.Users.FirstOrDefault().Id, Content = "Good article." }, new() { UserId = context.Users.FirstOrDefault().Id, Content = "This is a good article." }]
                 },
                 new() {
@@ -130,7 +130,7 @@ public static class SeedData
                     ViewCount = 300,
                     Likes = [new() { UserId = 2 }],
                     ImageUrl = "Thumbnail_statistic.jpg",
-                    CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(10),
+                    CreatedAt = DateTime.UtcNow,
                     Comments = [new() { UserId = context.Users.FirstOrDefault().Id, Content = "Harika bir makale." }, new() { UserId = context.Users.FirstOrDefault().Id, Content = "Bu da harika bir makale." }]
                 },
                 new() {
@@ -142,7 +142,7 @@ public static class SeedData
                     ViewCount = 300,
                     Likes = [new() { UserId = 2 }],
                     ImageUrl = "Thumbnail_mouse.jpg",
-                    CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(11),
+                    CreatedAt = DateTime.UtcNow,
                     Comments = [new() { UserId = context.Users.FirstOrDefault().Id, Content = "Good article." }, new() { UserId = context.Users.FirstOrDefault().Id, Content = "This is a good article." }]
                 },
                 new() {
@@ -154,7 +154,7 @@ public static class SeedData
                     ViewCount = 300,
                     Likes = [new() { UserId = 2 }],
                     ImageUrl = "Thumbnail_default.jpg",
-                    CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(12),
+                    CreatedAt = DateTime.UtcNow,
                     Comments = [new() { UserId = context.Users.FirstOrDefault().Id, Content = "Good article." }, new() { UserId = context.Users.FirstOrDefault().Id, Content = "This is a good article." }]
                 },
                 new() {
@@ -166,7 +166,7 @@ public static class SeedData
                     ViewCount = 300,
                     Likes = [new() { UserId = 2 }],
                     ImageUrl = "Thumbnail_statistic.jpg",
-                    CreatedAt = DateTime.UtcNow - TimeSpan.FromDays(13),
+                    CreatedAt = DateTime.UtcNow,
                     Comments = [new() { UserId = context.Users.FirstOrDefault().Id, Content = "Good article." }, new() { UserId = context.Users.FirstOrDefault().Id, Content = "This is a good article." }]
                 }
             };

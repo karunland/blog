@@ -1,5 +1,7 @@
 import { Box, Container, Typography, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import MuiLink from '@mui/material/Link';
 
 export const Footer = () => {
   return (
@@ -24,7 +26,16 @@ export const Footer = () => {
           <Typography variant="body2" color="text.secondary">
             © {new Date().getFullYear()} Blog. Tüm hakları saklıdır.
           </Typography>
+
           <Box sx={{ display: 'flex', gap: 3 }}>
+            <MuiLink
+              href="https://github.com/karunland/blog"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1 }}
+            >
+              <GitHubIcon /> Source
+            </MuiLink>
             <Link
               component={RouterLink}
               to="/privacy-policy"

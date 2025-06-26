@@ -131,7 +131,7 @@ const Login = () => {
           <GoogleLoginBlog buttonName="login" onError={handleGoogleError} />
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2">
-              Hesabınız yok mu?{' '}
+              Hesabın yok mu?{' '}
               <Link
                 href="/register"
                 underline="hover"

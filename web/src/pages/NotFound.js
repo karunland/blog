@@ -62,7 +62,7 @@ export function NotFound() {
             mb: 2
           }}
         >
-          Aradığınız sayfa mevcut değil veya taşınmış olabilir. Ana sayfaya dönerek devam edebilirsiniz.
+          Aradığın sayfa mevcut değil veya taşınmış olabilir. Ana sayfaya dönerek devam edebilirsiniz.
         </Typography>
 
         <Button

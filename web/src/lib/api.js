@@ -14,7 +14,8 @@ export const getBlogsByCategory = async (params) => {
     const response = await api.get('/blog/list', { 
       params,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
     return response.data;
@@ -32,7 +33,8 @@ export const getBestBlogs = async () => {
         sortBy: 2
       },
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
     return response.data;
@@ -54,9 +56,27 @@ export const getAllCategories = async () => {
   }
 };
 
+export const getCategoriesAnyBlog = async () => {
+  try {
+    const response = await api.get('/Category/CategoriesAnyBlog');
+    return response.data;
+  } catch (error) {
+    console.error('Get Categories Any Blog Error:', error);
+    toastr.error(error.response.data.errorMessage);
+    throw error;
+  }
+};
+
+
 export const getBlogBySlug = async (slug) => {
   try {
-    const response = await api.get(`/blog/detail?slug=${slug}`);
+    const response = await api.get(`/blog/detail?slug=${slug}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Get Blog By Slug Error:', error);

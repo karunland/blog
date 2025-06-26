@@ -1,8 +1,8 @@
-﻿using BlogApi.Core.Enums;
+using BlogApi.Core.Enums;
 
 namespace BlogApi.Application.DTOs.Blog;
 
-public record ListResponse
+public record MyListResponse
 (
     int Id,
     string Title,

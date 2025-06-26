@@ -32,17 +32,15 @@ export function BlogDetail() {
   const contentRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
-
+  const [isLiked, setIsLiked] = useState(false);
   useEffect(() => {
     loadBlog();
   }, [slug]);
 
   useEffect(() => {
     if (blog) {
-      // Blog içeriğini contentRef'e ekle
       contentRef.current.innerHTML = blog.content;
 
-      // Başlıkları bul ve ID'lerini ayarla
       const headingElements = contentRef.current.querySelectorAll('h1, h2, h3');
       const headingsData = Array.from(headingElements).map((heading, index) => {
         const id = `heading-${index}`;
@@ -55,14 +53,12 @@ export function BlogDetail() {
       });
       setHeadings(headingsData);
 
-      // Başlıklara stil ekle
       headingElements.forEach(heading => {
         heading.style.color = theme.palette.text.primary;
         heading.style.marginTop = theme.spacing(4);
         heading.style.marginBottom = theme.spacing(2);
       });
 
-      // Paragraf ve link stillerini ayarla
       const paragraphs = contentRef.current.querySelectorAll('p');
       paragraphs.forEach(p => {
         p.style.color = theme.palette.text.primary;
@@ -105,6 +101,8 @@ export function BlogDetail() {
       const response = await getBlogBySlug(slug);
       if (response.isSuccess) {
         setBlog(response.data);
+        console.log(response.data);
+        setIsLiked(response.data.liked);
       }
     } catch (error) {
       console.error('Blog yüklenemedi:', error);
@@ -206,7 +204,11 @@ export function BlogDetail() {
                   </Typography>
                 </Box>
               </Stack>
-              <LikeButton blog={blog} />
+              <LikeButton 
+                slug={blog.slug}
+                likeCount={blog.likeCount}
+                liked={blog.liked}
+              />
             </Stack>
           </Stack>
 

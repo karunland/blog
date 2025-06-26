@@ -17,7 +17,7 @@ using Messages = BlogApi.Application.Common.Messages.Messages;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings, IMemoryCache cache)
+public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings, IMemoryCache cache, TokenHelper tokenHelper)
 {
     private const string USER_CACHE_KEY = "USER_INFO";
 
@@ -65,12 +65,12 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         var emailMessage = new EmailMessage
         {
             To = newUser.Email,
-            Subject = "DevLog - Welcome",
+            Subject = "devnotes.online - Welcome",
             IsHtml = true,
             Body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
                     <h2>Hello {newUser.FirstName} {newUser.LastName}!</h2>
-                    <p>Welcome to DevLog. We are glad to see you here.</p>
+                    <p>Welcome to devnotes.online. We are glad to see you here.</p>
                 </div>"
         };
         
@@ -101,7 +101,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         var emailMessage = new EmailMessage
         {
             To = user.Email,
-            Subject = "DevLog - Email Verification Code",
+            Subject = "devnotes.online - Email Verification Code",
             IsHtml = true,
             Body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
@@ -138,7 +138,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         var emailMessage = new EmailMessage
         {
             To = user.Email,
-            Subject = "DevLog - Email Doğrulama Başarılı",
+            Subject = "devnotes.online - Email Doğrulama Başarılı",
             IsHtml = true,
             Body = $"Email doğrulama işlemi başarıyla tamamlandı."
         };
@@ -203,7 +203,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             user.Email,
             user.FirstName,
             user.LastName,
-            TokenHelper.GenerateToken(new JwtTokenDto(
+            tokenHelper.GenerateToken(new JwtTokenDto(
                 user.Id,
                 user.FirstName,
                 user.LastName,
@@ -286,7 +286,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             }
         }
 
-        var token = TokenHelper.GenerateToken(new JwtTokenDto(
+        var token = tokenHelper.GenerateToken(new JwtTokenDto(
             user.Id,
             user.FirstName,
             user.LastName,
@@ -309,25 +309,24 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         return meDto;
     }
 
-    public async Task<ApiResultPagination<BlogListResponse>> Blogs(FilterModel filter)
+    public async Task<ApiResultPagination<MyListResponse>> Blogs(FilterModel filter)
     {
         var blogs = context.Blogs
-            .OrderByDescending(x => x.UpdatedAt)
-            .ThenByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
+            // .ThenByDescending(x => x.)
             .AsNoTracking()
             .Where(x => x.UserId == currentUserService.Id)
-            .Select(x => new BlogListResponse
+            .Select(x => new MyListResponse
             (
                 x.Id,
                 x.Title,
-                x.Content,
                 x.Slug,
                 x.CreatedAt,
                 x.User.FullName,
                 x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
                 x.Category.Name,
                 x.CategoryId,
-                context.Views.Count(x => x.BlogId == x.Id),
+                context.Views.Count(v => v.BlogId == x.Id && !v.IsDeleted),
                 x.BlogStatusEnum,
                 x.BlogStatusEnum.ToString(),
                 x.ImageUrl,

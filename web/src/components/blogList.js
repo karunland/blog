@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { BlogCard } from './BlogCard';
-import { getBlogsByCategory, getAllCategories, searchBlogs } from '../lib/api';
+import { getBlogsByCategory, getAllCategories, searchBlogs, getCategoriesAnyBlog } from '../lib/api';
 import { PulseLoader } from 'react-spinners';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -32,16 +32,84 @@ function BlogSkeleton() {
     <Grid container spacing={3}>
       {[1, 2, 3, 4, 5, 6].map(i => (
         <Grid item xs={12} sm={6} md={4} key={i}>
-          <Box sx={{ height: '100%', borderRadius: 1, overflow: 'hidden' }}>
-            <Skeleton height={200} />
-            <Box sx={{ p: 2 }}>
-              <Skeleton height={60} />
-              <Skeleton width="60%" />
-              <Box sx={{ mt: 2 }}>
-                <Skeleton width="40%" />
-                <Skeleton width="30%" />
-                <Skeleton width="50%" />
+          <Box 
+            sx={{ 
+              height: '100%',
+              maxHeight: 420,
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '0.8px solid transparent',
+              bgcolor: 'background.paper',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Author Section */}
+            <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Skeleton 
+                variant="circular" 
+                width={40} 
+                height={40}
+                sx={{ 
+                  border: '2px solid',
+                  borderColor: 'primary.light'
+                }}
+              />
+              <Box sx={{ flex: 1 }}>
+                <Skeleton variant="text" width={120} height={24} />
+                <Skeleton variant="text" width={80} height={16} />
               </Box>
+            </Box>
+
+            {/* Image Section */}
+            <Box sx={{ px: 1 }}>
+              <Skeleton 
+                variant="rectangular" 
+                height={200}
+                sx={{ 
+                  borderRadius: '24px',
+                }}
+              />
+            </Box>
+
+            {/* Content Section */}
+            <Box sx={{ p: 2, flexGrow: 1 }}>
+              <Skeleton variant="text" height={28} sx={{ mb: 1 }} />
+              <Skeleton variant="text" width="80%" height={28} />
+            </Box>
+
+            {/* Stats Bar */}
+            <Box 
+              sx={{ 
+                p: 2,
+                mt: 'auto',
+                borderTop: '1px solid',
+                borderColor: 'divider',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <Stack direction="row" spacing={2}>
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <Skeleton variant="circular" width={18} height={18} />
+                  <Skeleton variant="text" width={20} />
+                </Stack>
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <Skeleton variant="circular" width={18} height={18} />
+                  <Skeleton variant="text" width={20} />
+                </Stack>
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                  <Skeleton variant="circular" width={18} height={18} />
+                  <Skeleton variant="text" width={20} />
+                </Stack>
+              </Stack>
+              <Skeleton 
+                variant="rounded" 
+                width={90} 
+                height={24} 
+                sx={{ borderRadius: '16px' }} 
+              />
             </Box>
           </Box>
         </Grid>
@@ -90,7 +158,7 @@ export function BlogList() {
 
   const loadCategories = async () => {
     try {
-      const response = await getAllCategories();
+      const response = await getCategoriesAnyBlog();
       if (response.isSuccess) {
         setCategories(response.data);
       }
@@ -127,7 +195,7 @@ export function BlogList() {
   };
 
   const handleSuggestionClick = (slug) => {
-    navigate(`/blog/${slug}`);
+    navigate(`/${slug}`);
     setShowSuggestions(false);
   };
 
@@ -190,7 +258,9 @@ export function BlogList() {
   }, [searchParams.get('CategoryId'), searchParams.get('Search'), searchParams.get('SortBy')]);
 
   useEffect(() => {
-    loadPosts();
+    if (page > 1) {
+      loadPosts();
+    }
   }, [page]);
 
   if (loading && posts.length === 0) {
@@ -273,7 +343,7 @@ export function BlogList() {
                 <Chip 
                   size="small"
                   label={category.blogsCount || 0}
-                  sx={{ ml: 1 }}
+                  sx={{ ml: 'auto' }}
                 />
               </MenuItem>
             ))}

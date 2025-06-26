@@ -53,7 +53,7 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
             user.Email,
             user.FirstName,
             user.LastName,
-            TokenHelper.GenerateToken(new JwtTokenDto(
+            tokenHelper.GenerateToken(new JwtTokenDto(
                 user.Id,
                 user.Email,
                 user.FirstName,
@@ -108,8 +108,8 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
         var emailMessage = new EmailMessage
         {
             To = payload.Email,
-            Subject = "Hesabınız Başarıyla Oluşturuldu",
-            Body = "Hesabınız başarıyla oluşturuldu."
+            Subject = "Hesabın Başarıyla Oluşturuldu",
+            Body = "Hesabın başarıyla oluşturuldu."
         };
 
         await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
@@ -119,7 +119,7 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
             newUser.Email,
             newUser.FirstName,
             newUser.LastName,
-            TokenHelper.GenerateToken(new JwtTokenDto(newUser.Id, newUser.Email, newUser.FirstName, newUser.LastName, newUser.FileUrl)),
+            tokenHelper.GenerateToken(new JwtTokenDto(newUser.Id, newUser.Email, newUser.FirstName, newUser.LastName, newUser.FileUrl)),
             baseSettings.BackendUrl + "/api/file/image/" + newUser.FileUrl,
             newUser.IsMailVerified,
             newUser.ExternalProvider,

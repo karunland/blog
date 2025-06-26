@@ -10,39 +10,39 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
 {
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResultPagination<BlogListResponse>> List([FromQuery] BlogFilterModel filter)
+    public async Task<ApiResultPagination<ListResponse>> List([FromQuery] BlogFilterModel filter)
     {
         return await blogRepo.GetAll(filter);
     }
-    
+
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResult<BlogListResponse>> Detail([FromQuery] string slug)
+    public async Task<ApiResult<DetailResponse>> Detail([FromQuery] string slug)
     {
         return await blogRepo.Detail(slug);
     }
-    
+
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResultPagination<BlogListResponse>> GetAll([FromQuery] BlogFilterModel filter)
+    public async Task<ApiResultPagination<ListResponse>> GetAll([FromQuery] BlogFilterModel filter)
     {
         return await blogRepo.GetAll(filter);
     }
-    
+
     [HttpPost]
     [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<ApiResult> Create([FromForm] BlogAddRequest blog)
     {
         return await blogRepo.Create(blog);
     }
-    
+
     [HttpPost]
     [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<ApiResult> Update([FromForm] BlogUpdateRequest blog)
     {
         return await blogRepo.Update(blog);
     }
-    
+
     [HttpPost]
     public async Task<ApiResult> Delete(string slug)
     {
@@ -51,7 +51,7 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResult<List<BlogListResponse>>> Search([FromQuery] string search)
+    public async Task<ApiResult<List<SearchResponse>>> Search([FromQuery] string search)
     {
         return await blogRepo.Search(search);
     }
@@ -67,5 +67,4 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
     {
         return await blogRepo.ToggleLikeBlog(request);
     }
-
 }

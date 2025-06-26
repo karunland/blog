@@ -1,11 +1,12 @@
-﻿using BlogApi.Core.Enums;
+using BlogApi.Core.Enums;
 
 namespace BlogApi.Application.DTOs.Blog;
 
-public record ListResponse
+public record DetailResponse
 (
     int Id,
     string Title,
+    string Content,
     string Slug,
     DateTime CreatedAt,
     string AuthorName,

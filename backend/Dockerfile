@@ -20,7 +20,6 @@ EXPOSE 5001
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY ["BlogApi.API/appsettings.json", "appsettings.json"]
-COPY ["BlogApi.API/appsettings.Development.json", "appsettings.Development.json"]
 COPY ["BlogApi.API/BlogApiFiles", "/app/BlogApiFiles"]
 VOLUME ["/app/BlogApiFiles"]
 ENTRYPOINT ["dotnet", "BlogApi.API.dll"]

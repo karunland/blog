@@ -1,81 +1,157 @@
-import { Container, Paper, Typography, Box, Avatar, Grid } from '@mui/material';
-import EmailIcon from '@mui/icons-material/Email';
+import { Container, Box, Typography, Grid, Paper, Stack, Link as MuiLink } from '@mui/material';
+import { Link } from 'react-router-dom';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import EmailIcon from '@mui/icons-material/Email';
+import aboutImage from '../assets/about-thumbnail.jpeg';
 
 export function About() {
+  const technologies = [
+    { 
+      name: 'Frontend', 
+      items: [
+        'React.js',
+        'Material-UI (MUI)',
+        'React Router'
+      ] 
+    },
+    { 
+      name: 'Backend', 
+      items: [
+        '.NET Core',
+        'Entity Framework',
+        'PostgreSQL'
+      ] 
+    },
+    { 
+      name: 'DevOps & Araçlar', 
+      items: [
+        'Docker',
+        'Nginx',
+        'Git'
+      ] 
+    },
+  ];
+
   return (
-    <Container maxWidth="md" sx={{ py: 5 }}>
-      <Paper elevation={1} sx={{ p: 5, borderRadius: 2 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Hakkımda
-        </Typography>
-        
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-          <Avatar
-            src="/profile-image.jpg"
-            alt="Profil"
-            sx={{ width: 150, height: 150 }}
+    <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Grid container spacing={6}>
+        {/* Hero Section */}
+        <Grid item xs={12}>
+          <Box
+            component="img"
+            src={aboutImage}
+            alt="About Blog Platform"
+            sx={{
+              width: '100%',
+              height: '300px',
+              objectFit: 'cover',
+              borderRadius: 2,
+            }}
           />
-        </Box>
+        </Grid>
 
-        <Typography variant="h5" align="center" gutterBottom sx={{ mb: 4 }}>
-          Merhaba, ben [İsim Soyisim]
-        </Typography>
+        {/* Mission Section */}
+        <Grid item xs={12} md={8}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              height: '100%',
+              bgcolor: 'rgba(255,255,255,0.03)',
+              borderRadius: 2,
+              border: 1,
+              borderColor: 'rgba(255,255,255,0.1)'
+            }}
+          >
+            <Typography variant="h5" gutterBottom sx={{ color: '#fff' }}>
+              Proje Hakkında
+            </Typography>
+            <Typography sx={{ color: '#bdbdbd', mb: 3 }}>
+              Bu platform, modern web teknolojilerini kullanarak geliştirilmiş bir blog sitesidir.
+              Frontend tarafında React.js ve Material-UI kullanılarak kullanıcı dostu bir arayüz,
+              backend tarafında ise .NET Core kullanıldı.
+              Kullanıcılar kolayca blog yazıları paylaşabilir, düzenleyebilir ve diğer yazarların
+              içeriklerini keşfedebilir.
+              
+            </Typography>
+            <Typography sx={{ color: '#bdbdbd', mb: 3 }}>Projenin kaynak kodlarına <Link to="https://github.com/karunland/blog">buradan</Link> ulaşabilirsiniz.</Typography>
+          </Paper>
+        </Grid>
 
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            Kim Bu Blogger?
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Yazılım geliştirme tutkusu ile başlayan yolculuğumda, 
-            sürekli öğrenme ve kendimi geliştirme fırsatları arıyorum. 
-            Bu blog, teknik deneyimlerimi ve öğrendiklerimi paylaşmak 
-            için oluşturduğum bir platform.
-          </Typography>
-        </Box>
+        {/* Creator Info */}
+        <Grid item xs={12} md={4}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              height: '100%',
+              bgcolor: 'rgba(255,255,255,0.03)',
+              borderRadius: 2,
+              border: 1,
+              borderColor: 'rgba(255,255,255,0.1)'
+            }}
+          >
+            <Typography variant="h5" gutterBottom sx={{ color: '#fff' }}>
+              Geliştirici
+            </Typography>
+            <Typography sx={{ color: '#bdbdbd', mb: 2 }}>
+              Harun Korkmaz
+            </Typography>
+            <Typography sx={{ color: '#bdbdbd', mb: 3 }}>
+              Elektronik ve Haberleşme Mühendisi
+              Backend Developer
+              Kocaeli Üniversitesi (2019)
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <MuiLink
+                href="https://github.com/karunland"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1 }}
+              >
+                <GitHubIcon /> GitHub
+              </MuiLink>
+              <MuiLink
+                href="mailto:contact@hkorkmaz.com"
+                sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1 }}
+              >
+                <EmailIcon /> Email
+              </MuiLink>
+            </Stack>
+          </Paper>
+        </Grid>
 
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            Neler Yapıyorum?
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Full-stack web geliştirme alanında çalışıyorum. 
-            React, .NET Core ve modern web teknolojileri üzerine 
-            yazılar yazıyor, deneyimlerimi paylaşıyorum.
-          </Typography>
-        </Box>
-
-        <Box>
-          <Typography variant="h6" gutterBottom>
-            İletişim
-          </Typography>
-          <Typography variant="body1" paragraph>
-            Benimle iletişime geçmek veya projelerim hakkında 
-            daha fazla bilgi almak için:
-          </Typography>
-          <Grid container spacing={2} sx={{ pl: 2 }}>
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <EmailIcon />
-                <Typography>example@email.com</Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <GitHubIcon />
-                <Typography>github.com/username</Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <LinkedInIcon />
-                <Typography>linkedin.com/in/username</Typography>
-              </Box>
-            </Grid>
+        {/* Technologies Section */}
+        <Grid item xs={12}>
+          <Grid container spacing={3}>
+            {technologies.map((category) => (
+              <Grid item xs={12} md={4} key={category.name}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 3,
+                    bgcolor: 'rgba(255,255,255,0.03)',
+                    borderRadius: 2,
+                    border: 1,
+                    borderColor: 'rgba(255,255,255,0.1)'
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom sx={{ color: '#fff' }}>
+                    {category.name}
+                  </Typography>
+                  <Stack spacing={1}>
+                    {category.items.map((item) => (
+                      <Typography key={item} sx={{ color: '#bdbdbd' }}>
+                        {item}
+                      </Typography>
+                    ))}
+                  </Stack>
+                </Paper>
+              </Grid>
+            ))}
           </Grid>
-        </Box>
-      </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 } 

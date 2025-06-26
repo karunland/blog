@@ -22,17 +22,7 @@ export function Home() {
       try {
         const response = await getBestBlogs();
         if (response.isSuccess) {
-          const blogsArray = response.data.map((blog) => ({
-            title: blog.title,
-            slug: blog.slug,
-            imageUrl: blog.imageUrl,
-            authorName: blog.authorName,
-            authorPhoto: blog.authorPhoto,
-            createdAt: blog.createdAt,
-            categoryName: blog.categoryName,
-            viewCount: blog.viewCount
-          }));
-          setBlogs(blogsArray);
+          setBlogs(response.data);
         }
       } catch (error) {
         console.error('Blog verileri yüklenirken hata:', error);
@@ -271,7 +261,7 @@ export function Home() {
                 Kolay İçerik Oluşturma
               </Typography>
               <Typography sx={{ color: '#bdbdbd' }}>
-                Modern editör ile yazılarınızı kolayca oluşturun ve düzenleyin.
+                Modern editör ile yazılarını kolayca oluştur ve düzenle
               </Typography>
             </Paper>
           </Grid>

@@ -28,7 +28,7 @@ public class CommentRepo(
             return ApiError.Failure(Messages.NotFound);
 
         var commenter = await _context.Users
-            .FirstOrDefaultAsync(u => u.Id == _currentUserService.Id);
+            .FirstOrDefaultAsync(u => u.Id == _currentUserService.Id) ?? throw new Exception("Kullanıcı bulunamadı.");
 
         var newComment = new Comment
         {
@@ -42,6 +42,15 @@ public class CommentRepo(
         _context.Comments.Add(newComment);
         await _context.SaveChangesAsync();
         
+        var emailMessage = new EmailMessage
+        {
+            To = blog.User.Email,
+            Subject = "Yeni Yorum",
+            Body = $"'{blog.Title}' başlıklı blog yazına {commenter.FullName} yorum yapıldı.."
+        };
+
+        // await _emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+
         return ApiResult.Success();
     }
     

@@ -8,13 +8,12 @@ import { toast } from '../utils/toast';
 import { LoginModal } from './LoginModal';
 import { styled } from '@mui/material/styles';
 
-export function LikeButton({ blog, onLikeUpdate }) {
+export function LikeButton({ slug, likeCount, liked }) {
   const { isAuthenticated } = useAuth();
-  const [isLiked, setIsLiked] = useState(blog.liked);
-  const [likeCount, setLikeCount] = useState(blog.likeCount);
+  const [isLikedState, setIsLikedState] = useState(liked || false);
+  const [likeCountState, setLikeCountState] = useState(likeCount || 0);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
- 
   const StyledIconButton = styled(IconButton)({
     padding: 0,
     fontSize: '18px',
@@ -22,14 +21,17 @@ export function LikeButton({ blog, onLikeUpdate }) {
       '& .MuiSvgIcon-root': {
         filter: 'drop-shadow(0 0 4px rgba(255, 23, 68, 0.6))',
         transform: 'scale(1.1)',
+        borderRadius: '50%',
+        // border: '2px solid rgba(255, 23, 68, 0.1)',
         transition: 'all 0.2s ease-in-out',
+
       }
     }
   });
 
   const LikeIcon = styled(FavoriteIcon)({
     color: '#ff1744',
-    transition: 'all 0.2s ease-in-out',
+    // transition: 'all 0.2s ease-in-out',
     fontSize: '20px',
   });
 
@@ -40,27 +42,18 @@ export function LikeButton({ blog, onLikeUpdate }) {
 
   const handleLike = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+
     if (!isAuthenticated) {
       setShowLoginModal(true);
       return;
     }
 
     try {
-      const response = await likeBlog(blog.slug);
-      const newLikeState = response.data.isLiked;
-
+      const response = await likeBlog(slug);
       if (response.isSuccess) {
-        setIsLiked(newLikeState);
-        const newLikeCount = response.data.likeCount;
-        setLikeCount(newLikeCount);
-        
-        // Notify parent component about the update
-        if (onLikeUpdate) {
-          onLikeUpdate({
-            liked: newLikeState,
-            likeCount: newLikeCount
-          });
-        }
+        setIsLikedState(response.data.liked);
+        setLikeCountState(response.data.likeCount);
       }
     } catch (error) {
       toast.error('Bir hata oluştu');
@@ -69,30 +62,37 @@ export function LikeButton({ blog, onLikeUpdate }) {
 
   return (
     <>
-      <Box 
+      <Box
         onClick={handleLike}
         className='LikeButton'
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
           gap: 0.5,
-          cursor: 'pointer'
+          cursor: 'pointer',
+          '&:hover': {
+            backgroundColor: 'rgba(255, 23, 68, 0.1, 0.1)',
+            borderRadius: '50%',
+          }
         }}
       >
-        <StyledIconButton 
-          size="small" 
+
+        <Box display={{ xs: 'none', md: 'flex', position: 'absolute', top: 0, left: 0, width: '10px', height: '10px', backgroundColor: 'rgba(255, 23, 68, 0.1)', borderRadius: '50%' }}>
+        </Box>
+        <StyledIconButton
+          size="small"
           color="error"
         >
-          {isLiked ? <LikeIcon /> : <StyledFavoriteBorderIcon />}
+          {isLikedState ? <LikeIcon /> : <StyledFavoriteBorderIcon />}
         </StyledIconButton>
         <Typography variant="body2" color="text.secondary">
-          {likeCount || 0}
+          {likeCountState == 0 ? '' : likeCountState}
         </Typography>
       </Box>
 
-      <LoginModal 
-        open={showLoginModal} 
-        onClose={() => setShowLoginModal(false)} 
+      <LoginModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
       />
     </>
   );

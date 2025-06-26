@@ -14,12 +14,13 @@ namespace BlogApi.Application.Helper;
 public class TokenHelper(BaseSettings baseSettings)
 {
 
-    public static string GenerateToken(JwtTokenDto user)
+    public string GenerateToken(JwtTokenDto user)
     {
-        var jwtSecret = "F833F51D8A55AA8D8EFACBB72AE3C2A863BA577C2F16E22495356C7FFD";
+        if (string.IsNullOrEmpty(baseSettings.JwtSecret))
+            throw new InvalidOperationException("JWT secret is not configured");
 
         JwtSecurityTokenHandler tokenHandler = new();
-        var key = Encoding.ASCII.GetBytes(jwtSecret);
+        var key = Encoding.UTF8.GetBytes(baseSettings.JwtSecret);
         SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = new ClaimsIdentity([
@@ -32,15 +33,15 @@ public class TokenHelper(BaseSettings baseSettings)
         return tokenHandler.WriteToken(token);
     }
 
-     public async Task<bool> VerifyGoogleAccessToken(string token)
+    public async Task<bool> VerifyGoogleAccessToken(string token)
     {
         HttpClient client = new();
         var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={token}");
         if (response.IsSuccessStatusCode)
         {
             await response.Content.ReadAsStringAsync();
-            
-            
+
+
             // JSON'dan gerekli bilgileri çıkarın ve doğrulayın.
             return true;
         }

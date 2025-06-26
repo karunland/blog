@@ -166,7 +166,7 @@ export function AddBlog() {
     e.preventDefault();
     
     if (wordCount < MIN_WORD_COUNT) {
-      setError(`Blog yazınız en az ${MIN_WORD_COUNT} kelime içermelidir. Şu an: ${wordCount} kelime`);
+      setError(`Blog yazın en az ${MIN_WORD_COUNT} kelime içermelidir. Şu an: ${wordCount} kelime`);
       return;
     }
 
@@ -182,7 +182,6 @@ export function AddBlog() {
         formDataToSend.append('Content', formData.content);
         formDataToSend.append('CategoryId', parseInt(formData.categoryId));
         formDataToSend.append('Status', parseInt(formData.status));
-        // Sadece yeni bir resim yüklendiğinde gönder
         if (formData.image instanceof File) {
           formDataToSend.append('Image', formData.image);
         }
@@ -190,7 +189,8 @@ export function AddBlog() {
         formDataToSend.append('title', formData.title);
         formDataToSend.append('content', formData.content);
         formDataToSend.append('categoryId', formData.categoryId);
-        formDataToSend.append('status', formData.status === 1 ? 'Draft' : formData.status === 2 ? 'Published' : 'Archived');
+        formDataToSend.append('status', formData.status === 1 ? 'Draft' : formData.status === 2 ?
+          'Published' : 'Archived');
         if (formData.image) {
           formDataToSend.append('image', formData.image);
         }
@@ -518,7 +518,7 @@ export function AddBlog() {
                   <Typography variant="subtitle2">
                     İçerik
                   </Typography>
-                  <Tooltip title={`Blog yazınız en az ${MIN_WORD_COUNT} kelime içermelidir`}>
+                  <Tooltip title={`Blog yazın en az ${MIN_WORD_COUNT} kelime içermelidir`}>
                     <InfoIcon sx={{ fontSize: 16, color: 'text.secondary', cursor: 'help' }} />
                   </Tooltip>
                 </Box>
@@ -527,7 +527,7 @@ export function AddBlog() {
                   color={wordCount >= MIN_WORD_COUNT ? "success" : "warning"}
                   size="small"
                   variant="outlined"
-                />
+              />
               </Box>
 
               <Box className="editor-container">

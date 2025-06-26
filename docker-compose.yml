@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: blog_postgres_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - blog_network_dev
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: blog_backend_dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5001
+    ports:
+      - "5001:5001"
+    volumes:
+      - blog_files_dev:/app/BlogApiFiles
+    depends_on:
+      - postgres
+    networks:
+      - blog_network_dev
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: blog_frontend_dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - blog_network_dev
+    restart: unless-stopped
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  blog_files_dev:
+    driver: local
+
+networks:
+  blog_network_dev:
+    driver: bridge 
