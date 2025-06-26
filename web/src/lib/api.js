@@ -1,6 +1,11 @@
 import axios from 'axios';
 import toastr from 'toastr';
-const API_URL = process.env.REACT_APP_API_URL;
+
+let API_URL = process.env.REACT_APP_API_URL;
+
+if (API_URL === undefined || API_URL === null || API_URL === '') {
+  API_URL = 'http://localhost:5001/api';
+}
 
 const api = axios.create({
   baseURL: API_URL,
