@@ -133,7 +133,7 @@ const Login = () => {
             <Typography variant="body2">
               Hesabın yok mu?{' '}
               <Link
-                href="/register"
+                to="/register"
                 underline="hover"
                 sx={{ cursor: 'pointer' }}
               >
