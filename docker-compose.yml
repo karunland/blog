@@ -4,6 +4,10 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: blog_postgres_dev
+    environment:
+      - POSTGRES_DB=BlogDb_Development
+      - POSTGRES_USER=bloguser
+      - POSTGRES_PASSWORD=blog
     ports:
       - "5433:5432"
     volumes:
