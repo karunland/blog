@@ -18,40 +18,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Dev",
-        builder =>
-        {
-            builder
-                .WithOrigins("http://localhost:3000", "https://devnotes.online",
-                "https://hkorkmaz.com")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        });
-
-    options.AddPolicy("Prod",
-        builder =>
-        {
-            builder
-                .WithOrigins("https://devnotes.online", "https://hkorkmaz.com")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        });
-});
-
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors("Dev");
-}
-else
-{
-    app.UseCors("Prod");
-}
 
 await app.UseAppServicesAsync(configuration, app.Environment);
 

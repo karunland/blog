@@ -82,22 +82,20 @@ public static class ProgramExtensions
         
         services.AddCors(options =>
         {
-            options.AddPolicy("Dev",
+            options.AddPolicy("AllowAll",
                 builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:3000", "https://devnotes.online",
-                            "https://hkorkmaz.com", "http://localhost:3001", "http://127.0.0.1:3000")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
-                });
-
-            options.AddPolicy("Prod",
-                builder =>
-                {
-                    builder
-                        .WithOrigins("https://devnotes.online", "https://hkorkmaz.com")
+                        .WithOrigins(
+                            "http://localhost:3000", 
+                            "http://localhost:3001", 
+                            "http://127.0.0.1:3000",
+                            "http://127.0.0.1:3001",
+                            "http://localhost:5000",
+                            "http://127.0.0.1:5000",
+                            "https://devnotes.online",
+                            "https://hkorkmaz.com"
+                        )
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
@@ -148,7 +146,10 @@ public static class ProgramExtensions
         var blogContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
         await blogContext.Database.MigrateAsync();
         blogContext.SeedDatabase();
-        app.UseCors("Dev");
+        
+        // CORS middleware'i environment'a göre yapılandır
+        app.UseCors("AllowAll");
+        
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();
