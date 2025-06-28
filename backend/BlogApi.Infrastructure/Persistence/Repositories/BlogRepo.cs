@@ -337,4 +337,46 @@ public class BlogRepo(
             return ApiError.Failure("Blog beğenilirken bir hata oluştu");
         }
     }
+
+    public async Task<ApiResultPagination<ListResponse>> GetBlogersBlogs(BlogFilterModel filter, string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+            return ApiError.Failure("Kullanıcı bulunamadı");
+        
+        var query = _context.Blogs.AsNoTracking().Where(x => x.UserId == int.Parse(userId) && x.BlogStatusEnum == BlogStatusEnum.Published && !x.IsDeleted).AsQueryable();
+
+        if (!string.IsNullOrEmpty(filter.Search))
+            query = query.Where(x => x.Title.Contains(filter.Search));
+
+        query = filter.SortBy switch
+        {
+            BlogSortType.Oldest => query.OrderBy(x => x.CreatedAt),
+            BlogSortType.MostViewed => query.OrderByDescending(x => x.ViewCount),
+            BlogSortType.MostCommented => query.OrderByDescending(x => x.Comments.Count),
+            _ => query.OrderByDescending(x => x.CreatedAt)
+        };
+
+        var result = query.Select(x => new ListResponse
+        (
+            x.Id,
+            x.Title,
+            x.Slug,
+            x.CreatedAt,
+            x.User.FullName,
+            x.User.ExternalProvider == ExternalProviderEnum.Google && x.User.FileUrl != null && x.User.FileUrl.StartsWith("http") ? x.User.FileUrl : _baseSettings.BackendUrl + "/api/file/image/" + x.User.FileUrl,
+            x.Category.Name,
+            x.CategoryId,
+            _context.Views.Count(v => v.BlogId == x.Id),
+            x.BlogStatusEnum,
+            x.BlogStatusEnum.ToString(),
+            _baseSettings.BackendUrl + "/api/file/image/" + x.ImageUrl,
+            x.Comments.Where(x => !x.IsDeleted).Count(),
+            x.Likes.Where(x => !x.IsDeleted).Count(),
+            x.Likes.Any(l => l.UserId == _currentUserService.Id && !l.IsDeleted)
+        ));
+
+        var paginatedResult = await result.PaginatedListAsync(filter.PageNumber, filter.PageSize);
+
+        return paginatedResult;
+    }
 }

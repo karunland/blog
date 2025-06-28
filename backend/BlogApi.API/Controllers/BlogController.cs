@@ -29,6 +29,13 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
         return await blogRepo.GetAll(filter);
     }
 
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<ApiResultPagination<ListResponse>> GetBlogersBlogs([FromQuery] BlogFilterModel filter, string userId)
+    {
+        return await blogRepo.GetBlogersBlogs(filter, userId);
+    }
+
     [HttpPost]
     [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<ApiResult> Create([FromForm] BlogAddRequest blog)
