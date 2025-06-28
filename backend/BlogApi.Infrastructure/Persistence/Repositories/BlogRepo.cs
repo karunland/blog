@@ -338,12 +338,16 @@ public class BlogRepo(
         }
     }
 
-    public async Task<ApiResultPagination<ListResponse>> GetBlogersBlogs(BlogFilterModel filter, string userId)
+    public async Task<ApiResultPagination<ListResponse>> GetBlogersBlogs(BlogFilterModel filter, string userMail)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userMail))
             return ApiError.Failure("Kullanıcı bulunamadı");
         
-        var query = _context.Blogs.AsNoTracking().Where(x => x.UserId == int.Parse(userId) && x.BlogStatusEnum == BlogStatusEnum.Published && !x.IsDeleted).AsQueryable();
+        var query = _context.Blogs.AsNoTracking().Where(x => x.User.Email == userMail
+            && x.User.IsDeleted == false
+            && x.BlogStatusEnum == BlogStatusEnum.Published
+            && !x.IsDeleted)
+        .AsQueryable();
 
         if (!string.IsNullOrEmpty(filter.Search))
             query = query.Where(x => x.Title.Contains(filter.Search));

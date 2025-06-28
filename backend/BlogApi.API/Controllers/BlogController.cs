@@ -31,9 +31,9 @@ public class BlogController(BlogRepo blogRepo) : BaseApiController
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ApiResultPagination<ListResponse>> GetBlogersBlogs([FromQuery] BlogFilterModel filter, string userId)
+    public async Task<ApiResultPagination<ListResponse>> GetBlogersBlogs([FromQuery] BlogFilterModel filter, [FromQuery] string userMail)
     {
-        return await blogRepo.GetBlogersBlogs(filter, userId);
+        return await blogRepo.GetBlogersBlogs(filter, userMail);
     }
 
     [HttpPost]
