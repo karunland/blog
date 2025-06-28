@@ -79,23 +79,16 @@ public static class ProgramExtensions
                 }
             });
         });
-        
+
+        var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ?? ["*"];
+
         services.AddCors(options =>
         {
             options.AddPolicy("AllowAll",
                 builder =>
                 {
                     builder
-                        .WithOrigins(
-                            "http://localhost:3000",
-                            "http://localhost:3001",
-                            "http://127.0.0.1:3000",
-                            "http://127.0.0.1:3001",
-                            "http://localhost:5000",
-                            "http://127.0.0.1:5000",
-                            "https://devnotes.online",
-                            "https://hkorkmaz.com"
-                        )
+                        .WithOrigins(allowedOrigins)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
