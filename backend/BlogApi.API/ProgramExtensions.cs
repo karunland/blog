@@ -79,16 +79,15 @@ public static class ProgramExtensions
                 }
             });
         });
-
-        var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ?? ["*"];
-
+        
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll",
+            options.AddPolicy("Dev",
                 builder =>
                 {
                     builder
-                        .WithOrigins(allowedOrigins)
+                        .WithOrigins("http://localhost:3000", "https://devnotes.online",
+                            "https://hkorkmaz.com", "http://localhost:3001", "http://127.0.0.1:3000")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
@@ -139,10 +138,7 @@ public static class ProgramExtensions
         var blogContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
         await blogContext.Database.MigrateAsync();
         blogContext.SeedDatabase();
-        
-        // CORS middleware'i environment'a göre yapılandır
-        app.UseCors("AllowAll");
-        
+        app.UseCors("Dev");
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();
