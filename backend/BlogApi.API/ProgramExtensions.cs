@@ -86,11 +86,9 @@ public static class ProgramExtensions
                 builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:3000", "https://devnotes.online",
-                            "https://hkorkmaz.com", "http://localhost:3001", "http://127.0.0.1:3000")
+                        .AllowAnyOrigin()
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                        .AllowAnyHeader();
                 });
         });
 
