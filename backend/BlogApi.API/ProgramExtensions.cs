@@ -80,13 +80,15 @@ public static class ProgramExtensions
             });
         });
         
+        var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ?? ["*"];
+
         services.AddCors(options =>
         {
             options.AddPolicy("Dev",
                 builder =>
                 {
                     builder
-                        .AllowAnyOrigin()
+                        .WithOrigins(allowedOrigins)
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
