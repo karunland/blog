@@ -18,7 +18,7 @@ public class BlogRepo(
     BlogContext _context,
     ICurrentUserService _currentUserService,
     FileRepo _fileRepo,
-    IEmailService _emailService,
+    // IEmailService _emailService,
     BaseSettings _baseSettings,
     IHttpContextAccessor _httpContextAccessor,
     IMemoryCache _cache)
@@ -90,17 +90,21 @@ public class BlogRepo(
 
     public async Task<ApiResult> Create(BlogAddRequest blog)
     {
-
-        // if app is in production, check if user is admin
         if (_baseSettings.Environmnt == "Production")
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == _currentUserService.Id);
-            if (user == null || !user.IsMailVerified)
+            var user = await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == _currentUserService.Id && x.IsDeleted == false && x.IsMailVerified == true);
+            
+            if (user == null)
                 return ApiError.Failure("Bu işlemi yapmak için yeterince yetkiniz yok.");
         }
         else
         {
-            var blogs = await _context.Blogs.Where(x => x.UserId == _currentUserService.Id && x.CreatedAt > DateTime.UtcNow.AddDays(-30)).ToListAsync();
+            var blogs = await _context.Blogs
+            .AsNoTracking()
+            .Where(x => x.UserId == _currentUserService.Id && x.CreatedAt > DateTime.UtcNow.AddDays(-30) && x.IsDeleted == false)
+            .ToListAsync();
             // if (blogs.Count >= 3)
             //     return ApiError.Failure("Test ortamında 1 ayda en fazla 3 blog oluşturabilirsiniz.");
         }
@@ -289,7 +293,7 @@ public class BlogRepo(
 
     public async Task<ApiResult> ChangeStatus(ChangeStatusRequest request)
     {
-        var blog = await _context.Blogs.FirstOrDefaultAsync(x => x.Slug == request.slug && x.UserId == _currentUserService.Id);
+        var blog = await _context.Blogs.FirstOrDefaultAsync(x => x.Slug == request.slug && x.UserId == _currentUserService.Id && x.IsDeleted == false);
 
         if (blog == null) return ApiError.Failure("Blog bulunamadı veya düzenleme yetkiniz yok.");
 
@@ -303,7 +307,7 @@ public class BlogRepo(
 
     public async Task<ApiResult<LikeResponse>> ToggleLikeBlog(LikeRequest request)
     {
-        var blog = await _context.Blogs.Where(x => x.Slug == request.slug).FirstOrDefaultAsync();
+        var blog = await _context.Blogs.Where(x => x.Slug == request.slug && x.IsDeleted == false).FirstOrDefaultAsync();
 
         if (blog == null) return ApiError.Failure("Blog bulunamadı");
 
@@ -344,8 +348,8 @@ public class BlogRepo(
             return ApiError.Failure("Kullanıcı bulunamadı");
         
         var query = _context.Blogs.AsNoTracking().Where(x => x.User.Email == userMail
-            && x.User.IsDeleted == false
             && x.BlogStatusEnum == BlogStatusEnum.Published
+            && !x.User.IsDeleted
             && !x.IsDeleted)
         .AsQueryable();
 

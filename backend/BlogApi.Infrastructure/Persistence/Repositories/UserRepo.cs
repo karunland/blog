@@ -30,7 +30,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
     public async Task<ApiResult> Register(UserAddDto user)
     {
-        if (await context.Users.AnyAsync(x => (x.Email == user.Email && x.IsGoogleRegister == false) || (x.ExternalId == user.Email && x.IsGoogleRegister == true)))
+        if (await context.Users.AnyAsync(x => (x.Email == user.Email && x.IsGoogleRegister == false && x.IsDeleted == false) || (x.ExternalId == user.Email && x.IsGoogleRegister == true && x.IsDeleted == false)))
         {
             return ApiError.Failure(Messages.AlreadyExist, HttpStatusCode.BadRequest);
         }
@@ -82,7 +82,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
     public async Task<ApiResult> SendVerificationCode()
     {
-        var user = await context.Users.FindAsync(currentUserService.Id);
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserService.Id && x.IsDeleted == false);
         if (user == null)
             return ApiError.Failure(Messages.NotFound);
 
@@ -121,7 +121,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
     public async Task<ApiResult> VerifyCode(string code)
     {
-        var user = await context.Users.FindAsync(currentUserService.Id);
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserService.Id && x.IsDeleted == false);
         if (user == null)
             return ApiError.Failure(Messages.NotFound);
 
@@ -172,7 +172,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
     public async Task<ApiResult> Update(UserUpdateRequest user)
     {
-        var currentUser = await context.Users.FindAsync(currentUserService.Id);
+        var currentUser = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserService.Id && x.IsDeleted == false);
         if (currentUser == null)
             return ApiError.Failure(Messages.NotFound);
 
@@ -226,7 +226,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             return cachedUser;
         }
 
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserService.Id);
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserService.Id && x.IsDeleted == false);
         
         if (user == null) return ApiError.Failure(Messages.NotFound);
         
@@ -252,70 +252,13 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
         return userDto;
     }
 
-    public async Task<ApiResult<MeResponse>> ExternalLogin(ExternalAuthRequest externalUser)
-    {
-        var user = await context.Users
-            .FirstOrDefaultAsync(u => u.Email == externalUser.Email);
-
-        if (user == null)
-        {
-            user = new User
-            {
-                Email = externalUser.Email,
-                FirstName = externalUser.FirstName,
-                LastName = externalUser.LastName,
-                Username = externalUser.Email.Split('@')[0],
-                ExternalId = externalUser.ExternalId,
-                ExternalProvider = ExternalProviderEnum.Google,
-                ExternalPictureUrl = externalUser.ExternalPictureUrl,
-                IsExternalAuth = true
-            };
-
-            await context.Users.AddAsync(user);
-            await context.SaveChangesAsync();
-        }
-        else
-        {
-            if (!user.IsExternalAuth || user.ExternalId != externalUser.ExternalId)
-            {
-                user.ExternalId = externalUser.ExternalId;
-                user.ExternalProvider = ExternalProviderEnum.Google;
-                user.ExternalPictureUrl = externalUser.ExternalPictureUrl;
-                user.IsExternalAuth = true;
-                await context.SaveChangesAsync();
-            }
-        }
-
-        var token = tokenHelper.GenerateToken(new JwtTokenDto(
-            user.Id,
-            user.FirstName,
-            user.LastName,
-            user.Email,
-            baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl
-        ));
-
-        var meDto = new MeResponse
-        (
-            user.Email,
-            user.FirstName,
-            user.LastName,
-            token,
-            baseSettings.BackendUrl + "/api/file/image/" + user.FileUrl,
-            user.IsMailVerified,
-            user.ExternalProvider,
-            user.ExternalProvider.GetEnumDescription()
-        );
-
-        return meDto;
-    }
-
     public async Task<ApiResultPagination<MyListResponse>> Blogs(FilterModel filter)
     {
         var blogs = context.Blogs
-            .OrderByDescending(x => x.CreatedAt)
-            // .ThenByDescending(x => x.)
             .AsNoTracking()
-            .Where(x => x.UserId == currentUserService.Id)
+            .Where(x => x.UserId == currentUserService.Id && x.IsDeleted == false)
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenByDescending(x => x.Id)
             .Select(x => new MyListResponse
             (
                 x.Id,

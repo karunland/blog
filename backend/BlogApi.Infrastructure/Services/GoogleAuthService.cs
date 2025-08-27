@@ -24,7 +24,7 @@ public class GoogleAuthService(BlogContext context, BaseSettings baseSettings, I
 
         var result = await context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Email == payload.Email &&  x.ExternalProvider == ExternalProviderEnum.Google);
+            .FirstOrDefaultAsync(x => x.Email == payload.Email &&  x.ExternalProvider == ExternalProviderEnum.Google && !x.IsDeleted);
 
         if (result != null)
         {
