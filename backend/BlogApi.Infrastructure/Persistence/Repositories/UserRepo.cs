@@ -17,7 +17,9 @@ using Messages = BlogApi.Application.Common.Messages.Messages;
 
 namespace BlogApi.Infrastructure.Persistence.Repositories;
 
-public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, IEmailService emailService, BaseSettings baseSettings, IMemoryCache cache, TokenHelper tokenHelper)
+public class UserRepo(BlogContext context, ICurrentUserService currentUserService, FileRepo fileRepo, 
+// IEmailService emailService, 
+BaseSettings baseSettings, IMemoryCache cache, TokenHelper tokenHelper)
 {
     private const string USER_CACHE_KEY = "USER_INFO";
 
@@ -74,7 +76,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
                 </div>"
         };
         
-        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        // await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
         
 
         return ApiResult.Success();
@@ -114,7 +116,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
 
         context.VerificationCodes.Add(verificationCode);
         await context.SaveChangesAsync();
-        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        // await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
         return ApiResult.Success();
     }
@@ -143,7 +145,7 @@ public class UserRepo(BlogContext context, ICurrentUserService currentUserServic
             Body = $"Email doğrulama işlemi başarıyla tamamlandı."
         };
 
-        await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
+        //  await emailService.SendEmailAsync(emailMessage.To, emailMessage.Subject, emailMessage.Body);
 
         return ApiResult.Success();
     }

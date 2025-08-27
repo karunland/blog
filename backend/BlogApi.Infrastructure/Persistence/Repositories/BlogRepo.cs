@@ -313,7 +313,7 @@ public class BlogRepo(
 
         var likesOfUser = await _context.Likes.Where(x => x.BlogId == blog.Id && x.UserId == _currentUserService.Id && !x.IsDeleted).ToListAsync();
         var isLiked = false;
-        if (!likesOfUser.Any())
+        if (likesOfUser.Count == 0)
         {
             _context.Likes.Add(new Like
             {
