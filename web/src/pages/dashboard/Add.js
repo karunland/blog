@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FiUpload } from 'react-icons/fi';
 import { getCategories, createBlog, getBlogDetail, updateBlog } from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
 import {
@@ -30,16 +29,19 @@ import {
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import CreateIcon from '@mui/icons-material/Create';
 import EditIcon from '@mui/icons-material/Edit';
 import LinkIcon from '@mui/icons-material/Link';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ImageIcon from '@mui/icons-material/Image';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import InfoIcon from '@mui/icons-material/Info';
+import toastr from 'toastr';
+
 import '../../styles/AddBlog.css';
 
-const MIN_WORD_COUNT = 100; // Minimum kelime sayısı
+
+const MIN_WORD_COUNT = 20; // Minimum kelime sayısı
+const REACT_APP_TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -75,6 +77,12 @@ export function AddBlog() {
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [wordCount, setWordCount] = useState(0);
+
+
+  if (!REACT_APP_TINYMCE_API_KEY) {
+    toastr.error('TinyMCE API Key bulunamadı');
+    navigate('/');
+  }
 
   useEffect(() => {
     document.title = isEditMode 

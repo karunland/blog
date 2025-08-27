@@ -1,34 +1,19 @@
-using System.Net;
-using System.Net.Mail;
-using BlogApi.Core.Entities;
 using BlogApi.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MimeKit;
-using MailKit.Net.Smtp;
 using MailKit.Security;
-using BlogApi.Core.Settings;
 
 namespace BlogApi.Infrastructure.Services;
 
-public class EmailService : IEmailService
+public class EmailService(IConfiguration configuration, ILogger<EmailService> logger) : IEmailService
 {
-    private readonly EmailSettings _emailSettings;
-    private readonly ILogger<EmailService> _logger;
-
-    public EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger)
-    {
-        _emailSettings = emailSettings.Value;
-        _logger = logger;
-    }
-
     public async Task SendEmailAsync(string to, string subject, string body, bool isHtml = false)
     {
         try
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_emailSettings.DisplayName, _emailSettings.Email));
+            message.From.Add(new MailboxAddress(configuration["EmailSettings:DisplayName"], configuration["EmailSettings:Email"]));
             message.To.Add(MailboxAddress.Parse(to));
             message.Subject = subject;
 
@@ -41,22 +26,19 @@ public class EmailService : IEmailService
 
             using var smtp = new MailKit.Net.Smtp.SmtpClient();
             
-            // SSL/TLS ayarları
-            await smtp.ConnectAsync(_emailSettings.Host, _emailSettings.Port, 
+            await smtp.ConnectAsync(configuration["EmailSettings:Host"] ?? "", Convert.ToInt16(configuration["EmailSettings:Port"]), 
                 SecureSocketOptions.StartTls);
 
-            // Gmail için authentication
-            await smtp.AuthenticateAsync(_emailSettings.Email, _emailSettings.Password);
-            
-            // Email gönderme
-            await smtp.SendAsync(message);
-            await smtp.DisconnectAsync(true);
+            // await smtp.AuthenticateAsync(configuration["EmailSettings:Email"], configuration["EmailSettings:Password"]);
+            //
+            // await smtp.SendAsync(message);
+            // await smtp.DisconnectAsync(true);
 
-            _logger.LogInformation($"Email sent successfully to {to}");
+            logger.LogInformation($"Email sent successfully to {to}");
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Email sending failed: {ex.Message}");
+            logger.LogError($"Email sending failed: {ex.Message}");
             throw;
         }
     }

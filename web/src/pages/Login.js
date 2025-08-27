@@ -18,10 +18,19 @@ import LoginIcon from '@mui/icons-material/Login';
 import { GoogleLoginBlog } from '../components/GoogleLogin';
 import { Divider } from '@mui/material';
 import Logo from '../components/Logo';
+import toastr from 'toastr';
+
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const Login = () => {
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  if (!GOOGLE_CLIENT_ID) {
+    toastr.error('Google Client ID bulunamadı');
+    navigate('/');
+  }
   const [formData, setFormData] = useState({
     email: '',
     password: ''

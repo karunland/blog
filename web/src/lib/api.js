@@ -215,17 +215,6 @@ export const searchBlogs = async (search) => {
   }
 };
 
-export const googleRegister = async (credential) => {
-  try {
-    const response = await api.post('/user/googleRegister', credential);
-    return response.data;
-  } catch (error) {
-    console.error('Google Register Error:', error);
-    toastr.error(error.response.data.errorMessage);
-    throw error;
-  }
-};
-
 export const googleLogin = async (credential) => {
   try {
     const response = await api.post('/user/googleLogin', credential);

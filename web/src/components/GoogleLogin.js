@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
 import { setUser } from '../store/userSlice';
-import { googleLogin, googleRegister, getMe } from '../lib/api';
+import { googleLogin, getMe } from '../lib/api';
 import GoogleIcon from '@mui/icons-material/Google';
 import { toast } from '../utils/toast';
 
@@ -13,9 +13,7 @@ export function GoogleLoginBlog({ buttonName, onError }) {
 
   const handleGoogleResponse = async (codeResponse) => {
     try {
-      const apiResponse = buttonName === 'login' 
-        ? await googleLogin({ credential: codeResponse.access_token })
-        : await googleRegister({ credential: codeResponse.access_token });
+      const apiResponse = await googleLogin({ credential: codeResponse.access_token });
 
       if (apiResponse.isSuccess) {
         const token = apiResponse.data.token;
@@ -39,7 +37,7 @@ export function GoogleLoginBlog({ buttonName, onError }) {
   const login = useGoogleLogin({
     onSuccess: handleGoogleResponse,
     onError: (error) => {
-      // console.error('Google OAuth error:', error);
+      console.log(error);
     },
     flow: 'implicit',
     scope: 'email profile',

@@ -37,16 +37,10 @@ public class TokenHelper(BaseSettings baseSettings)
     {
         HttpClient client = new();
         var response = await client.GetAsync($"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={token}");
-        if (response.IsSuccessStatusCode)
-        {
-            await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode) return false;
+        await response.Content.ReadAsStringAsync();
+        return true;
 
-
-            // JSON'dan gerekli bilgileri çıkarın ve doğrulayın.
-            return true;
-        }
-
-        return false;
     }
 
     public async Task<GoogleJsonWebSignature.Payload> GetPayloadFromGoogle(string token)
@@ -63,7 +57,7 @@ public class TokenHelper(BaseSettings baseSettings)
         catch (Exception ex)
         {
             Console.WriteLine(ex);
-            return null;
+            throw new Exception();
         }
     }
 
@@ -76,11 +70,11 @@ public class TokenHelper(BaseSettings baseSettings)
         if (response.IsSuccessStatusCode)
         {
             var json = await response.Content.ReadAsStringAsync();
-            var userInfo = JsonConvert.DeserializeObject<UserInfo>(json);
+            var userInfo = JsonConvert.DeserializeObject<UserInfo>(json) ?? new UserInfo();
             return userInfo;
         }
 
-        return null;
+        throw new Exception("Error getting user info");
     }
 }
 

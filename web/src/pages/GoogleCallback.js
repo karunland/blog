@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/userSlice';
 import { handleGoogleCallback } from '../lib/auth';
-import { googleLogin, googleRegister, getMe } from '../lib/api';
+import { googleLogin, getMe } from '../lib/api';
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
@@ -17,16 +17,12 @@ const GoogleCallback = () => {
         try {
           const { accessToken, type } = result;
           
-          // Login veya register işlemini yap
-          const apiResponse = type === 'login'
-            ? await googleLogin({ credential: accessToken })
-            : await googleRegister({ credential: accessToken });
+          const apiResponse = await googleLogin({ credential: accessToken });
 
           if (apiResponse.isSuccess) {
             const token = apiResponse.data.token;
             localStorage.setItem('token', token);
             
-            // Kullanıcı bilgilerini al
             const meResponse = await getMe();
             if (meResponse.isSuccess) {
               dispatch(setUser(meResponse.data));

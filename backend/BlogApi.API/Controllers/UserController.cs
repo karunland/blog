@@ -43,9 +43,9 @@ public class UserController(UserRepo userRepo, GoogleAuthService googleAuthServi
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ApiResult<MeResponse>> GoogleRegister(justString credential)
+    public async Task<ApiResult<MeResponse>> GoogleLogin(justString credential)
     {
-        return await googleAuthService.GoogleRegisterAsync(credential.credential);
+        return await googleAuthService.GoogleAuthAsync(credential.credential);
     }
 
     [HttpPost]
@@ -59,13 +59,6 @@ public class UserController(UserRepo userRepo, GoogleAuthService googleAuthServi
     public async Task<ApiResult<MeResponse>> Login(UserLoginDto user)
     {
         return await userRepo.Login(user);
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    public async Task<ApiResult<MeResponse>> GoogleLogin(justString credential)
-    {
-        return await googleAuthService.GoogleLogin(credential.credential);
     }
 
     [HttpGet]

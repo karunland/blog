@@ -22,17 +22,12 @@ public static class ProgramExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddHttpContextAccessor();
-        services.Configure<BaseSettings>(configuration.GetSection("BaseSettings"));
-        // use postgresql
-        var connectionString = configuration.GetConnectionString("BlogConnection");
-        Console.WriteLine(connectionString);
-        if (connectionString != null)
-            services.AddDbContext<BlogContext>(options =>
-            {
-                 options.UseNpgsql(connectionString);
-            });
         
-        // Add Memory Cache
+        services.Configure<BaseSettings>(configuration.GetSection("BaseSettings"));
+
+        services.AddDbContext<BlogContext>(options =>
+             options.UseNpgsql(configuration.GetConnectionString("BlogConnection")));
+        
         services.AddMemoryCache();
         
         services.AddScoped<BlogRepo>();
@@ -75,7 +70,7 @@ public static class ProgramExtensions
                     {
                         Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
                     },
-                    Array.Empty<string>()
+                    []
                 }
             });
         });
@@ -116,7 +111,6 @@ public static class ProgramExtensions
     }
 
     public static async Task<IApplicationBuilder> UseAppServicesAsync(this IApplicationBuilder app,
-        IConfiguration configuration,
         IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
@@ -130,7 +124,6 @@ public static class ProgramExtensions
                 c.InjectStylesheet("/swagger-ui/custom.css");
             });
 
-            // Serve the custom CSS file
             app.UseStaticFiles();
         }
 

@@ -27,7 +27,7 @@ services:
     ports:
       - "5001:5001"
     volumes:
-      - blog_files_dev:/app/BlogApiFiles
+      - ./backend/BlogApi.API/BlogApiFiles:/app/BlogApiFiles:rw
     depends_on:
       - postgres
     networks:
@@ -49,8 +49,6 @@ services:
 
 volumes:
   postgres_data_dev:
-    driver: local
-  blog_files_dev:
     driver: local
 
 networks:
